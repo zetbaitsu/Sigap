@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "id.zelory.sigap"
+        applicationId "id.satusatudua.sigap"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1

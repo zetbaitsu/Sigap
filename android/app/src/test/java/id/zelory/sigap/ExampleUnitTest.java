@@ -1,4 +1,4 @@
-package id.zelory.sigap;
+package id.satusatudua.sigap;
 
 import org.junit.Test;
 
