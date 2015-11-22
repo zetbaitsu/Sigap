@@ -1,13 +1,17 @@
-package id.satusatudua.sigap;
+package id.satusatudua.sigap.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.api.FirebaseApi;
+import id.satusatudua.sigap.data.model.Location;
+import id.satusatudua.sigap.data.model.User;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,10 +26,23 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                addUser();
             }
         });
+    }
+
+    private void addUser() {
+        User user = new User.Builder()
+                .setUsername("RyMey")
+                .setPassword("SEMANGAT")
+                .setName("Rya Meyvriska")
+                .setBirthday("24051994")
+                .setGender("F")
+                .setStatus("Online")
+                .setLocation(new Location(142, 20))
+                .build();
+
+        FirebaseApi.pluck().getApi().child("user").child(user.getUsername()).setValue(user);
     }
 
     @Override
