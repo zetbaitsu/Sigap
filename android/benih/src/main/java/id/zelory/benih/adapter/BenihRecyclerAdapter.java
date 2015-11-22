@@ -140,14 +140,23 @@ public abstract class BenihRecyclerAdapter<Data, Holder extends BenihItemViewHol
                             data.add(items.get(i));
                         }
                     }
-                }).subscribe(new Action1<Object>()
-        {
+                }).subscribe(new Action1<Object>() {
             @Override
-            public void call(Object o)
-            {
+            public void call(Object o) {
                 notifyDataSetChanged();
             }
         });
+    }
+
+    public void addOrUpdate(Data item)
+    {
+        int i = data.indexOf(item);
+        if (i >= 0) {
+            data.set(i, item);
+            notifyItemChanged(i);
+        } else {
+            add(item);
+        }
     }
 
     public void remove(int position)

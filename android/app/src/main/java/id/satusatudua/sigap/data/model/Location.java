@@ -1,8 +1,14 @@
 package id.satusatudua.sigap.data.model;
 
 /**
- * Created by zetbaitsu on 8/21/15.
+ * Created on : November 22, 2015
+ * Author     : zetbaitsu
+ * Name       : Zetra
+ * Email      : zetra@mail.ugm.ac.id
+ * GitHub     : https://github.com/zetbaitsu
+ * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
+
 public class Location {
     private double latitude;
     private double longitude;

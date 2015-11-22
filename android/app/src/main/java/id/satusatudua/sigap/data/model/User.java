@@ -1,11 +1,20 @@
 package id.satusatudua.sigap.data.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
- * Created by zetbaitsu on 8/21/15.
+ * Created on : November 22, 2015
+ * Author     : zetbaitsu
+ * Name       : Zetra
+ * Email      : zetra@mail.ugm.ac.id
+ * GitHub     : https://github.com/zetbaitsu
+ * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class User {
-    private String username;
-    private String password;
+public class User implements Parcelable {
+    private String uid;
+    private String idNumber;
+    private String email;
     private String name;
     private String gender;
     private String birthday;
@@ -16,20 +25,50 @@ public class User {
 
     }
 
-    public String getUsername() {
-        return username;
+    protected User(Parcel in) {
+        uid = in.readString();
+        idNumber = in.readString();
+        email = in.readString();
+        name = in.readString();
+        gender = in.readString();
+        birthday = in.readString();
+        status = in.readString();
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
+    public String getUid() {
+        return uid;
     }
 
-    public String getPassword() {
-        return password;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public String getIdNumber() {
+        return idNumber;
+    }
+
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getName() {
@@ -72,6 +111,22 @@ public class User {
         this.location = location;
     }
 
+    @Override
+    public int describeContents() {
+        return hashCode();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uid);
+        dest.writeString(idNumber);
+        dest.writeString(email);
+        dest.writeString(name);
+        dest.writeString(gender);
+        dest.writeString(birthday);
+        dest.writeString(status);
+    }
+
     public static class Builder {
         private User user;
 
@@ -79,13 +134,18 @@ public class User {
             user = new User();
         }
 
-        public Builder setUsername(String username) {
-            user.username = username;
+        public Builder setUid(String uid) {
+            user.uid = uid;
             return this;
         }
 
-        public Builder setPassword(String password) {
-            user.password = password;
+        public Builder setIdNumber(String idNumber) {
+            user.idNumber = idNumber;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            user.email = email;
             return this;
         }
 
@@ -120,10 +180,20 @@ public class User {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o instanceof User) {
+            User user = (User) o;
+            return uid.equals(user.uid);
+        }
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                "uid='" + uid + '\'' +
+                ", idNumber='" + idNumber + '\'' +
+                ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
                 ", birthday='" + birthday + '\'' +

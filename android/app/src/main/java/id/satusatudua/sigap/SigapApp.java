@@ -4,9 +4,17 @@ import android.app.Application;
 
 import com.firebase.client.Firebase;
 
+import timber.log.Timber;
+
 /**
- * Author     : Zetra - https://github.com/zetbaitsu
+ * Created on : November 22, 2015
+ * Author     : zetbaitsu
+ * Name       : Zetra
+ * Email      : zetra@mail.ugm.ac.id
+ * GitHub     : https://github.com/zetbaitsu
+ * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
+
 public class SigapApp extends Application {
 
     private static SigapApp sigapApp;
@@ -16,6 +24,11 @@ public class SigapApp extends Application {
         super.onCreate();
         sigapApp = this;
         Firebase.setAndroidContext(this);
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+            Timber.tag(getClass().getSimpleName());
+        }
     }
 
     public static SigapApp pluck() {

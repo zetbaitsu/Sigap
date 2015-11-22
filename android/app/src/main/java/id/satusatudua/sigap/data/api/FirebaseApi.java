@@ -3,8 +3,14 @@ package id.satusatudua.sigap.data.api;
 import com.firebase.client.Firebase;
 
 /**
- * Author     : Zetra - https://github.com/zetbaitsu
+ * Created on : November 22, 2015
+ * Author     : zetbaitsu
+ * Name       : Zetra
+ * Email      : zetra@mail.ugm.ac.id
+ * GitHub     : https://github.com/zetbaitsu
+ * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
+
 public enum FirebaseApi {
 
     INSTANCE;

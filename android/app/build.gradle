@@ -52,4 +52,5 @@ dependencies {
     compile 'com.firebase:firebase-client-android:2.4.1'
     retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.0.6'
     compile project(':benih')
+    compile 'org.apache.directory.studio:org.apache.commons.codec:1.8'
 }

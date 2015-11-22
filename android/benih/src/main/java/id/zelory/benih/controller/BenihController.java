@@ -18,6 +18,7 @@ package id.zelory.benih.controller;
 
 import android.os.Bundle;
 
+import id.zelory.benih.controller.event.BenihErrorEvent;
 import timber.log.Timber;
 
 /**
@@ -39,7 +40,7 @@ public abstract class BenihController<P extends BenihController.Presenter>
 
     public interface Presenter
     {
-        void showError(Throwable throwable);
+        void showError(BenihErrorEvent errorEvent);
 
         void showLoading();
 
