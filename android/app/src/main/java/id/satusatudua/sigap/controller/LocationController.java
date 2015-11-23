@@ -43,28 +43,13 @@ public class LocationController extends BenihController<LocationController.Prese
     private LocationRequest request;
     private ReactiveLocationProvider locationProvider;
 
-    public LocationController(Presenter presenter) {
+    public LocationController(Presenter presenter, int priority) {
         super(presenter);
         request = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setPriority(priority)
                 .setInterval(100);
         locationProvider = new ReactiveLocationProvider(SigapApp.pluck().getApplicationContext());
         listenLocationUpdate();
-    }
-
-    public void loadLastLocation() {
-        locationProvider.getLastKnownLocation()
-                .map(location -> new Location(location.getLatitude(), location.getLongitude()))
-                .subscribe(location -> {
-                    if (presenter != null) {
-                        presenter.showLastKnownLocation(location);
-                    }
-                }, throwable -> {
-                    Timber.e(throwable.getMessage());
-                    if (presenter != null) {
-                        presenter.showError(ErrorEvent.GENERAL);
-                    }
-                });
     }
 
     private void listenLocationUpdate() {
@@ -96,9 +81,12 @@ public class LocationController extends BenihController<LocationController.Prese
 
     }
 
-    public interface Presenter extends BenihController.Presenter {
-        void showLastKnownLocation(Location location);
+    public void destroy() {
+        request = null;
+        locationProvider = null;
+    }
 
+    public interface Presenter extends BenihController.Presenter {
         void onLocationUpdated(Location location);
     }
 }

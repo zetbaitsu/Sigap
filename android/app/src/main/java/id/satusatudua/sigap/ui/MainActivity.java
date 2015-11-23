@@ -34,15 +34,13 @@ import timber.log.Timber;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 
-public class MainActivity extends BenihActivity implements UserController.Presenter,
-        LocationController.Presenter {
+public class MainActivity extends BenihActivity implements UserController.Presenter {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerView;
 
     private UserController userController;
-    private LocationController locationController;
     private ProgressDialog progressDialog;
     private UserAdapter userAdapter;
 
@@ -70,7 +68,7 @@ public class MainActivity extends BenihActivity implements UserController.Presen
         recyclerView.setAdapter(userAdapter);
 
         setupController(savedInstanceState);
-        locationController = new LocationController(this);
+        //locationController = new LocationController(this);
     }
 
     private void setupController(Bundle savedInstanceState) {
@@ -164,15 +162,5 @@ public class MainActivity extends BenihActivity implements UserController.Presen
         progressDialog = null;
         userAdapter.clear();
         userAdapter = null;
-    }
-
-    @Override
-    public void showLastKnownLocation(Location location) {
-
-    }
-
-    @Override
-    public void onLocationUpdated(Location location) {
-        Timber.d(location.toString());
     }
 }

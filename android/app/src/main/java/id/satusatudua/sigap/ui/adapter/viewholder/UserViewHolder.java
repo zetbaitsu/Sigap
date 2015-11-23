@@ -49,6 +49,6 @@ public class UserViewHolder extends BenihItemViewHolder<User> {
     public void bind(User user) {
         email.setText(user.getEmail());
         name.setText(user.getName());
-        location.setText("Latitude: " + user.getLocation().getLatitude() + ", Longitude: " + user.getLocation().getLongitude());
+        location.setText(String.format("Latitude: %s, Longitude: %s", user.getLocation().getLatitude(), user.getLocation().getLongitude()));
     }
 }

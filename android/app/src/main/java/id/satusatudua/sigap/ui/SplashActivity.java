@@ -40,6 +40,9 @@ public class SplashActivity extends BenihActivity {
 
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
+
+        sendBroadcast(new Intent("id.satusatudua.sigap.ACTION_START"));
+
         if (FirebaseApi.pluck().getApi().getAuth() != null) {
             new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, MainActivity.class)), 1800);
         } else {
