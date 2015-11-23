@@ -1,6 +1,7 @@
 package id.satusatudua.sigap.data.api;
 
 import com.firebase.client.Firebase;
+import com.firebase.geofire.GeoFire;
 
 /**
  * Created on : November 22, 2015
@@ -15,9 +16,11 @@ public enum FirebaseApi {
 
     INSTANCE;
     private Firebase firebase;
+    private GeoFire geoFire;
 
     FirebaseApi() {
         firebase = new Firebase("https://sigap.firebaseio.com/");
+        geoFire = new GeoFire(firebase);
     }
 
     public static FirebaseApi pluck() {
@@ -26,5 +29,9 @@ public enum FirebaseApi {
 
     public Firebase getApi() {
         return firebase;
+    }
+
+    public GeoFire getGeoFire() {
+        return geoFire;
     }
 }

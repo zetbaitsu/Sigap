@@ -39,6 +39,7 @@ public class UserViewHolder extends BenihItemViewHolder<User> {
 
     @Bind(R.id.email) TextView email;
     @Bind(R.id.name) TextView name;
+    @Bind(R.id.location) TextView location;
 
     public UserViewHolder(View itemView, OnItemClickListener itemClickListener, OnLongItemClickListener longItemClickListener) {
         super(itemView, itemClickListener, longItemClickListener);
@@ -48,5 +49,6 @@ public class UserViewHolder extends BenihItemViewHolder<User> {
     public void bind(User user) {
         email.setText(user.getEmail());
         name.setText(user.getName());
+        location.setText("Latitude: " + user.getLocation().getLatitude() + ", Longitude: " + user.getLocation().getLongitude());
     }
 }

@@ -13,9 +13,11 @@ import java.util.List;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.controller.LocationController;
 import id.satusatudua.sigap.controller.UserController;
 import id.satusatudua.sigap.controller.event.ErrorEvent;
 import id.satusatudua.sigap.data.api.FirebaseApi;
+import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.ui.adapter.UserAdapter;
 import id.zelory.benih.BenihActivity;
@@ -32,13 +34,15 @@ import timber.log.Timber;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 
-public class MainActivity extends BenihActivity implements UserController.Presenter {
+public class MainActivity extends BenihActivity implements UserController.Presenter,
+        LocationController.Presenter {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerView;
 
     private UserController userController;
+    private LocationController locationController;
     private ProgressDialog progressDialog;
     private UserAdapter userAdapter;
 
@@ -66,6 +70,7 @@ public class MainActivity extends BenihActivity implements UserController.Presen
         recyclerView.setAdapter(userAdapter);
 
         setupController(savedInstanceState);
+        locationController = new LocationController(this);
     }
 
     private void setupController(Bundle savedInstanceState) {
@@ -159,5 +164,15 @@ public class MainActivity extends BenihActivity implements UserController.Presen
         progressDialog = null;
         userAdapter.clear();
         userAdapter = null;
+    }
+
+    @Override
+    public void showLastKnownLocation(Location location) {
+
+    }
+
+    @Override
+    public void onLocationUpdated(Location location) {
+        Timber.d(location.toString());
     }
 }
