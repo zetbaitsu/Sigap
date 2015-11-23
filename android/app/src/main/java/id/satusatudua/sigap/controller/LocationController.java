@@ -56,11 +56,10 @@ public class LocationController extends BenihController<LocationController.Prese
         locationProvider.getUpdatedLocation(request)
                 .map(location -> new Location(location.getLatitude(), location.getLongitude()))
                 .subscribe(location -> {
+                    User user = LocalDataManager.getCurrentUser();
+                    user.setLocation(location);
+                    FirebaseApi.pluck().getApi().child("users").child(user.getUid()).setValue(user);
                     if (presenter != null) {
-                        User user = LocalDataManager.getCurrentUser();
-                        user.setLocation(location);
-                        FirebaseApi.pluck().getApi().child("users").child(user.getUid()).setValue(user);
-                        LocalDataManager.saveCurrentUser(user);
                         presenter.onLocationUpdated(location);
                     }
                 }, throwable -> {

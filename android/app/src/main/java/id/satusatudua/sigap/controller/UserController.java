@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.satusatudua.sigap.controller.event.ErrorEvent;
+import id.satusatudua.sigap.data.LocalDataManager;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.util.IteratorUtils;
@@ -135,6 +136,9 @@ public class UserController extends BenihController<UserController.Presenter> {
                     return user;
                 })
                 .subscribe(user -> {
+                    if (user.equals(LocalDataManager.getCurrentUser())) {
+                        LocalDataManager.saveCurrentUser(user);
+                    }
                     if (presenter != null) {
                         presenter.onUserChanged(user);
                     }
