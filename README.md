@@ -1,10 +1,10 @@
 # Android
 
-Standard code for variable name, class name, method name, bracket position, etc please follow this one: http://google.github.io/styleguide/javaguide.html
+Standard code for variable name, class name, method name, bracket position, etc please follow this one http://google.github.io/styleguide/javaguide.html
 
 The architecture of this application are based on two programming models:
 
-1. Functional Reactive Programming. This programming model powers almost all the layers in the application.
+1. Functional Reactive Programming. This programming model powers almost all the layers in the application, please read this one https://github.com/ReactiveX/RxJava/wiki
 2. Benih style programming, please check this out link for detail http://zetbaitsu.github.io/Benih/
 
 These programming models enables us to focus on key points:
