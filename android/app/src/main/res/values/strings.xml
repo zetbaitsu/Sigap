@@ -10,4 +10,8 @@
     <string name="register">Register</string>
     <string name="have_account">Have an account?</string>
     <string name="copy_rights">© SatuSatuDua 2015</string>
+    <string name="masuk">Masuk</string>
+    <string name="buat_akun">Klik disini untuk membuat akun</string>
+    <string name="lupa_kata_sandi">Lupa kata sandi?</string>
+    <string name="kata_sandi">Kata sandi</string>
 </resources>

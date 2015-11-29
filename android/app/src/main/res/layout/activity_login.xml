@@ -75,7 +75,7 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Kata sandi"
+                    android:hint="@string/kata_sandi"
                     android:inputType="textPassword"/>
 
             </android.support.design.widget.TextInputLayout>
@@ -87,7 +87,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
-                android:text="Lupa kata sandi?"
+                android:text="@string/lupa_kata_sandi"
                 android:textSize="16sp"/>
 
         </LinearLayout>
@@ -107,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_primary_dark"
-            android:text="@string/login"
+            android:text="@string/masuk"
             android:textColor="@color/white"/>
     </LinearLayout>
 
@@ -118,7 +118,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="12dp"
-        android:text="Klik disini untuk membuat akun"
+        android:text="@string/buat_akun"
         android:textColor="#FFF"
         android:textSize="16sp"/>
 
