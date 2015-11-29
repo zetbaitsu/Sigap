@@ -67,9 +67,9 @@ public class LoginActivity extends BenihActivity implements LoginController.Pres
         String password = this.password.getText().toString();
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            this.email.setError("Please add valid email address!");
+            this.email.setError("Mohon masukan alamat email yang valid!");
         } else if (password.length() <= 0) {
-            this.password.setError("Please add your password here!");
+            this.password.setError("Mohon masukan password anda disini!");
         } else {
             loginController.login(email, password);
         }
@@ -80,14 +80,14 @@ public class LoginActivity extends BenihActivity implements LoginController.Pres
         String email = this.email.getText().toString();
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            this.email.setError("Please add valid email address!");
+            this.email.setError("Mohon masukan alamat email yang valid terlebih dahulu!");
         } else {
             showLoading();
             FirebaseApi.pluck().getApi().resetPassword(email, new Firebase.ResultHandler() {
                 @Override
                 public void onSuccess() {
                     dismissLoading();
-                    Snackbar snackbar = Snackbar.make(password, "An email for reset password has been sent to you.", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(password, "Sebuah email telah dikirimkan untuk mengatur ulang kata sandi.", Snackbar.LENGTH_LONG);
                     snackbar.getView().setBackgroundResource(R.color.colorPrimary);
                     snackbar.show();
                 }
@@ -130,7 +130,7 @@ public class LoginActivity extends BenihActivity implements LoginController.Pres
     @Override
     public void showLoading() {
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Please wait...");
+        progressDialog.setMessage("Silahkan tunggu...");
         progressDialog.show();
     }
 
