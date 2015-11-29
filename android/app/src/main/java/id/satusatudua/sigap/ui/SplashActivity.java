@@ -44,6 +44,7 @@ public class SplashActivity extends BenihActivity {
         sendBroadcast(new Intent("id.satusatudua.sigap.ACTION_START"));
 
         if (FirebaseApi.pluck().getApi().getAuth() != null) {
+            //TODO change to MainActivity if you have develop for register page.
             new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, WelcomeActivity.class)), 1800);
         } else {
             new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, WelcomeActivity.class)), 1800);

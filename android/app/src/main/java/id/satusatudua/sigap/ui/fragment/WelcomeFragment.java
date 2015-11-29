@@ -18,7 +18,10 @@ package id.satusatudua.sigap.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import butterknife.Bind;
 import id.satusatudua.sigap.R;
 import id.zelory.benih.fragment.BenihFragment;
 
@@ -31,6 +34,10 @@ import id.zelory.benih.fragment.BenihFragment;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class WelcomeFragment extends BenihFragment {
+
+    @Bind(R.id.image) ImageView imageView;
+    @Bind(R.id.title) TextView title;
+    @Bind(R.id.description) TextView description;
 
     private int page;
 
@@ -50,5 +57,31 @@ public class WelcomeFragment extends BenihFragment {
     @Override
     protected void onViewReady(@Nullable Bundle savedInstanceState) {
         page = getArguments().getInt("page", 1);
+        initView();
+    }
+
+    private void initView() {
+        switch (page) {
+            case 1:
+                imageView.setImageResource(R.drawable.pembukaan1);
+                title.setText("Selamat Datang");
+                description.setText("Sigap adalah sebuah aplikasi yang akan membantu anda pada kondisi darurat.");
+                break;
+            case 2:
+                imageView.setImageResource(R.drawable.pembukaan2);
+                title.setText("Tombol Darurat");
+                description.setText("Sigap menghubungkan masyarakat dan polisi ketika kondisi darurat.");
+                break;
+            case 3:
+                imageView.setImageResource(R.drawable.pembukaan3);
+                title.setText("Kawal Teman");
+                description.setText("Gunakan fitur kawal teman untuk memastikan teman terhindar dari bahaya.");
+                break;
+            case 4:
+                imageView.setImageResource(R.drawable.pembukaan4);
+                title.setText("Navigasi");
+                description.setText("Data lokasi rawan dari pengguna akan membantu anda menghindarinya.");
+                break;
+        }
     }
 }
