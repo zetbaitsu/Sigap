@@ -18,20 +18,22 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
-    android:orientation="vertical">
+    android:background="@color/colorPrimaryDark"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context=".ui.LoginActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:layout_above="@+id/card_view"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="12dp"
-        android:text="@string/app_name"
-        android:textColor="#FFF"
-        android:textSize="36sp"/>
+        android:src="@drawable/big_icon"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
@@ -40,6 +42,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_margin="16dp"
+        app:cardCornerRadius="8dp"
         app:cardElevation="4dp">
 
         <LinearLayout
@@ -72,25 +75,10 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/password"
+                    android:hint="Kata sandi"
                     android:inputType="textPassword"/>
 
             </android.support.design.widget.TextInputLayout>
-
-            <android.support.v7.widget.ButtonBarLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:layout_marginTop="8dp">
-
-                <Button
-                    android:id="@+id/login"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorPrimaryDark"
-                    android:text="@string/login"
-                    android:textColor="#FFF"/>
-            </android.support.v7.widget.ButtonBarLayout>
 
             <TextView
                 android:id="@+id/forgot_password"
@@ -99,13 +87,29 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
-                android:text="@string/forgot_password"
-                android:textColor="#000"
+                android:text="Lupa kata sandi?"
                 android:textSize="16sp"/>
 
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/card_view"
+        android:layout_margin="16dp"
+        android:background="@drawable/rounded_white"
+        android:padding="2dp">
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_primary_dark"
+            android:text="@string/login"
+            android:textColor="@color/white"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/register"
@@ -114,7 +118,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="12dp"
-        android:text="@string/create_account"
+        android:text="Klik disini untuk membuat akun"
         android:textColor="#FFF"
         android:textSize="16sp"/>
 
