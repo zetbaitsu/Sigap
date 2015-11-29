@@ -14,39 +14,41 @@
  * limitations under the License.
  */
 
-package id.satusatudua.sigap.ui;
+package id.satusatudua.sigap.ui.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.annotation.Nullable;
 
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.api.FirebaseApi;
-import id.zelory.benih.BenihActivity;
+import id.zelory.benih.fragment.BenihFragment;
 
 /**
- * Created on : November 22, 2015
+ * Created on : November 29, 2015
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class SplashActivity extends BenihActivity {
-    @Override
-    protected int getActivityView() {
-        return R.layout.activity_splash;
+public class WelcomeFragment extends BenihFragment {
+
+    private int page;
+
+    public static WelcomeFragment newInstance(int page) {
+        WelcomeFragment fragment = new WelcomeFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("page", page);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
-    protected void onViewReady(Bundle savedInstanceState) {
+    protected int getFragmentView() {
+        return R.layout.fragment_welcome;
+    }
 
-        sendBroadcast(new Intent("id.satusatudua.sigap.ACTION_START"));
-
-        if (FirebaseApi.pluck().getApi().getAuth() != null) {
-            new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, WelcomeActivity.class)), 1800);
-        } else {
-            new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, WelcomeActivity.class)), 1800);
-        }
+    @Override
+    protected void onViewReady(@Nullable Bundle savedInstanceState) {
+        page = getArguments().getInt("page", 1);
     }
 }
