@@ -9,4 +9,5 @@
     <string name="logout">Logout</string>
     <string name="register">Register</string>
     <string name="have_account">Have an account?</string>
+    <string name="copy_rights">© SatuSatuDua 2015</string>
 </resources>

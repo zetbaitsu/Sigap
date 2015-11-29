@@ -19,16 +19,26 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     android:orientation="vertical">
 
+    <ImageView
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_above="@+id/app_name"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/big_icon"/>
+
     <TextView
+        android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:layout_marginTop="24dp"
         android:text="@string/app_name"
-        android:textColor="#000"
-        android:textSize="36sp"/>
+        android:textColor="@color/white"
+        android:textSize="48sp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -37,8 +47,8 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="12dp"
         android:gravity="center"
-        android:text="Copyrigths SatuSatuDua 2015"
-        android:textColor="#000"
+        android:text="@string/copy_rights"
+        android:textColor="@color/white"
         android:textSize="16sp"/>
 
 </RelativeLayout>
