@@ -13,17 +13,14 @@ import java.util.List;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.controller.LocationController;
 import id.satusatudua.sigap.controller.UserController;
 import id.satusatudua.sigap.controller.event.ErrorEvent;
 import id.satusatudua.sigap.data.api.FirebaseApi;
-import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.ui.adapter.UserAdapter;
 import id.zelory.benih.BenihActivity;
 import id.zelory.benih.controller.event.BenihErrorEvent;
 import id.zelory.benih.view.BenihRecyclerView;
-import timber.log.Timber;
 
 /**
  * Created on : November 22, 2015
