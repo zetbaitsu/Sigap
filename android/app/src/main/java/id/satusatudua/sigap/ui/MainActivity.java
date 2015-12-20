@@ -13,14 +13,12 @@ import java.util.List;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.controller.UserController;
-import id.satusatudua.sigap.controller.event.ErrorEvent;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.presenter.UserPresenter;
 import id.satusatudua.sigap.ui.adapter.UserAdapter;
-import id.zelory.benih.BenihActivity;
-import id.zelory.benih.controller.event.BenihErrorEvent;
-import id.zelory.benih.view.BenihRecyclerView;
+import id.zelory.benih.ui.BenihActivity;
+import id.zelory.benih.ui.view.BenihRecyclerView;
 
 /**
  * Created on : November 22, 2015
@@ -31,18 +29,18 @@ import id.zelory.benih.view.BenihRecyclerView;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 
-public class MainActivity extends BenihActivity implements UserController.Presenter {
+public class MainActivity extends BenihActivity implements UserPresenter.View {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerView;
 
-    private UserController userController;
+    private UserPresenter userPresenter;
     private ProgressDialog progressDialog;
     private UserAdapter userAdapter;
 
     @Override
-    protected int getActivityView() {
+    protected int getResourceLayout() {
         return R.layout.activity_main;
     }
 
@@ -59,24 +57,24 @@ public class MainActivity extends BenihActivity implements UserController.Presen
         });
 
         userAdapter.setOnLongItemClickListener((view, position) ->
-                                                       userController.loadUser(userAdapter.getData().get(position).getUid()));
+                                                       userPresenter.loadUser(userAdapter.getData().get(position).getUid()));
 
         recyclerView.setUpAsList();
         recyclerView.setAdapter(userAdapter);
 
         setupController(savedInstanceState);
-        //locationController = new LocationController(this);
+        //locationController = new LocationPresenter(this);
     }
 
     private void setupController(Bundle savedInstanceState) {
-        if (userController == null) {
-            userController = new UserController(this);
+        if (userPresenter == null) {
+            userPresenter = new UserPresenter(this);
         }
 
         if (savedInstanceState != null) {
-            userController.loadState(savedInstanceState);
+            userPresenter.loadState(savedInstanceState);
         } else {
-            userController.loadUsers();
+            userPresenter.loadUsers();
         }
     }
 
@@ -129,9 +127,8 @@ public class MainActivity extends BenihActivity implements UserController.Presen
     }
 
     @Override
-    public void showError(BenihErrorEvent errorEvent) {
-        ErrorEvent event = (ErrorEvent) errorEvent;
-        Snackbar.make(recyclerView, event.toString(), Snackbar.LENGTH_LONG).show();
+    public void showError(String errorMessage) {
+        Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -148,14 +145,14 @@ public class MainActivity extends BenihActivity implements UserController.Presen
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        userController.saveState(outState);
+        userPresenter.saveState(outState);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        userController = null;
+        userPresenter = null;
         progressDialog = null;
         userAdapter.clear();
         userAdapter = null;

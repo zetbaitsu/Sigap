@@ -14,19 +14,21 @@
  *  limitations under the License.
  */
 
-package id.zelory.benih.network;
+package id.zelory.benih.util;
 
-import id.zelory.benih.util.Bson;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
 /**
- * Created by zetbaitsu on 7/9/15.
+ * Created on : December 09, 2015
+ * Author     : zetbaitsu
+ * Name       : Zetra
+ * Email      : zetra@mail.ugm.ac.id
+ * GitHub     : https://github.com/zetbaitsu
+ * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class BenihServiceGenerator
-{
-    public static <S> S createService(Class<S> serviceClass, String baseUrl)
-    {
+public class BenihServiceGenerator {
+    public static <S> S createService(Class<S> serviceClass, String baseUrl) {
         RestAdapter.Builder builder = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.BASIC)
                 .setConverter(new GsonConverter(Bson.pluck().getParser()))

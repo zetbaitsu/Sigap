@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package id.satusatudua.sigap.controller;
+package id.satusatudua.sigap.presenter;
 
 import android.os.Bundle;
 
@@ -27,7 +27,7 @@ import java.util.Map;
 import id.satusatudua.sigap.data.LocalDataManager;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.model.User;
-import id.zelory.benih.controller.BenihController;
+import id.zelory.benih.presenter.BenihPresenter;
 import timber.log.Timber;
 
 /**
@@ -38,14 +38,14 @@ import timber.log.Timber;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class RegisterController extends BenihController<RegisterController.Presenter> {
+public class RegisterPresenter extends BenihPresenter<RegisterPresenter.View> {
 
-    public RegisterController(Presenter presenter) {
-        super(presenter);
+    public RegisterPresenter(View view) {
+        super(view);
     }
 
     public void register(User user, String password) {
-        presenter.showLoading();
+        view.showLoading();
         FirebaseApi.pluck()
                 .getApi()
                 .createUser(user.getEmail(), password, new Firebase.ValueResultHandler<Map<String, Object>>() {
@@ -65,21 +65,21 @@ public class RegisterController extends BenihController<RegisterController.Prese
                                                 .setValue(user, (firebaseError, firebase) -> {
                                                     if (firebaseError != null) {
                                                         Timber.e(firebaseError.getMessage());
-                                                        presenter.onFailedRegister(firebaseError);
-                                                        presenter.dismissLoading();
-                                                    } else if (presenter != null) {
+                                                        view.onFailedRegister(firebaseError);
+                                                        view.dismissLoading();
+                                                    } else if (view != null) {
                                                         LocalDataManager.saveCurrentUser(user);
-                                                        presenter.onSuccessRegister(user);
-                                                        presenter.dismissLoading();
+                                                        view.onSuccessRegister(user);
+                                                        view.dismissLoading();
                                                     }
                                                 });
                                     }
 
                                     @Override
                                     public void onAuthenticationError(FirebaseError firebaseError) {
-                                        if (presenter != null) {
-                                            presenter.onFailedRegister(firebaseError);
-                                            presenter.dismissLoading();
+                                        if (view != null) {
+                                            view.onFailedRegister(firebaseError);
+                                            view.dismissLoading();
                                         }
                                     }
                                 });
@@ -88,9 +88,9 @@ public class RegisterController extends BenihController<RegisterController.Prese
                     @Override
                     public void onError(FirebaseError firebaseError) {
                         Timber.e("Failed to create user because " + firebaseError.getMessage());
-                        if (presenter != null) {
-                            presenter.onFailedRegister(firebaseError);
-                            presenter.dismissLoading();
+                        if (view != null) {
+                            view.onFailedRegister(firebaseError);
+                            view.dismissLoading();
                         }
                     }
                 });
@@ -106,7 +106,7 @@ public class RegisterController extends BenihController<RegisterController.Prese
 
     }
 
-    public interface Presenter extends BenihController.Presenter {
+    public interface View extends BenihPresenter.View {
         void onSuccessRegister(User user);
 
         void onFailedRegister(FirebaseError error);

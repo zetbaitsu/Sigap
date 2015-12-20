@@ -14,28 +14,26 @@
  *  limitations under the License.
  */
 
-package id.zelory.benih;
+package id.zelory.benih.ui.adapter.viewholder;
 
-import android.os.Bundle;
-
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import android.view.View;
 
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public abstract class BenihActivity extends RxAppCompatActivity
-{
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(getActivityView());
-        ButterKnife.bind(this);
+/**
+ * Created on : July 29, 2015
+ * Author     : zetbaitsu
+ * Name       : Zetra
+ * Email      : zetra@mail.ugm.ac.id
+ * GitHub     : https://github.com/zetbaitsu
+ * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
+ */
+public abstract class BenihListViewHolder<Data> {
+    public BenihListViewHolder(View itemView) {
+        ButterKnife.bind(this, itemView);
         Timber.tag(getClass().getSimpleName());
-        onViewReady(savedInstanceState);
     }
 
-    protected abstract int getActivityView();
-
-    protected abstract void onViewReady(Bundle savedInstanceState);
+    public abstract void bind(Data data);
 }

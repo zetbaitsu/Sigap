@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package id.satusatudua.sigap.controller;
+package id.satusatudua.sigap.presenter;
 
 import android.os.Bundle;
 
 import com.google.android.gms.location.LocationRequest;
 
 import id.satusatudua.sigap.SigapApp;
-import id.satusatudua.sigap.controller.event.ErrorEvent;
 import id.satusatudua.sigap.data.LocalDataManager;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
-import id.zelory.benih.controller.BenihController;
+import id.zelory.benih.presenter.BenihPresenter;
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import timber.log.Timber;
 
@@ -38,13 +37,13 @@ import timber.log.Timber;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class LocationController extends BenihController<LocationController.Presenter> {
+public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
 
     private LocationRequest request;
     private ReactiveLocationProvider locationProvider;
 
-    public LocationController(Presenter presenter, int priority) {
-        super(presenter);
+    public LocationPresenter(View view, int priority) {
+        super(view);
         request = LocationRequest.create()
                 .setPriority(priority)
                 .setInterval(100);
@@ -59,13 +58,13 @@ public class LocationController extends BenihController<LocationController.Prese
                     User user = LocalDataManager.getCurrentUser();
                     user.setLocation(location);
                     FirebaseApi.pluck().getApi().child("users").child(user.getUid()).setValue(user);
-                    if (presenter != null) {
-                        presenter.onLocationUpdated(location);
+                    if (view != null) {
+                        view.onLocationUpdated(location);
                     }
                 }, throwable -> {
                     Timber.e(throwable.getMessage());
-                    if (presenter != null) {
-                        presenter.showError(ErrorEvent.GENERAL);
+                    if (view != null) {
+                        view.showError(throwable.getMessage());
                     }
                 });
     }
@@ -85,7 +84,7 @@ public class LocationController extends BenihController<LocationController.Prese
         locationProvider = null;
     }
 
-    public interface Presenter extends BenihController.Presenter {
+    public interface View extends BenihPresenter.View {
         void onLocationUpdated(Location location);
     }
 }

@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.ui.adapter.viewholder.UserViewHolder;
-import id.zelory.benih.adapter.BenihRecyclerAdapter;
+import id.zelory.benih.ui.adapter.BenihRecyclerAdapter;
 
 /**
  * Created on : November 22, 2015
@@ -39,7 +39,7 @@ public class UserAdapter extends BenihRecyclerAdapter<User, UserViewHolder> {
     }
 
     @Override
-    protected int getItemView(int viewType) {
+    protected int getItemResourceLayout(int viewType) {
         return R.layout.item_user;
     }
 

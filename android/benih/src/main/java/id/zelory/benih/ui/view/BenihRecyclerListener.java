@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package id.zelory.benih.view;
+package id.zelory.benih.ui.view;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,10 +22,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
 /**
- * Created by zetbaitsu on 7/28/15.
+ * Created on : December 09, 2015
+ * Author     : zetbaitsu
+ * Name       : Zetra
+ * Email      : zetra@mail.ugm.ac.id
+ * GitHub     : https://github.com/zetbaitsu
+ * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public abstract class BenihRecyclerListener extends RecyclerView.OnScrollListener
-{
+public abstract class BenihRecyclerListener extends RecyclerView.OnScrollListener {
     private int previousTotal = 0;
     private boolean loading = true;
     private int visibleThreshold = 3;
@@ -37,72 +41,59 @@ public abstract class BenihRecyclerListener extends RecyclerView.OnScrollListene
     private GridLayoutManager gridLayoutManager;
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
 
-    public BenihRecyclerListener(LinearLayoutManager linearLayoutManager)
-    {
+    public BenihRecyclerListener(LinearLayoutManager linearLayoutManager) {
         this.linearLayoutManager = linearLayoutManager;
     }
 
-    public BenihRecyclerListener(GridLayoutManager gridLayoutManager)
-    {
+    public BenihRecyclerListener(GridLayoutManager gridLayoutManager) {
         this.gridLayoutManager = gridLayoutManager;
     }
 
-    public BenihRecyclerListener(StaggeredGridLayoutManager staggeredGridLayoutManager)
-    {
+    public BenihRecyclerListener(StaggeredGridLayoutManager staggeredGridLayoutManager) {
         this.staggeredGridLayoutManager = staggeredGridLayoutManager;
     }
 
-    public BenihRecyclerListener(LinearLayoutManager linearLayoutManager, int visibleThreshold)
-    {
+    public BenihRecyclerListener(LinearLayoutManager linearLayoutManager, int visibleThreshold) {
         this.linearLayoutManager = linearLayoutManager;
         this.visibleThreshold = visibleThreshold;
     }
 
-    public BenihRecyclerListener(GridLayoutManager gridLayoutManager, int visibleThreshold)
-    {
+    public BenihRecyclerListener(GridLayoutManager gridLayoutManager, int visibleThreshold) {
         this.gridLayoutManager = gridLayoutManager;
         this.visibleThreshold = visibleThreshold;
     }
 
-    public BenihRecyclerListener(StaggeredGridLayoutManager staggeredGridLayoutManager, int visibleThreshold)
-    {
+    public BenihRecyclerListener(StaggeredGridLayoutManager staggeredGridLayoutManager, int visibleThreshold) {
         this.staggeredGridLayoutManager = staggeredGridLayoutManager;
         this.visibleThreshold = visibleThreshold;
     }
 
     @Override
-    public void onScrolled(RecyclerView recyclerView, int dx, int dy)
-    {
+    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
         visibleItemCount = recyclerView.getChildCount();
-        if (linearLayoutManager != null)
-        {
+        if (linearLayoutManager != null) {
             totalItemCount = linearLayoutManager.getItemCount();
             firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
-        } else if (gridLayoutManager != null)
-        {
+        } else if (gridLayoutManager != null) {
             totalItemCount = gridLayoutManager.getItemCount();
             firstVisibleItem = gridLayoutManager.findFirstVisibleItemPosition();
-        } else if (staggeredGridLayoutManager != null)
-        {
+        } else if (staggeredGridLayoutManager != null) {
             totalItemCount = staggeredGridLayoutManager.getItemCount();
             int[] tmp = null;
             tmp = staggeredGridLayoutManager.findFirstCompletelyVisibleItemPositions(tmp);
-            if (tmp != null && tmp.length > 0)
-            {
+            if (tmp != null && tmp.length > 0) {
                 firstVisibleItem = tmp[0];
             }
         }
 
-        if (loading && totalItemCount > previousTotal)
-        {
+        if (loading && totalItemCount > previousTotal) {
             loading = false;
             previousTotal = totalItemCount;
         }
 
-        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold))
-        {
+        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
             currentPage++;
             onLoadMore(currentPage);
             loading = true;

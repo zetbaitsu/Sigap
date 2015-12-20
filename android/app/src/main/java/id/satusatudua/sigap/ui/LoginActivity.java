@@ -29,11 +29,10 @@ import com.firebase.client.FirebaseError;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.controller.LoginController;
+import id.satusatudua.sigap.presenter.LoginPresenter;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.model.User;
-import id.zelory.benih.BenihActivity;
-import id.zelory.benih.controller.event.BenihErrorEvent;
+import id.zelory.benih.ui.BenihActivity;
 
 /**
  * Created on : November 22, 2015
@@ -43,22 +42,22 @@ import id.zelory.benih.controller.event.BenihErrorEvent;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class LoginActivity extends BenihActivity implements LoginController.Presenter {
+public class LoginActivity extends BenihActivity implements LoginPresenter.View {
 
     @Bind(R.id.email) EditText email;
     @Bind(R.id.password) EditText password;
 
-    private LoginController loginController;
+    private LoginPresenter loginPresenter;
     private ProgressDialog progressDialog;
 
     @Override
-    protected int getActivityView() {
+    protected int getResourceLayout() {
         return R.layout.activity_login;
     }
 
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
-        loginController = new LoginController(this);
+        loginPresenter = new LoginPresenter(this);
     }
 
     @OnClick(R.id.login)
@@ -71,7 +70,7 @@ public class LoginActivity extends BenihActivity implements LoginController.Pres
         } else if (password.length() <= 0) {
             this.password.setError("Mohon masukan password anda disini!");
         } else {
-            loginController.login(email, password);
+            loginPresenter.login(email, password);
         }
     }
 
@@ -123,7 +122,7 @@ public class LoginActivity extends BenihActivity implements LoginController.Pres
     }
 
     @Override
-    public void showError(BenihErrorEvent errorEvent) {
+    public void showError(String errorMessage) {
 
     }
 

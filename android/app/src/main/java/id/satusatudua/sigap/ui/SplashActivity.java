@@ -22,7 +22,7 @@ import android.os.Handler;
 
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.api.FirebaseApi;
-import id.zelory.benih.BenihActivity;
+import id.zelory.benih.ui.BenihActivity;
 
 /**
  * Created on : November 22, 2015
@@ -33,8 +33,9 @@ import id.zelory.benih.BenihActivity;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class SplashActivity extends BenihActivity {
+
     @Override
-    protected int getActivityView() {
+    protected int getResourceLayout() {
         return R.layout.activity_splash;
     }
 

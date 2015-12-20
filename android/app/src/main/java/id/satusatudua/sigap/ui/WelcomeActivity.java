@@ -29,7 +29,7 @@ import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.ui.adapter.WelcomePagerAdapter;
 import id.satusatudua.sigap.ui.fragment.WelcomeFragment;
-import id.zelory.benih.BenihActivity;
+import id.zelory.benih.ui.BenihActivity;
 
 /**
  * Created on : November 29, 2015
@@ -50,7 +50,7 @@ public class WelcomeActivity extends BenihActivity implements ViewPager.OnPageCh
     private int pos = 0;
 
     @Override
-    protected int getActivityView() {
+    protected int getResourceLayout() {
         return R.layout.activity_welcome;
     }
 

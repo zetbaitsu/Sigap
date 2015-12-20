@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Zetra.
+ * Copyright (c) 2015 Zelory.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,28 +14,35 @@
  *  limitations under the License.
  */
 
-package id.zelory.benih.adapter.viewholder;
+package id.zelory.benih.ui.adapter.viewholder;
 
+import android.os.Bundle;
 import android.view.View;
 
-import butterknife.ButterKnife;
-import timber.log.Timber;
-
 /**
- * Created on : July 29, 2015
+ * Created on : August 25, 2015
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public abstract class BenihListViewHolder<Data>
-{
-    public BenihListViewHolder(View itemView)
-    {
-        ButterKnife.bind(this, itemView);
-        Timber.tag(getClass().getSimpleName());
+public abstract class BenihHeaderViewHolder extends BenihItemViewHolder {
+    protected Bundle bundle;
+
+    public BenihHeaderViewHolder(View itemView, Bundle bundle) {
+        super(itemView, null, null);
+        this.bundle = bundle;
     }
 
-    public abstract void bind(Data data);
+    @Override
+    public void bind(Object o) {
+
+    }
+
+    public abstract void show();
+
+    public void saveState(Bundle bundle) {
+        this.bundle = bundle;
+    }
 }

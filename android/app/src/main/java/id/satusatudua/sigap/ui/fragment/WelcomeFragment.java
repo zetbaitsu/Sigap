@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
-import id.zelory.benih.fragment.BenihFragment;
+import id.zelory.benih.ui.fragment.BenihFragment;
 
 /**
  * Created on : November 29, 2015
@@ -50,7 +50,7 @@ public class WelcomeFragment extends BenihFragment {
     }
 
     @Override
-    protected int getFragmentView() {
+    protected int getResourceLayout() {
         return R.layout.fragment_welcome;
     }
 

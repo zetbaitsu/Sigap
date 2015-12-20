@@ -22,10 +22,9 @@ import android.widget.TextView;
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.User;
-import id.zelory.benih.adapter.BenihRecyclerAdapter.OnItemClickListener;
-import id.zelory.benih.adapter.viewholder.BenihItemViewHolder;
-
-import static id.zelory.benih.adapter.BenihRecyclerAdapter.OnLongItemClickListener;
+import id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnItemClickListener;
+import id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnLongItemClickListener;
+import id.zelory.benih.ui.adapter.viewholder.BenihItemViewHolder;
 
 /**
  * Created on : November 22, 2015

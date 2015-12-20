@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package id.satusatudua.sigap.controller;
+package id.satusatudua.sigap.presenter;
 
 import android.os.Bundle;
 
@@ -23,13 +23,12 @@ import com.firebase.client.DataSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-import id.satusatudua.sigap.controller.event.ErrorEvent;
 import id.satusatudua.sigap.data.LocalDataManager;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.util.IteratorUtils;
 import id.satusatudua.sigap.util.RxFirebase;
-import id.zelory.benih.controller.BenihController;
+import id.zelory.benih.presenter.BenihPresenter;
 import id.zelory.benih.util.BenihScheduler;
 import timber.log.Timber;
 
@@ -42,12 +41,12 @@ import timber.log.Timber;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 
-public class UserController extends BenihController<UserController.Presenter> {
+public class UserPresenter extends BenihPresenter<UserPresenter.View> {
 
     private List<User> users;
 
-    public UserController(Presenter presenter) {
-        super(presenter);
+    public UserPresenter(View view) {
+        super(view);
         users = new ArrayList<>();
         listenUserAdded();
         listenUserChanged();
@@ -55,7 +54,7 @@ public class UserController extends BenihController<UserController.Presenter> {
     }
 
     public void loadUsers() {
-        presenter.showLoading();
+        view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().getApi().child("users"))
                 .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(DataSnapshot::getChildren)
@@ -65,34 +64,34 @@ public class UserController extends BenihController<UserController.Presenter> {
                     return this.users;
                 })
                 .subscribe(users -> {
-                    if (presenter != null) {
-                        presenter.showUsers(users);
-                        presenter.dismissLoading();
+                    if (view != null) {
+                        view.showUsers(users);
+                        view.dismissLoading();
                     }
                 }, throwable -> {
                     Timber.e(throwable.getMessage());
-                    if (presenter != null) {
-                        presenter.showError(ErrorEvent.LOAD_USERS);
-                        presenter.dismissLoading();
+                    if (view != null) {
+                        view.showError(throwable.getMessage());
+                        view.dismissLoading();
                     }
                 });
     }
 
     public void loadUser(String uid) {
-        presenter.showLoading();
+        view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().getApi().child("users").child(uid))
                 .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                 .subscribe(user -> {
-                    if (presenter != null) {
-                        presenter.showUser(user);
-                        presenter.dismissLoading();
+                    if (view != null) {
+                        view.showUser(user);
+                        view.dismissLoading();
                     }
                 }, throwable -> {
                     Timber.e(throwable.getMessage());
-                    if (presenter != null) {
-                        presenter.showError(ErrorEvent.LOAD_USER);
-                        presenter.dismissLoading();
+                    if (view != null) {
+                        view.showError(throwable.getMessage());
+                        view.dismissLoading();
                     }
                 });
     }
@@ -110,13 +109,13 @@ public class UserController extends BenihController<UserController.Presenter> {
                     return user;
                 })
                 .subscribe(user -> {
-                    if (user != null && presenter != null) {
-                        presenter.onUserAdded(user);
+                    if (user != null && view != null) {
+                        view.onUserAdded(user);
                     }
                 }, throwable -> {
                     Timber.e(throwable.getMessage());
-                    if (presenter != null && users != null) {
-                        presenter.showError(ErrorEvent.USER_ADDED);
+                    if (view != null && users != null) {
+                        view.showError(throwable.getMessage());
                     }
                 });
     }
@@ -139,13 +138,13 @@ public class UserController extends BenihController<UserController.Presenter> {
                     if (user.equals(LocalDataManager.getCurrentUser())) {
                         LocalDataManager.saveCurrentUser(user);
                     }
-                    if (presenter != null) {
-                        presenter.onUserChanged(user);
+                    if (view != null) {
+                        view.onUserChanged(user);
                     }
                 }, throwable -> {
                     Timber.e(throwable.getMessage());
-                    if (presenter != null) {
-                        presenter.showError(ErrorEvent.USER_CHANGED);
+                    if (view != null) {
+                        view.showError(throwable.getMessage());
                     }
                 });
     }
@@ -160,13 +159,13 @@ public class UserController extends BenihController<UserController.Presenter> {
                     return user;
                 })
                 .subscribe(user -> {
-                    if (presenter != null) {
-                        presenter.onUserRemoved(user);
+                    if (view != null) {
+                        view.onUserRemoved(user);
                     }
                 }, throwable -> {
                     Timber.e(throwable.getMessage());
-                    if (presenter != null) {
-                        presenter.showError(ErrorEvent.USER_REMOVED);
+                    if (view != null) {
+                        view.showError(throwable.getMessage());
                     }
                 });
     }
@@ -182,14 +181,14 @@ public class UserController extends BenihController<UserController.Presenter> {
         Timber.d("loadState " + getClass().getSimpleName());
         users = bundle.getParcelableArrayList("users");
         if (users != null) {
-            presenter.showUsers(users);
+            view.showUsers(users);
         } else {
             Timber.d("failed loadState users in " + getClass().getSimpleName());
             loadUsers();
         }
     }
 
-    public interface Presenter extends BenihController.Presenter {
+    public interface View extends BenihPresenter.View {
         void showUsers(List<User> users);
 
         void showUser(User user);

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package id.zelory.benih.view;
+package id.zelory.benih.ui.view;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
@@ -23,33 +23,32 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 /**
- * Created by zetbaitsu on 7/12/15.
+ * Created on : December 09, 2015
+ * Author     : zetbaitsu
+ * Name       : Zetra
+ * Email      : zetra@mail.ugm.ac.id
+ * GitHub     : https://github.com/zetbaitsu
+ * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class BenihRecyclerView extends RecyclerView
-{
-    public BenihRecyclerView(Context context)
-    {
+public class BenihRecyclerView extends RecyclerView {
+    public BenihRecyclerView(Context context) {
         super(context);
     }
 
-    public BenihRecyclerView(Context context, AttributeSet attrs)
-    {
+    public BenihRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public BenihRecyclerView(Context context, AttributeSet attrs, int defStyle)
-    {
+    public BenihRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public void setUpAsList()
-    {
+    public void setUpAsList() {
         setHasFixedSize(true);
         setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-    public void setUpAsGrid(int spanCount)
-    {
+    public void setUpAsGrid(int spanCount) {
         setHasFixedSize(true);
         setLayoutManager(new GridLayoutManager(getContext(), spanCount));
     }

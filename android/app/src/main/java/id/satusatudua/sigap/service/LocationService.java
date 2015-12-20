@@ -23,9 +23,8 @@ import android.support.annotation.Nullable;
 
 import com.google.android.gms.location.LocationRequest;
 
-import id.satusatudua.sigap.controller.LocationController;
 import id.satusatudua.sigap.data.model.Location;
-import id.zelory.benih.controller.event.BenihErrorEvent;
+import id.satusatudua.sigap.presenter.LocationPresenter;
 import id.zelory.benih.util.BenihUtils;
 import timber.log.Timber;
 
@@ -37,9 +36,9 @@ import timber.log.Timber;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class LocationService extends Service implements LocationController.Presenter {
+public class LocationService extends Service implements LocationPresenter.View {
 
-    private LocationController locationController;
+    private LocationPresenter locationPresenter;
 
     @Nullable
     @Override
@@ -55,9 +54,9 @@ public class LocationService extends Service implements LocationController.Prese
         Timber.d(getClass().getSimpleName() + " is creating");
 
         if (BenihUtils.isMyAppRunning(getApplicationContext(), getPackageName())) {
-            locationController = new LocationController(this, LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationPresenter = new LocationPresenter(this, LocationRequest.PRIORITY_HIGH_ACCURACY);
         } else {
-            locationController = new LocationController(this, LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            locationPresenter = new LocationPresenter(this, LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         }
     }
 
@@ -67,7 +66,7 @@ public class LocationService extends Service implements LocationController.Prese
     }
 
     @Override
-    public void showError(BenihErrorEvent errorEvent) {
+    public void showError(String errorMessage) {
 
     }
 
@@ -84,9 +83,9 @@ public class LocationService extends Service implements LocationController.Prese
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (locationController != null) {
-            locationController.destroy();
-            locationController = null;
+        if (locationPresenter != null) {
+            locationPresenter.destroy();
+            locationPresenter = null;
         }
     }
 }

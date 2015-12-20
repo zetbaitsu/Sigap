@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package id.zelory.benih.adapter;
+package id.zelory.benih.ui.adapter;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.List;
 
-import id.zelory.benih.fragment.BenihFragment;
+import id.zelory.benih.ui.fragment.BenihFragment;
 import timber.log.Timber;
 
 /**

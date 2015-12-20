@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package id.zelory.benih.view;
+package id.zelory.benih.ui.view;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -28,37 +28,36 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 /**
- * Created by zetbaitsu on 7/27/15.
+ * Created on : December 09, 2015
+ * Author     : zetbaitsu
+ * Name       : Zetra
+ * Email      : zetra@mail.ugm.ac.id
+ * GitHub     : https://github.com/zetbaitsu
+ * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class BenihImageView extends ImageView
-{
+public class BenihImageView extends ImageView {
     private String imageUrl;
 
-    public BenihImageView(Context context)
-    {
+    public BenihImageView(Context context) {
         super(context);
     }
 
-    public BenihImageView(Context context, AttributeSet attrs)
-    {
+    public BenihImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public BenihImageView(Context context, AttributeSet attrs, int defStyleAttr)
-    {
+    public BenihImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setImageUrl(String url)
-    {
+    public void setImageUrl(String url) {
         imageUrl = url;
         Glide.with(getContext())
                 .load(url)
                 .into(this);
     }
 
-    public void setImageUrl(String url, int errorResourceId)
-    {
+    public void setImageUrl(String url, int errorResourceId) {
         imageUrl = url;
         Glide.with(getContext())
                 .load(url)
@@ -66,8 +65,7 @@ public class BenihImageView extends ImageView
                 .into(this);
     }
 
-    public void setImageUrl(String url, int placeHolderResourceId, int errorResourceId)
-    {
+    public void setImageUrl(String url, int placeHolderResourceId, int errorResourceId) {
         imageUrl = url;
         Glide.with(getContext())
                 .load(url)
@@ -76,8 +74,7 @@ public class BenihImageView extends ImageView
                 .into(this);
     }
 
-    public void setImageUrl(String url, int placeHolderDrawable, Drawable errorDrawable)
-    {
+    public void setImageUrl(String url, int placeHolderDrawable, Drawable errorDrawable) {
         imageUrl = url;
         Glide.with(getContext())
                 .load(url)
@@ -86,24 +83,20 @@ public class BenihImageView extends ImageView
                 .into(this);
     }
 
-    public void setImageUrl(String url, final ProgressBar progressBar)
-    {
+    public void setImageUrl(String url, final ProgressBar progressBar) {
         imageUrl = url;
         progressBar.setVisibility(VISIBLE);
         Glide.with(getContext())
                 .load(url)
-                .listener(new RequestListener<String, GlideDrawable>()
-                {
+                .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource)
-                    {
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                         progressBar.setVisibility(GONE);
                         return false;
                     }
 
                     @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource)
-                    {
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                         progressBar.setVisibility(GONE);
                         return false;
                     }
@@ -111,24 +104,20 @@ public class BenihImageView extends ImageView
                 .into(this);
     }
 
-    public void setImageUrl(String url, final ProgressBar progressBar, int errorResourceId)
-    {
+    public void setImageUrl(String url, final ProgressBar progressBar, int errorResourceId) {
         imageUrl = url;
         progressBar.setVisibility(VISIBLE);
         Glide.with(getContext())
                 .load(url)
-                .listener(new RequestListener<String, GlideDrawable>()
-                {
+                .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource)
-                    {
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                         progressBar.setVisibility(GONE);
                         return false;
                     }
 
                     @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource)
-                    {
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                         progressBar.setVisibility(GONE);
                         return false;
                     }
@@ -137,24 +126,20 @@ public class BenihImageView extends ImageView
                 .into(this);
     }
 
-    public void setImageUrl(String url, final ProgressBar progressBar, Drawable errorDrawable)
-    {
+    public void setImageUrl(String url, final ProgressBar progressBar, Drawable errorDrawable) {
         imageUrl = url;
         progressBar.setVisibility(VISIBLE);
         Glide.with(getContext())
                 .load(url)
-                .listener(new RequestListener<String, GlideDrawable>()
-                {
+                .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource)
-                    {
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                         progressBar.setVisibility(GONE);
                         return false;
                     }
 
                     @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource)
-                    {
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                         progressBar.setVisibility(GONE);
                         return false;
                     }
@@ -163,8 +148,7 @@ public class BenihImageView extends ImageView
                 .into(this);
     }
 
-    public String getImageUrl()
-    {
+    public String getImageUrl() {
         return imageUrl;
     }
 }

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package id.zelory.benih.adapter.viewholder;
+package id.zelory.benih.ui.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -22,8 +22,8 @@ import android.view.View;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-import static id.zelory.benih.adapter.BenihRecyclerAdapter.OnItemClickListener;
-import static id.zelory.benih.adapter.BenihRecyclerAdapter.OnLongItemClickListener;
+import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnItemClickListener;
+import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnLongItemClickListener;
 
 /**
  * Created on : July 10, 2015
@@ -35,14 +35,12 @@ import static id.zelory.benih.adapter.BenihRecyclerAdapter.OnLongItemClickListen
  */
 public abstract class BenihItemViewHolder<Data> extends RecyclerView.ViewHolder implements
         View.OnClickListener,
-        View.OnLongClickListener
-{
+        View.OnLongClickListener {
     private OnItemClickListener itemClickListener;
     private OnLongItemClickListener longItemClickListener;
     private boolean hasHeader = false;
 
-    public BenihItemViewHolder(View itemView, OnItemClickListener itemClickListener, OnLongItemClickListener longItemClickListener)
-    {
+    public BenihItemViewHolder(View itemView, OnItemClickListener itemClickListener, OnLongItemClickListener longItemClickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         Timber.tag(getClass().getSimpleName());
@@ -54,34 +52,27 @@ public abstract class BenihItemViewHolder<Data> extends RecyclerView.ViewHolder 
 
     public abstract void bind(Data data);
 
-    public boolean isHasHeader()
-    {
+    public boolean isHasHeader() {
         return hasHeader;
     }
 
-    public void setHasHeader(boolean hasHeader)
-    {
+    public void setHasHeader(boolean hasHeader) {
         this.hasHeader = hasHeader;
     }
 
     @Override
-    public void onClick(View v)
-    {
-        if (itemClickListener != null)
-        {
+    public void onClick(View v) {
+        if (itemClickListener != null) {
             itemClickListener.onItemClick(v, hasHeader ? getAdapterPosition() - 1 : getAdapterPosition());
         }
     }
 
     @Override
-    public boolean onLongClick(View v)
-    {
-        if (longItemClickListener != null)
-        {
+    public boolean onLongClick(View v) {
+        if (longItemClickListener != null) {
             longItemClickListener.onLongItemClick(v, hasHeader ? getAdapterPosition() - 1 : getAdapterPosition());
             return true;
         }
-
         return false;
     }
 }

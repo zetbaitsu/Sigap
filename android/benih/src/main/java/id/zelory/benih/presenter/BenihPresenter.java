@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Zelory.
+ * Copyright (c) 2015 Zetra.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,39 +14,37 @@
  *  limitations under the License.
  */
 
-package id.zelory.benih.adapter.viewholder;
+package id.zelory.benih.presenter;
 
 import android.os.Bundle;
-import android.view.View;
+
+import timber.log.Timber;
 
 /**
- * Created on : August 25, 2015
+ * Created on : December 09, 2015
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public abstract class BenihHeaderViewHolder extends BenihItemViewHolder
-{
-    protected Bundle bundle;
+public abstract class BenihPresenter<V extends BenihPresenter.View> {
+    protected V view;
 
-    public BenihHeaderViewHolder(View itemView, Bundle bundle)
-    {
-        super(itemView, null, null);
-        this.bundle = bundle;
+    public BenihPresenter(V view) {
+        this.view = view;
+        Timber.tag(getClass().getSimpleName());
     }
 
-    @Override
-    public void bind(Object o)
-    {
+    public abstract void saveState(Bundle bundle);
 
-    }
+    public abstract void loadState(Bundle bundle);
 
-    public abstract void show();
+    public interface View {
+        void showError(String errorMessage);
 
-    public void saveState(Bundle bundle)
-    {
-        this.bundle = bundle;
+        void showLoading();
+
+        void dismissLoading();
     }
 }

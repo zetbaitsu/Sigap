@@ -28,20 +28,15 @@ import android.view.inputmethod.InputMethodManager;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class KeyboardUtil
-{
-    public static void showKeyboard(Context context, View view)
-    {
+public class KeyboardUtil {
+    public static void showKeyboard(Context context, View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        if (view.requestFocus())
-        {
+        if (view.requestFocus()) {
             inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 
-    public static void hideKeyboard(Context context, View view)
-    {
+    public static void hideKeyboard(Context context, View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }

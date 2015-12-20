@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package id.zelory.benih.adapter;
+package id.zelory.benih.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -25,118 +25,103 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import id.zelory.benih.adapter.viewholder.BenihItemViewHolder;
+import id.zelory.benih.ui.adapter.viewholder.BenihItemViewHolder;
 import id.zelory.benih.util.BenihWorker;
 import rx.functions.Action1;
 import timber.log.Timber;
 
 /**
- * Created by zetbaitsu on 7/10/15.
+ * Created on : December 09, 2015
+ * Author     : zetbaitsu
+ * Name       : Zetra
+ * Email      : zetra@mail.ugm.ac.id
+ * GitHub     : https://github.com/zetbaitsu
+ * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public abstract class BenihRecyclerAdapter<Data, Holder extends BenihItemViewHolder> extends
-        RecyclerView.Adapter<Holder>
-{
+        RecyclerView.Adapter<Holder> {
     protected Context context;
     protected List<Data> data;
     protected OnItemClickListener itemClickListener;
     protected OnLongItemClickListener longItemClickListener;
 
-    public BenihRecyclerAdapter(Context context)
-    {
+    public BenihRecyclerAdapter(Context context) {
         this.context = context;
         data = new ArrayList<>();
         Timber.tag(getClass().getSimpleName());
     }
 
-    public BenihRecyclerAdapter(Context context, List<Data> data)
-    {
+    public BenihRecyclerAdapter(Context context, List<Data> data) {
         this.context = context;
         this.data = data;
         Timber.tag(getClass().getSimpleName());
     }
 
-    protected View getView(ViewGroup parent, int viewType)
-    {
-        return LayoutInflater.from(context).inflate(getItemView(viewType), parent, false);
+    protected View getView(ViewGroup parent, int viewType) {
+        return LayoutInflater.from(context).inflate(getItemResourceLayout(viewType), parent, false);
     }
 
-    protected abstract int getItemView(int viewType);
+    protected abstract int getItemResourceLayout(int viewType);
 
     @Override
     public abstract Holder onCreateViewHolder(ViewGroup parent, int viewType);
 
     @Override
-    public void onBindViewHolder(Holder holder, int position)
-    {
+    public void onBindViewHolder(Holder holder, int position) {
         holder.bind(data.get(position));
     }
 
     @Override
-    public int getItemCount()
-    {
-        try
-        {
+    public int getItemCount() {
+        try {
             return data.size();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             return 0;
         }
     }
 
     @Override
-    public long getItemId(int position)
-    {
+    public long getItemId(int position) {
         return position;
     }
 
-    public interface OnItemClickListener
-    {
+    public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
 
-    public void setOnItemClickListener(OnItemClickListener itemClickListener)
-    {
+    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
-    public interface OnLongItemClickListener
-    {
+    public interface OnLongItemClickListener {
         void onLongItemClick(View view, int position);
     }
 
-    public void setOnLongItemClickListener(OnLongItemClickListener longItemClickListener)
-    {
+    public void setOnLongItemClickListener(OnLongItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;
     }
 
-    public List<Data> getData()
-    {
+    public List<Data> getData() {
         return data;
     }
 
-    public void add(Data item)
-    {
+    public void add(Data item) {
         data.add(item);
         notifyItemInserted(data.size() - 1);
     }
 
-    public void add(Data item, int position)
-    {
+    public void add(Data item, int position) {
         data.add(position, item);
         notifyItemInserted(position);
     }
 
-    public void add(final List<Data> items)
-    {
+    public void add(final List<Data> items) {
         final int size = items.size();
         BenihWorker.pluck()
-                .doInComputation(new Runnable()
-                {
+                .doInComputation(new Runnable() {
                     @Override
-                    public void run()
-                    {
-                        for (int i = 0; i < size; i++)
-                        {
+                    public void run() {
+                        for (int i = 0; i < size; i++) {
                             data.add(items.get(i));
                         }
                     }
@@ -148,8 +133,7 @@ public abstract class BenihRecyclerAdapter<Data, Holder extends BenihItemViewHol
         });
     }
 
-    public void addOrUpdate(Data item)
-    {
+    public void addOrUpdate(Data item) {
         int i = data.indexOf(item);
         if (i >= 0) {
             data.set(i, item);
@@ -159,21 +143,43 @@ public abstract class BenihRecyclerAdapter<Data, Holder extends BenihItemViewHol
         }
     }
 
-    public void remove(int position)
-    {
-        data.remove(position);
-        notifyItemRemoved(position);
+    public void addOrUpdate(final List<Data> items) {
+        final int size = items.size();
+        BenihWorker.pluck()
+                .doInComputation(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < size; i++) {
+                            Data item = items.get(i);
+                            int x = data.indexOf(item);
+                            if (x >= 0) {
+                                data.set(x, item);
+                            } else {
+                                add(item);
+                            }
+                        }
+                    }
+                }).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                notifyDataSetChanged();
+            }
+        });
     }
 
-    public void remove(Data item)
-    {
+    public void remove(int position) {
+        if (position >= 0 && position < data.size()) {
+            data.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void remove(Data item) {
         int position = data.indexOf(item);
-        data.remove(position);
-        notifyItemRemoved(position);
+        remove(position);
     }
 
-    public void clear()
-    {
+    public void clear() {
         data.clear();
         notifyDataSetChanged();
     }

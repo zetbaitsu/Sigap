@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package id.satusatudua.sigap.controller;
+package id.satusatudua.sigap.presenter;
 
 import android.os.Bundle;
 
@@ -22,12 +22,11 @@ import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
-import id.satusatudua.sigap.controller.event.ErrorEvent;
 import id.satusatudua.sigap.data.LocalDataManager;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.util.RxFirebase;
-import id.zelory.benih.controller.BenihController;
+import id.zelory.benih.presenter.BenihPresenter;
 import id.zelory.benih.util.BenihScheduler;
 import timber.log.Timber;
 
@@ -39,14 +38,14 @@ import timber.log.Timber;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class LoginController extends BenihController<LoginController.Presenter> {
+public class LoginPresenter extends BenihPresenter<LoginPresenter.View> {
 
-    public LoginController(Presenter presenter) {
-        super(presenter);
+    public LoginPresenter(View view) {
+        super(view);
     }
 
     public void login(String email, String password) {
-        presenter.showLoading();
+        view.showLoading();
         if (FirebaseApi.pluck().getApi().getAuth() == null) {
             FirebaseApi.pluck()
                     .getApi()
@@ -58,16 +57,16 @@ public class LoginController extends BenihController<LoginController.Presenter> 
                                     .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                                     .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                                     .subscribe(user -> {
-                                        if (presenter != null) {
+                                        if (view != null) {
                                             LocalDataManager.saveCurrentUser(user);
-                                            presenter.onSuccessLogin(user);
-                                            presenter.dismissLoading();
+                                            view.onSuccessLogin(user);
+                                            view.dismissLoading();
                                         }
                                     }, throwable -> {
                                         Timber.e(throwable.getMessage());
-                                        if (presenter != null) {
-                                            presenter.showError(ErrorEvent.LOAD_USER);
-                                            presenter.dismissLoading();
+                                        if (view != null) {
+                                            view.showError(throwable.getMessage());
+                                            view.dismissLoading();
                                         }
                                     });
                         }
@@ -75,14 +74,14 @@ public class LoginController extends BenihController<LoginController.Presenter> 
                         @Override
                         public void onAuthenticationError(FirebaseError firebaseError) {
                             Timber.e("Failed to create user because " + firebaseError.getMessage());
-                            if (presenter != null) {
-                                presenter.onFailedLogin(firebaseError);
-                                presenter.dismissLoading();
+                            if (view != null) {
+                                view.onFailedLogin(firebaseError);
+                                view.dismissLoading();
                             }
                         }
                     });
         } else {
-            presenter.dismissLoading();
+            view.dismissLoading();
         }
     }
 
@@ -96,7 +95,7 @@ public class LoginController extends BenihController<LoginController.Presenter> 
 
     }
 
-    public interface Presenter extends BenihController.Presenter {
+    public interface View extends BenihPresenter.View {
         void onSuccessLogin(User user);
 
         void onFailedLogin(FirebaseError error);

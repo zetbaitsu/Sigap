@@ -29,11 +29,10 @@ import com.firebase.client.FirebaseError;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.controller.RegisterController;
 import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
-import id.zelory.benih.BenihActivity;
-import id.zelory.benih.controller.event.BenihErrorEvent;
+import id.satusatudua.sigap.presenter.RegisterPresenter;
+import id.zelory.benih.ui.BenihActivity;
 
 /**
  * Created on : November 22, 2015
@@ -43,24 +42,24 @@ import id.zelory.benih.controller.event.BenihErrorEvent;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class RegisterActivity extends BenihActivity implements RegisterController.Presenter {
+public class RegisterActivity extends BenihActivity implements RegisterPresenter.View {
 
     @Bind(R.id.nama) EditText nama;
     @Bind(R.id.email) EditText email;
     @Bind(R.id.tgl_lahir) EditText tanggalLahir;
     @Bind(R.id.laki) RadioButton laki;
 
-    private RegisterController registerController;
+    private RegisterPresenter registerPresenter;
     private ProgressDialog progressDialog;
 
     @Override
-    protected int getActivityView() {
+    protected int getResourceLayout() {
         return R.layout.activity_register;
     }
 
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
-        registerController = new RegisterController(this);
+        registerPresenter = new RegisterPresenter(this);
     }
 
     @OnClick(R.id.register)
@@ -85,7 +84,7 @@ public class RegisterActivity extends BenihActivity implements RegisterControlle
             user.setLocation(new Location(123, 120));
             user.setFromApps(true);
 
-            registerController.register(user, "adadsadasda");
+            registerPresenter.register(user, "adadsadasda");
         }
     }
 
@@ -111,7 +110,7 @@ public class RegisterActivity extends BenihActivity implements RegisterControlle
     }
 
     @Override
-    public void showError(BenihErrorEvent errorEvent) {
+    public void showError(String errorMessage) {
 
     }
 
