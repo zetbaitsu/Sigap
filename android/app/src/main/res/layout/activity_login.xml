@@ -24,7 +24,6 @@
     android:background="@color/colorPrimaryDark"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:orientation="vertical"
     tools:context=".ui.LoginActivity">
 
     <ImageView

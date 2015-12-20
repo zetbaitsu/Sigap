@@ -45,12 +45,10 @@ import id.zelory.benih.controller.event.BenihErrorEvent;
  */
 public class RegisterActivity extends BenihActivity implements RegisterController.Presenter {
 
-    @Bind(R.id.id_number) EditText idNumber;
-    @Bind(R.id.name) EditText name;
+    @Bind(R.id.nama) EditText nama;
     @Bind(R.id.email) EditText email;
-    @Bind(R.id.password) EditText password;
-    @Bind(R.id.birthdate) EditText birthDate;
-    @Bind(R.id.male) RadioButton male;
+    @Bind(R.id.tgl_lahir) EditText tanggalLahir;
+    @Bind(R.id.laki) RadioButton laki;
 
     private RegisterController registerController;
     private ProgressDialog progressDialog;
@@ -67,40 +65,35 @@ public class RegisterActivity extends BenihActivity implements RegisterControlle
 
     @OnClick(R.id.register)
     public void register() {
-        String idNumber = this.idNumber.getText().toString();
-        String name = this.name.getText().toString();
+        String nama = this.nama.getText().toString();
         String email = this.email.getText().toString();
-        String password = this.password.getText().toString();
-        String birthDate = this.birthDate.getText().toString();
+        String tanggalLahir = this.tanggalLahir.getText().toString();
 
-        if (idNumber.isEmpty()) {
-            this.idNumber.setError("Please fill this form!");
-        } else if (name.isEmpty()) {
-            this.idNumber.setError("Please fill this form!");
+
+        if (nama.isEmpty()) {
+            this.nama.setError("Mohon masukan nama anda!");
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            this.email.setError("Please add valid email address!");
-        } else if (password.length() < 6) {
-            this.password.setError("Password at least 6 characters!");
-        } else if (birthDate.isEmpty()) {
-            this.birthDate.setError("Please fill this form!");
+            this.email.setError("Mohon masukan alamat email yang valid!");
+        } else if (tanggalLahir.isEmpty()) {
+            this.tanggalLahir.setError("Mohon masukan tanggal lahir anda!");
         } else {
-            User user = new User.Builder()
-                    .setIdNumber(idNumber)
-                    .setName(name)
-                    .setEmail(email)
-                    .setBirthday(birthDate)
-                    .setGender(male.isChecked() ? "M" : "F")
-                    .setLocation(new Location(123, 120))
-                    .setStatus("Online")
-                    .build();
+            User user = new User();
+            user.setName(nama);
+            user.setEmail(email);
+            user.setBirthDate(tanggalLahir);
+            user.setMale(laki.isChecked());
+            user.setLocation(new Location(123, 120));
+            user.setFromApps(true);
 
-            registerController.register(user, password);
+            registerController.register(user, "adadsadasda");
         }
     }
 
     @OnClick(R.id.login)
     public void login() {
-        onBackPressed();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     @Override
@@ -112,7 +105,7 @@ public class RegisterActivity extends BenihActivity implements RegisterControlle
 
     @Override
     public void onFailedRegister(FirebaseError error) {
-        Snackbar snackbar = Snackbar.make(male, error.getMessage(), Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(laki, error.getMessage(), Snackbar.LENGTH_LONG);
         snackbar.getView().setBackgroundResource(R.color.colorAccent);
         snackbar.show();
     }
@@ -125,7 +118,7 @@ public class RegisterActivity extends BenihActivity implements RegisterControlle
     @Override
     public void showLoading() {
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Please wait...");
+        progressDialog.setMessage("Silahkan tunggu...");
         progressDialog.show();
     }
 

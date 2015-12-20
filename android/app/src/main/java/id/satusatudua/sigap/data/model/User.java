@@ -13,12 +13,11 @@ import android.os.Parcelable;
  */
 public class User implements Parcelable {
     private String uid;
-    private String idNumber;
     private String email;
     private String name;
-    private String gender;
-    private String birthday;
-    private String status;
+    private boolean male;
+    private String birthDate;
+    private boolean fromApps;
     private Location location;
 
     public User() {
@@ -27,12 +26,12 @@ public class User implements Parcelable {
 
     protected User(Parcel in) {
         uid = in.readString();
-        idNumber = in.readString();
         email = in.readString();
         name = in.readString();
-        gender = in.readString();
-        birthday = in.readString();
-        status = in.readString();
+        male = in.readByte() != 0;
+        birthDate = in.readString();
+        fromApps = in.readByte() != 0;
+        location = in.readParcelable(Location.class.getClassLoader());
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -55,14 +54,6 @@ public class User implements Parcelable {
         this.uid = uid;
     }
 
-    public String getIdNumber() {
-        return idNumber;
-    }
-
-    public void setIdNumber(String idNumber) {
-        this.idNumber = idNumber;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -79,28 +70,28 @@ public class User implements Parcelable {
         this.name = name;
     }
 
-    public String getGender() {
-        return gender;
+    public boolean isMale() {
+        return male;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setMale(boolean male) {
+        this.male = male;
     }
 
-    public String getBirthday() {
-        return birthday;
+    public String getBirthDate() {
+        return birthDate;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
     }
 
-    public String getStatus() {
-        return status;
+    public boolean isFromApps() {
+        return fromApps;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setFromApps(boolean fromApps) {
+        this.fromApps = fromApps;
     }
 
     public Location getLocation() {
@@ -112,6 +103,11 @@ public class User implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        return o instanceof User && ((User) o).uid.equals(uid);
+    }
+
+    @Override
     public int describeContents() {
         return hashCode();
     }
@@ -119,85 +115,23 @@ public class User implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(uid);
-        dest.writeString(idNumber);
         dest.writeString(email);
         dest.writeString(name);
-        dest.writeString(gender);
-        dest.writeString(birthday);
-        dest.writeString(status);
-    }
-
-    public static class Builder {
-        private User user;
-
-        public Builder() {
-            user = new User();
-        }
-
-        public Builder setUid(String uid) {
-            user.uid = uid;
-            return this;
-        }
-
-        public Builder setIdNumber(String idNumber) {
-            user.idNumber = idNumber;
-            return this;
-        }
-
-        public Builder setEmail(String email) {
-            user.email = email;
-            return this;
-        }
-
-        public Builder setName(String name) {
-            user.name = name;
-            return this;
-        }
-
-        public Builder setGender(String gender) {
-            user.gender = gender;
-            return this;
-        }
-
-        public Builder setBirthday(String birthday) {
-            user.birthday = birthday;
-            return this;
-        }
-
-        public Builder setStatus(String status) {
-            user.status = status;
-            return this;
-        }
-
-        public Builder setLocation(Location location) {
-            user.location = location;
-            return this;
-        }
-
-        public User build() {
-            return user;
-        }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof User) {
-            User user = (User) o;
-            return uid.equals(user.uid);
-        }
-        return false;
+        dest.writeByte((byte) (male ? 1 : 0));
+        dest.writeString(birthDate);
+        dest.writeByte((byte) (fromApps ? 1 : 0));
+        dest.writeParcelable(location, flags);
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "uid='" + uid + '\'' +
-                ", idNumber='" + idNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
-                ", gender='" + gender + '\'' +
-                ", birthday='" + birthday + '\'' +
-                ", status='" + status + '\'' +
+                ", male='" + male + '\'' +
+                ", birthDate='" + birthDate + '\'' +
+                ", fromApps=" + fromApps +
                 ", location=" + location +
                 '}';
     }
