@@ -76,6 +76,13 @@
                 android:layout_margin="4dp"
                 android:background="@drawable/circle_red_white"/>
 
+            <View
+                android:id="@+id/icon_page_5"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/circle_red_white"/>
+
         </LinearLayout>
 
         <Button

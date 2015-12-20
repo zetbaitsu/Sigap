@@ -82,6 +82,11 @@ public class WelcomeFragment extends BenihFragment {
                 title.setText("Navigasi");
                 description.setText("Data lokasi rawan dari pengguna akan membantu anda menghindarinya.");
                 break;
+            case 5:
+                imageView.setImageResource(R.drawable.pembukaan5);
+                title.setText("Kontak Darurat Bersama");
+                description.setText("Masukan kontak darurat wilayah anda untuk digunakan bersama.");
+                break;
         }
     }
 }
