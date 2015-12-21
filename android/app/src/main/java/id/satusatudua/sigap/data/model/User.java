@@ -3,6 +3,8 @@ package id.satusatudua.sigap.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 /**
  * Created on : November 22, 2015
  * Author     : zetbaitsu
@@ -16,7 +18,7 @@ public class User implements Parcelable {
     private String email;
     private String name;
     private boolean male;
-    private String birthDate;
+    private Date birthDate;
     private boolean fromApps;
     private Location location;
 
@@ -29,7 +31,7 @@ public class User implements Parcelable {
         email = in.readString();
         name = in.readString();
         male = in.readByte() != 0;
-        birthDate = in.readString();
+        birthDate = new Date(in.readLong());
         fromApps = in.readByte() != 0;
         location = in.readParcelable(Location.class.getClassLoader());
     }
@@ -78,11 +80,11 @@ public class User implements Parcelable {
         this.male = male;
     }
 
-    public String getBirthDate() {
+    public Date getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -118,7 +120,7 @@ public class User implements Parcelable {
         dest.writeString(email);
         dest.writeString(name);
         dest.writeByte((byte) (male ? 1 : 0));
-        dest.writeString(birthDate);
+        dest.writeLong(birthDate.getTime());
         dest.writeByte((byte) (fromApps ? 1 : 0));
         dest.writeParcelable(location, flags);
     }
