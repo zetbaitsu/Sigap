@@ -103,7 +103,7 @@ public class LoginPresenter extends BenihPresenter<LoginPresenter.View> {
                     public void onAuthenticationError(FirebaseError firebaseError) {
                         Timber.e(firebaseError.getMessage());
                         if (view != null) {
-                            view.onFailedLogin(firebaseError);
+                            view.showError(firebaseError.getMessage());
                             view.dismissLoading();
                         }
                     }
@@ -122,7 +122,5 @@ public class LoginPresenter extends BenihPresenter<LoginPresenter.View> {
 
     public interface View extends BenihPresenter.View {
         void onSuccessLogin(User user);
-
-        void onFailedLogin(FirebaseError error);
     }
 }

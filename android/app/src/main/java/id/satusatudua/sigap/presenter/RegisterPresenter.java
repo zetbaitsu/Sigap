@@ -67,7 +67,7 @@ public class RegisterPresenter extends BenihPresenter<RegisterPresenter.View> {
                             @Override
                             public void onError(FirebaseError firebaseError) {
                                 if (view != null) {
-                                    view.onFailedRegister(firebaseError);
+                                    view.showError(firebaseError.getMessage());
                                     view.dismissLoading();
                                 }
                             }
@@ -78,7 +78,7 @@ public class RegisterPresenter extends BenihPresenter<RegisterPresenter.View> {
                     public void onError(FirebaseError firebaseError) {
                         Timber.e("Failed to create user because " + firebaseError.getMessage());
                         if (view != null) {
-                            view.onFailedRegister(firebaseError);
+                            view.showError(firebaseError.getMessage());
                             view.dismissLoading();
                         }
                     }
@@ -97,7 +97,5 @@ public class RegisterPresenter extends BenihPresenter<RegisterPresenter.View> {
 
     public interface View extends BenihPresenter.View {
         void onSuccessRegister(User user);
-
-        void onFailedRegister(FirebaseError error);
     }
 }

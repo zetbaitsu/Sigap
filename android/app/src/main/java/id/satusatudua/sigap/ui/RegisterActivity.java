@@ -28,8 +28,6 @@ import android.util.Patterns;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
-import com.firebase.client.FirebaseError;
-
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
@@ -136,15 +134,10 @@ public class RegisterActivity extends BenihActivity implements RegisterPresenter
     }
 
     @Override
-    public void onFailedRegister(FirebaseError error) {
-        Snackbar snackbar = Snackbar.make(laki, error.getMessage(), Snackbar.LENGTH_LONG);
+    public void showError(String errorMessage) {
+        Snackbar snackbar = Snackbar.make(laki, errorMessage, Snackbar.LENGTH_LONG);
         snackbar.getView().setBackgroundResource(R.color.colorAccent);
         snackbar.show();
-    }
-
-    @Override
-    public void showError(String errorMessage) {
-
     }
 
     @Override
