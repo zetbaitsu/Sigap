@@ -26,6 +26,7 @@ public class SigapApp extends Application {
         super.onCreate();
         sigapApp = this;
         Firebase.setAndroidContext(this);
+        Firebase.getDefaultConfig().setPersistenceEnabled(true);
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());

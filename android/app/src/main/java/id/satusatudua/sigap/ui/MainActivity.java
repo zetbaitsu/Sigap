@@ -15,10 +15,12 @@ import butterknife.Bind;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.presenter.CurrentUserPresenter;
 import id.satusatudua.sigap.presenter.UserPresenter;
 import id.satusatudua.sigap.ui.adapter.UserAdapter;
 import id.zelory.benih.ui.BenihActivity;
 import id.zelory.benih.ui.view.BenihRecyclerView;
+import timber.log.Timber;
 
 /**
  * Created on : November 22, 2015
@@ -29,7 +31,8 @@ import id.zelory.benih.ui.view.BenihRecyclerView;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 
-public class MainActivity extends BenihActivity implements UserPresenter.View {
+public class MainActivity extends BenihActivity implements UserPresenter.View,
+        CurrentUserPresenter.View {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
@@ -38,6 +41,7 @@ public class MainActivity extends BenihActivity implements UserPresenter.View {
     private UserPresenter userPresenter;
     private ProgressDialog progressDialog;
     private UserAdapter userAdapter;
+    private CurrentUserPresenter currentUserPresenter;
 
     @Override
     protected int getResourceLayout() {
@@ -63,6 +67,7 @@ public class MainActivity extends BenihActivity implements UserPresenter.View {
         recyclerView.setAdapter(userAdapter);
 
         setupController(savedInstanceState);
+        currentUserPresenter = new CurrentUserPresenter(this);
         //locationController = new LocationPresenter(this);
     }
 
@@ -89,10 +94,7 @@ public class MainActivity extends BenihActivity implements UserPresenter.View {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_logout:
-                FirebaseApi.pluck().getApi().unauth();
-                Intent intent = new Intent(this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                currentUserPresenter.logout();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -156,5 +158,17 @@ public class MainActivity extends BenihActivity implements UserPresenter.View {
         progressDialog = null;
         userAdapter.clear();
         userAdapter = null;
+    }
+
+    @Override
+    public void onCurrentUserChanged(User currentUser) {
+        Timber.d("Current user changed " + currentUser);
+    }
+
+    @Override
+    public void onSuccessLogout() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

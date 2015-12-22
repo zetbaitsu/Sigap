@@ -18,13 +18,10 @@ package id.satusatudua.sigap.presenter;
 
 import android.os.Bundle;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.User;
-import id.satusatudua.sigap.util.PasswordUtils;
 import id.zelory.benih.presenter.BenihPresenter;
 import id.zelory.benih.util.BenihScheduler;
 import timber.log.Timber;
@@ -64,6 +61,31 @@ public class CurrentUserPresenter extends BenihPresenter<CurrentUserPresenter.Vi
                 });
     }
 
+    public void logout() {
+        view.showLoading();
+        currentUser.setFromApps(false);
+        FirebaseApi.pluck()
+                .getApi()
+                .child("users")
+                .child(currentUser.getUid())
+                .setValue(currentUser, (firebaseError, firebase) -> {
+                    if (firebaseError != null) {
+                        Timber.d(firebaseError.getMessage());
+                        if (view != null) {
+                            view.showError(firebaseError.getMessage());
+                            view.dismissLoading();
+                        }
+                    } else {
+                        FirebaseApi.pluck().getApi().unauth();
+                        StateManager.pluck().setState(StateManager.State.NEW);
+                        if (view != null) {
+                            view.onSuccessLogout();
+                            view.dismissLoading();
+                        }
+                    }
+                });
+    }
+
     @Override
     public void saveState(Bundle bundle) {
 
@@ -77,5 +99,7 @@ public class CurrentUserPresenter extends BenihPresenter<CurrentUserPresenter.Vi
     public interface View extends BenihPresenter.View {
 
         void onCurrentUserChanged(User currentUser);
+
+        void onSuccessLogout();
     }
 }
