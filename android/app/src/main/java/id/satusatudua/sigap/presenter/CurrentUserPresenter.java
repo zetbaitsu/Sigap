@@ -64,32 +64,6 @@ public class CurrentUserPresenter extends BenihPresenter<CurrentUserPresenter.Vi
                 });
     }
 
-    public void updatePassword(String oldPassword, String newPassword) {
-        view.showLoading();
-        FirebaseApi.pluck()
-                .getApi()
-                .changePassword(currentUser.getEmail(),
-                                PasswordUtils.hashPassword(oldPassword),
-                                PasswordUtils.hashPassword(newPassword),
-                                new Firebase.ResultHandler() {
-                                    @Override
-                                    public void onSuccess() {
-                                        if (view != null) {
-                                            view.onCurrentUserChanged(currentUser);
-                                            view.dismissLoading();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(FirebaseError firebaseError) {
-                                        if (view != null) {
-                                            view.onFailedUpdatePassword(firebaseError);
-                                            view.dismissLoading();
-                                        }
-                                    }
-                                });
-    }
-
     @Override
     public void saveState(Bundle bundle) {
 
@@ -103,7 +77,5 @@ public class CurrentUserPresenter extends BenihPresenter<CurrentUserPresenter.Vi
     public interface View extends BenihPresenter.View {
 
         void onCurrentUserChanged(User currentUser);
-
-        void onFailedUpdatePassword(FirebaseError error);
     }
 }

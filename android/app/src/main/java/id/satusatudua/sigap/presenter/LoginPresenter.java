@@ -26,6 +26,7 @@ import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.util.PasswordUtils;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
 import id.zelory.benih.util.BenihScheduler;
@@ -50,7 +51,7 @@ public class LoginPresenter extends BenihPresenter<LoginPresenter.View> {
         if (FirebaseApi.pluck().getApi().getAuth() == null) {
             FirebaseApi.pluck()
                     .getApi()
-                    .authWithPassword(email, password, new Firebase.AuthResultHandler() {
+                    .authWithPassword(email, PasswordUtils.hashPassword(password), new Firebase.AuthResultHandler() {
                         @Override
                         public void onAuthenticated(AuthData authData) {
                             Timber.d("Logged with data: " + authData);

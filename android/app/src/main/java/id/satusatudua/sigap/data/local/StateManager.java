@@ -46,6 +46,14 @@ public enum StateManager {
         sharedPreferences.edit().putString("user_state", state.name()).apply();
     }
 
+    public String getToken() {
+        return sharedPreferences.getString("user_token", "");
+    }
+
+    public void setToken(String token) {
+        sharedPreferences.edit().putString("user_token", token).apply();
+    }
+
     public static StateManager pluck() {
         return HARVEST;
     }

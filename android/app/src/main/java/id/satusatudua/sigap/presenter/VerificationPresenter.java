@@ -71,10 +71,10 @@ public class VerificationPresenter extends BenihPresenter<VerificationPresenter.
                 .authWithPassword(currentUser.getEmail(), token, new Firebase.AuthResultHandler() {
                     @Override
                     public void onAuthenticated(AuthData authData) {
-                        Timber.d("Logged with uid " + authData.getUid());
                         currentUser.setUid(authData.getUid());
                         CacheManager.pluck().cacheCurrentUser(currentUser);
                         StateManager.pluck().setState(StateManager.State.SET_PASSWORD);
+                        StateManager.pluck().setToken(token);
                         if (view != null) {
                             view.onSuccessVerification(currentUser);
                             view.dismissLoading();

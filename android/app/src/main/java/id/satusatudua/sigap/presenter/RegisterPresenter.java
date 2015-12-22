@@ -27,6 +27,7 @@ import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.util.PasswordUtils;
 import id.zelory.benih.presenter.BenihPresenter;
 import timber.log.Timber;
 
@@ -44,11 +45,11 @@ public class RegisterPresenter extends BenihPresenter<RegisterPresenter.View> {
         super(view);
     }
 
-    public void register(User user, String password) {
+    public void register(User user) {
         view.showLoading();
         FirebaseApi.pluck()
                 .getApi()
-                .createUser(user.getEmail(), password, new Firebase.ValueResultHandler<Map<String, Object>>() {
+                .createUser(user.getEmail(), PasswordUtils.generatePassword(), new Firebase.ValueResultHandler<Map<String, Object>>() {
                     @Override
                     public void onSuccess(Map<String, Object> stringObjectMap) {
                         Timber.d("Create user with data: " + stringObjectMap.toString());

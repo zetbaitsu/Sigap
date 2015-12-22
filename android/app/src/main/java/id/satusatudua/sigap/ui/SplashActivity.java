@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.StateManager;
 import id.zelory.benih.ui.BenihActivity;
 
@@ -53,7 +52,7 @@ public class SplashActivity extends BenihActivity {
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, VerificationActivity.class)), 1800);
                 break;
             case SET_PASSWORD:
-                new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, VerificationActivity.class)), 1800);
+                new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, SetPasswordActivity.class)), 1800);
                 break;
             case LOGGED:
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, MainActivity.class)), 1800);

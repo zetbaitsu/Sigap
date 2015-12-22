@@ -19,6 +19,7 @@ package id.satusatudua.sigap.ui;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -108,7 +109,19 @@ public class VerificationActivity extends BenihActivity implements VerificationP
 
     @Override
     public void onSuccessVerification(User user) {
-
+        new AlertDialog.Builder(this)
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(R.string.app_name)
+                .setCancelable(false)
+                .setMessage("Satu langkah lagi, silahkan atur kata sandi anda pada halaman berikutnya.")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    Intent intent = new Intent(this, SetPasswordActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                })
+                .show()
+                .getButton(DialogInterface.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
     }
 
     @Override

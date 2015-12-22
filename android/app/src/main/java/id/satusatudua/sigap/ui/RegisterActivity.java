@@ -107,7 +107,7 @@ public class RegisterActivity extends BenihActivity implements RegisterPresenter
             user.setMale(laki.isChecked());
             user.setLocation(new Location(123, 120));
             user.setFromApps(true);
-            registerPresenter.register(user, PasswordUtils.generatePassword());
+            registerPresenter.register(user);
         }
     }
 
@@ -125,7 +125,8 @@ public class RegisterActivity extends BenihActivity implements RegisterPresenter
                 .setTitle(R.string.app_name)
                 .setCancelable(false)
                 .setMessage("Kami telah mengirimkan password akun anda ke email yang anda daftarkan tadi, masukan password tersebut ke form selanjutnya untuk memverikasi alamat email anda.")
-                .setPositiveButton("OK", (dialog1, which) -> {
+                .setPositiveButton("OK", (dialog, which) -> {
+                    sendBroadcast(new Intent("id.satusatudua.sigap.ACTION_START"));
                     Intent intent = new Intent(this, VerificationActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
