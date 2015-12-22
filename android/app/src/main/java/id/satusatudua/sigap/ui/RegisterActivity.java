@@ -16,8 +16,10 @@
 
 package id.satusatudua.sigap.ui;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -37,7 +39,6 @@ import id.satusatudua.sigap.presenter.RegisterPresenter;
 import id.satusatudua.sigap.util.PasswordUtils;
 import id.satusatudua.sigap.util.TimeUtils;
 import id.zelory.benih.ui.BenihActivity;
-import timber.log.Timber;
 
 /**
  * Created on : November 22, 2015
@@ -119,9 +120,19 @@ public class RegisterActivity extends BenihActivity implements RegisterPresenter
 
     @Override
     public void onSuccessRegister(User user) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        new AlertDialog.Builder(this)
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(R.string.app_name)
+                .setCancelable(false)
+                .setMessage("Kami telah mengirimkan password akun anda ke email yang anda daftarkan tadi, masukan password tersebut ke form selanjutnya untuk memverikasi alamat email anda.")
+                .setPositiveButton("OK", (dialog1, which) -> {
+                    Intent intent = new Intent(this, VerificationActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                })
+                .show()
+                .getButton(DialogInterface.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
     }
 
     @Override

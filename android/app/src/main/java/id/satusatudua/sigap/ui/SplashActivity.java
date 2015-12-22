@@ -22,6 +22,7 @@ import android.os.Handler;
 
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.api.FirebaseApi;
+import id.satusatudua.sigap.data.local.StateManager;
 import id.zelory.benih.ui.BenihActivity;
 
 /**
@@ -44,11 +45,21 @@ public class SplashActivity extends BenihActivity {
 
         sendBroadcast(new Intent("id.satusatudua.sigap.ACTION_START"));
 
-        if (FirebaseApi.pluck().getApi().getAuth() != null) {
-            //TODO change to MainActivity if you have develop for register page.
-            new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, WelcomeActivity.class)), 1800);
-        } else {
-            new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, WelcomeActivity.class)), 1800);
+        switch (StateManager.pluck().getState()) {
+            case NEW:
+                new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, WelcomeActivity.class)), 1800);
+                break;
+            case VERIFY_EMAIL:
+                new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, VerificationActivity.class)), 1800);
+                break;
+            case SET_PASSWORD:
+                new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, VerificationActivity.class)), 1800);
+                break;
+            case LOGGED:
+                new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, MainActivity.class)), 1800);
+                break;
+            default:
+                new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, WelcomeActivity.class)), 1800);
         }
     }
 }

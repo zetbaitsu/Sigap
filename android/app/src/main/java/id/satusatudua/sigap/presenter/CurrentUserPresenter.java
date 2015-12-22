@@ -18,40 +18,32 @@ package id.satusatudua.sigap.presenter;
 
 import android.os.Bundle;
 
-import com.google.android.gms.location.LocationRequest;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 
-import id.satusatudua.sigap.SigapApp;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
-import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.util.PasswordUtils;
 import id.zelory.benih.presenter.BenihPresenter;
 import id.zelory.benih.util.BenihScheduler;
-import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import timber.log.Timber;
 
 /**
- * Created on : November 23, 2015
+ * Created on : December 22, 2015
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
+public class CurrentUserPresenter extends BenihPresenter<CurrentUserPresenter.View> {
 
-    private LocationRequest request;
-    private ReactiveLocationProvider locationProvider;
     private User currentUser;
 
-    public LocationPresenter(View view, int priority) {
+    public CurrentUserPresenter(View view) {
         super(view);
         listenCurrentUser();
-        request = LocationRequest.create()
-                .setPriority(priority)
-                .setInterval(100);
-        locationProvider = new ReactiveLocationProvider(SigapApp.pluck().getApplicationContext());
-        listenLocationUpdate();
     }
 
     private void listenCurrentUser() {
@@ -60,31 +52,42 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
                 .subscribe(user -> {
                     if (user != null) {
                         currentUser = user;
+                        if (view != null) {
+                            view.onCurrentUserChanged(currentUser);
+                        }
                     }
                 }, throwable -> {
                     Timber.e(throwable.getMessage());
                     if (view != null) {
                         view.showError(throwable.getMessage());
-                        view.dismissLoading();
                     }
                 });
     }
 
-    private void listenLocationUpdate() {
-        locationProvider.getUpdatedLocation(request)
-                .map(location -> new Location(location.getLatitude(), location.getLongitude()))
-                .subscribe(location -> {
-                    currentUser.setLocation(location);
-                    FirebaseApi.pluck().getApi().child("users").child(currentUser.getUid()).setValue(currentUser);
-                    if (view != null) {
-                        view.onLocationUpdated(location);
-                    }
-                }, throwable -> {
-                    Timber.e(throwable.getMessage());
-                    if (view != null) {
-                        view.showError(throwable.getMessage());
-                    }
-                });
+    public void updatePassword(String oldPassword, String newPassword) {
+        view.showLoading();
+        FirebaseApi.pluck()
+                .getApi()
+                .changePassword(currentUser.getEmail(),
+                                PasswordUtils.hashPassword(oldPassword),
+                                PasswordUtils.hashPassword(newPassword),
+                                new Firebase.ResultHandler() {
+                                    @Override
+                                    public void onSuccess() {
+                                        if (view != null) {
+                                            view.onCurrentUserChanged(currentUser);
+                                            view.dismissLoading();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(FirebaseError firebaseError) {
+                                        if (view != null) {
+                                            view.onFailedUpdatePassword(firebaseError);
+                                            view.dismissLoading();
+                                        }
+                                    }
+                                });
     }
 
     @Override
@@ -97,12 +100,10 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
 
     }
 
-    public void destroy() {
-        request = null;
-        locationProvider = null;
-    }
-
     public interface View extends BenihPresenter.View {
-        void onLocationUpdated(Location location);
+
+        void onCurrentUserChanged(User currentUser);
+
+        void onFailedUpdatePassword(FirebaseError error);
     }
 }

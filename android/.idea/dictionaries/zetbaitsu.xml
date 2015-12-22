@@ -2,6 +2,7 @@
   <dictionary name="zetbaitsu">
     <words>
       <w>hmac</w>
+      <w>kode</w>
       <w>lahir</w>
       <w>lupa</w>
       <w>masuk</w>
@@ -10,6 +11,7 @@
       <w>satusatudua</w>
       <w>sigap</w>
       <w>tunggu</w>
+      <w>ulang</w>
     </words>
   </dictionary>
 </component>

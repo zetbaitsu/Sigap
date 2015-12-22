@@ -14,32 +14,43 @@
  * limitations under the License.
  */
 
-package id.satusatudua.sigap.data;
+package id.satusatudua.sigap.data.local;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import id.satusatudua.sigap.SigapApp;
-import id.satusatudua.sigap.data.model.User;
-import id.zelory.benih.util.BenihPreferenceUtils;
-import id.zelory.benih.util.Bson;
 
 /**
- * Created on : November 23, 2015
+ * Created on : December 22, 2015
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class LocalDataManager {
+public enum StateManager {
+    HARVEST;
 
-    public static void saveCurrentUser(User user) {
-        BenihPreferenceUtils.putString(SigapApp.pluck().getApplicationContext(),
-                                       "current_user",
-                                       Bson.pluck().getParser().toJson(user));
+    private final SharedPreferences sharedPreferences;
+
+    StateManager() {
+        sharedPreferences = SigapApp.pluck().getSharedPreferences("sigap.state", Context.MODE_PRIVATE);
     }
 
-    public static User getCurrentUser() {
-        return Bson.pluck()
-                .getParser()
-                .fromJson(BenihPreferenceUtils.getString(SigapApp.pluck().getApplicationContext(), "current_user"), User.class);
+    public State getState() {
+        return State.valueOf(sharedPreferences.getString("user_state", "NEW"));
+    }
+
+    public void setState(State state) {
+        sharedPreferences.edit().putString("user_state", state.name()).apply();
+    }
+
+    public static StateManager pluck() {
+        return HARVEST;
+    }
+
+    public enum State {
+        NEW, VERIFY_EMAIL, SET_PASSWORD, LOGGED
     }
 }

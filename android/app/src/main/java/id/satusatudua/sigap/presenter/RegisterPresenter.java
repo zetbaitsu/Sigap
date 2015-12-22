@@ -18,14 +18,14 @@ package id.satusatudua.sigap.presenter;
 
 import android.os.Bundle;
 
-import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.util.Map;
 
-import id.satusatudua.sigap.data.LocalDataManager;
 import id.satusatudua.sigap.data.api.FirebaseApi;
+import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.User;
 import id.zelory.benih.presenter.BenihPresenter;
 import timber.log.Timber;
@@ -51,38 +51,26 @@ public class RegisterPresenter extends BenihPresenter<RegisterPresenter.View> {
                 .createUser(user.getEmail(), password, new Firebase.ValueResultHandler<Map<String, Object>>() {
                     @Override
                     public void onSuccess(Map<String, Object> stringObjectMap) {
-                        Timber.d("Logged with data: " + stringObjectMap.toString());
-                        FirebaseApi.pluck()
-                                .getApi()
-                                .authWithPassword(user.getEmail(), password, new Firebase.AuthResultHandler() {
-                                    @Override
-                                    public void onAuthenticated(AuthData authData) {
-                                        user.setUid(authData.getUid());
-                                        FirebaseApi.pluck()
-                                                .getApi()
-                                                .child("users")
-                                                .child(user.getUid())
-                                                .setValue(user, (firebaseError, firebase) -> {
-                                                    if (firebaseError != null) {
-                                                        Timber.e(firebaseError.getMessage());
-                                                        view.onFailedRegister(firebaseError);
-                                                        view.dismissLoading();
-                                                    } else if (view != null) {
-                                                        LocalDataManager.saveCurrentUser(user);
-                                                        view.onSuccessRegister(user);
-                                                        view.dismissLoading();
-                                                    }
-                                                });
-                                    }
+                        Timber.d("Create user with data: " + stringObjectMap.toString());
+                        FirebaseApi.pluck().getApi().resetPassword(user.getEmail(), new Firebase.ResultHandler() {
+                            @Override
+                            public void onSuccess() {
+                                if (view != null) {
+                                    CacheManager.pluck().cacheCurrentUser(user);
+                                    StateManager.pluck().setState(StateManager.State.VERIFY_EMAIL);
+                                    view.onSuccessRegister(user);
+                                    view.dismissLoading();
+                                }
+                            }
 
-                                    @Override
-                                    public void onAuthenticationError(FirebaseError firebaseError) {
-                                        if (view != null) {
-                                            view.onFailedRegister(firebaseError);
-                                            view.dismissLoading();
-                                        }
-                                    }
-                                });
+                            @Override
+                            public void onError(FirebaseError firebaseError) {
+                                if (view != null) {
+                                    view.onFailedRegister(firebaseError);
+                                    view.dismissLoading();
+                                }
+                            }
+                        });
                     }
 
                     @Override

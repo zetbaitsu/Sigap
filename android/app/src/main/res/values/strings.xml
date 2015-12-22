@@ -15,4 +15,6 @@
     <string name="lupa_kata_sandi">Lupa kata sandi?</string>
     <string name="kata_sandi">Kata sandi</string>
     <string name="daftar">Daftar</string>
+    <string name="kirim_ulang">Kirim Ulang</string>
+    <string name="submit">Submit</string>
 </resources>

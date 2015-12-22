@@ -22,8 +22,9 @@ import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
-import id.satusatudua.sigap.data.LocalDataManager;
 import id.satusatudua.sigap.data.api.FirebaseApi;
+import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
@@ -58,7 +59,8 @@ public class LoginPresenter extends BenihPresenter<LoginPresenter.View> {
                                     .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                                     .subscribe(user -> {
                                         if (view != null) {
-                                            LocalDataManager.saveCurrentUser(user);
+                                            CacheManager.pluck().cacheCurrentUser(user);
+                                            StateManager.pluck().setState(StateManager.State.LOGGED);
                                             view.onSuccessLogin(user);
                                             view.dismissLoading();
                                         }

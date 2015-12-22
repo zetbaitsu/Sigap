@@ -23,8 +23,8 @@ import com.firebase.client.DataSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-import id.satusatudua.sigap.data.LocalDataManager;
 import id.satusatudua.sigap.data.api.FirebaseApi;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.util.IteratorUtils;
 import id.satusatudua.sigap.util.RxFirebase;
@@ -43,14 +43,32 @@ import timber.log.Timber;
 
 public class UserPresenter extends BenihPresenter<UserPresenter.View> {
 
+    private User currentUser;
     private List<User> users;
 
     public UserPresenter(View view) {
         super(view);
         users = new ArrayList<>();
+        listenCurrentUser();
         listenUserAdded();
         listenUserChanged();
         listenUserRemoved();
+    }
+
+    private void listenCurrentUser() {
+        CacheManager.pluck().getCurrentUser()
+                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                .subscribe(user -> {
+                    if (user != null) {
+                        currentUser = user;
+                    }
+                }, throwable -> {
+                    Timber.e(throwable.getMessage());
+                    if (view != null) {
+                        view.showError(throwable.getMessage());
+                        view.dismissLoading();
+                    }
+                });
     }
 
     public void loadUsers() {
@@ -135,8 +153,8 @@ public class UserPresenter extends BenihPresenter<UserPresenter.View> {
                     return user;
                 })
                 .subscribe(user -> {
-                    if (user.equals(LocalDataManager.getCurrentUser())) {
-                        LocalDataManager.saveCurrentUser(user);
+                    if (user.equals(currentUser)) {
+                        CacheManager.pluck().cacheCurrentUser(user);
                     }
                     if (view != null) {
                         view.onUserChanged(user);

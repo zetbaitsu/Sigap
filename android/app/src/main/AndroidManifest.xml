@@ -39,6 +39,9 @@
         <activity
             android:name=".ui.RegisterActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.VerificationActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>
