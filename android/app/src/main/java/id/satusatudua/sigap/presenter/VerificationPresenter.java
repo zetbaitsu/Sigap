@@ -26,7 +26,6 @@ import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.User;
-import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
 import id.zelory.benih.util.BenihScheduler;
 import timber.log.Timber;

@@ -48,44 +48,66 @@ public class LoginPresenter extends BenihPresenter<LoginPresenter.View> {
 
     public void login(String email, String password) {
         view.showLoading();
-        if (FirebaseApi.pluck().getApi().getAuth() == null) {
-            FirebaseApi.pluck()
-                    .getApi()
-                    .authWithPassword(email, PasswordUtils.hashPassword(password), new Firebase.AuthResultHandler() {
-                        @Override
-                        public void onAuthenticated(AuthData authData) {
-                            Timber.d("Logged with data: " + authData);
-                            RxFirebase.observeOnce(FirebaseApi.pluck().getApi().child("users").child(authData.getUid()))
-                                    .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
-                                    .map(dataSnapshot -> dataSnapshot.getValue(User.class))
-                                    .subscribe(user -> {
+        FirebaseApi.pluck()
+                .getApi()
+                .authWithPassword(email, PasswordUtils.hashPassword(password), new Firebase.AuthResultHandler() {
+                    @Override
+                    public void onAuthenticated(AuthData authData) {
+                        RxFirebase.observeOnce(FirebaseApi.pluck().getApi().child("users").child(authData.getUid()))
+                                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                                .map(dataSnapshot -> dataSnapshot.getValue(User.class))
+                                .subscribe(user -> {
+                                    Timber.d("get logged data: " + user.toString());
+                                    Timber.d("is user logged: " + user.isFromApps());
+                                    if (user.isFromApps()) {
+                                        FirebaseApi.pluck().getApi().unauth();
                                         if (view != null) {
-                                            CacheManager.pluck().cacheCurrentUser(user);
-                                            StateManager.pluck().setState(StateManager.State.LOGGED);
-                                            view.onSuccessLogin(user);
+                                            view.showError("Akun ini masih login di device lain!");
                                             view.dismissLoading();
                                         }
-                                    }, throwable -> {
-                                        Timber.e(throwable.getMessage());
-                                        if (view != null) {
-                                            view.showError(throwable.getMessage());
-                                            view.dismissLoading();
-                                        }
-                                    });
-                        }
+                                    } else {
+                                        user.setUid(authData.getUid());
+                                        user.setFromApps(true);
+                                        FirebaseApi.pluck()
+                                                .getApi()
+                                                .child("users")
+                                                .child(user.getUid())
+                                                .setValue(user, (firebaseError, firebase) -> {
+                                                    if (firebaseError != null) {
+                                                        Timber.d(firebaseError.getMessage());
+                                                        if (view != null) {
+                                                            view.showError(firebaseError.getMessage());
+                                                            view.dismissLoading();
+                                                        }
+                                                    } else {
+                                                        CacheManager.pluck().cacheCurrentUser(user);
+                                                        StateManager.pluck().setState(StateManager.State.LOGGED);
+                                                        if (view != null) {
+                                                            view.onSuccessLogin(user);
+                                                            view.dismissLoading();
+                                                        }
+                                                    }
+                                                });
 
-                        @Override
-                        public void onAuthenticationError(FirebaseError firebaseError) {
-                            Timber.e("Failed to create user because " + firebaseError.getMessage());
-                            if (view != null) {
-                                view.onFailedLogin(firebaseError);
-                                view.dismissLoading();
-                            }
+                                    }
+                                }, throwable -> {
+                                    Timber.e(throwable.getMessage());
+                                    if (view != null) {
+                                        view.showError(throwable.getMessage());
+                                        view.dismissLoading();
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onAuthenticationError(FirebaseError firebaseError) {
+                        Timber.e(firebaseError.getMessage());
+                        if (view != null) {
+                            view.onFailedLogin(firebaseError);
+                            view.dismissLoading();
                         }
-                    });
-        } else {
-            view.dismissLoading();
-        }
+                    }
+                });
     }
 
     @Override

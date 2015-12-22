@@ -123,7 +123,9 @@ public class LoginActivity extends BenihActivity implements LoginPresenter.View 
 
     @Override
     public void showError(String errorMessage) {
-
+        Snackbar snackbar = Snackbar.make(password, errorMessage, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundResource(R.color.colorAccent);
+        snackbar.show();
     }
 
     @Override

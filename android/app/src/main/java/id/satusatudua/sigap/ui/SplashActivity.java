@@ -57,6 +57,9 @@ public class SplashActivity extends BenihActivity {
             case LOGGED:
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, MainActivity.class)), 1800);
                 break;
+            case LOGOUT:
+                new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, LoginActivity.class)), 1800);
+                break;
             default:
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, WelcomeActivity.class)), 1800);
         }

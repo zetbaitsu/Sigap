@@ -77,7 +77,9 @@ public class CurrentUserPresenter extends BenihPresenter<CurrentUserPresenter.Vi
                         }
                     } else {
                         FirebaseApi.pluck().getApi().unauth();
-                        StateManager.pluck().setState(StateManager.State.NEW);
+                        StateManager.pluck().setState(StateManager.State.LOGOUT);
+                        currentUser.setFromApps(false);
+                        CacheManager.pluck().cacheCurrentUser(currentUser);
                         if (view != null) {
                             view.onSuccessLogout();
                             view.dismissLoading();

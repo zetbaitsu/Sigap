@@ -13,7 +13,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.CurrentUserPresenter;
 import id.satusatudua.sigap.presenter.UserPresenter;

@@ -36,7 +36,6 @@ import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.RegisterPresenter;
-import id.satusatudua.sigap.util.PasswordUtils;
 import id.satusatudua.sigap.util.TimeUtils;
 import id.zelory.benih.ui.BenihActivity;
 

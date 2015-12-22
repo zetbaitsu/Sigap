@@ -23,6 +23,7 @@ import com.google.android.gms.location.LocationRequest;
 import id.satusatudua.sigap.SigapApp;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
 import id.zelory.benih.presenter.BenihPresenter;
@@ -74,10 +75,12 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
         locationProvider.getUpdatedLocation(request)
                 .map(location -> new Location(location.getLatitude(), location.getLongitude()))
                 .subscribe(location -> {
-                    currentUser.setLocation(location);
-                    FirebaseApi.pluck().getApi().child("users").child(currentUser.getUid()).setValue(currentUser);
-                    if (view != null) {
-                        view.onLocationUpdated(location);
+                    if (StateManager.pluck().getState().equals(StateManager.State.LOGGED)) {
+                        currentUser.setLocation(location);
+                        FirebaseApi.pluck().getApi().child("users").child(currentUser.getUid()).setValue(currentUser);
+                        if (view != null) {
+                            view.onLocationUpdated(location);
+                        }
                     }
                 }, throwable -> {
                     Timber.e(throwable.getMessage());
