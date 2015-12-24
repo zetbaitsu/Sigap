@@ -22,15 +22,15 @@ To implement separation of concerns, there are several layers on this applicatio
 
 Those layers are:
 
-1. The Presenter layer
-2. The Controller layer
+1. The View layer
+2. The Presenter layer
 3. The Storage layer
 4. The Network layer
 
 The communication flow between those layers are strictly sequential, in the sense that the larger number of the layer won't be succeeded by the smaller layer number. For example:
 
-1. `Presenter layer` -> `Controller layer` -> `Network layer` is permitted
-2. `Presenter layer` -> `Network layer` -> `Controller layer` is **not** permitted
+1. `View layer` -> `Presenter layer` -> `Network layer` is permitted
+2. `View layer` -> `Network layer` -> `Presenter layer` is **not** permitted
 
 ## Other Notes
 
