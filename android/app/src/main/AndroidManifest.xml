@@ -45,6 +45,9 @@
         <activity
             android:name=".ui.SetPasswordActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.TombolActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>
