@@ -32,6 +32,138 @@ The communication flow between those layers are strictly sequential, in the sens
 1. `View layer` -> `Presenter layer` -> `Network layer` is permitted
 2. `View layer` -> `Network layer` -> `Presenter layer` is **not** permitted
 
+## Data Structure
+```
+└─ sigap
+   ├─ users
+   |  └─ userId
+   |     └─ birthDate
+   |     └─ email
+   |     └─ fromApps
+   |     └─ male
+   |     └─ name
+   |     └─ status
+   |     └─ userId
+   ├─ userLocations
+   |  └─ userId
+   |     └─ g
+   |     └─ l
+   |        └─ 0
+   |        └─ 1
+   ├─ userTrusted
+   |  └─ userId
+   |     └─ userIds
+   ├─ covers
+   |  └─ userId
+   |     └─ owner
+   |     └─ destination
+   |     └─ open
+   |     └─ userIds
+   ├─ coverMessages
+   |  └─ userId
+   |     └─ userId
+   |     └─ date
+   |     └─ content
+   ├─ cases
+   |  └─ caseId
+   |     └─ date
+   |     └─ owner
+   |     └─ open
+   |     └─ caseId
+   ├─ caseLocations
+   |  └─ caseId
+   |     └─ g
+   |     └─ l
+   |        └─ 0
+   |        └─ 1
+   ├─ userCases
+   |  └─ userId
+   |     └─ caseIds
+   ├─ helperCases
+   |  └─ caseId
+   |     └─ userIds
+   ├─ userHelps
+   |  └─ userId
+   |     └─ caseIds
+   ├─ caseMessages
+   |  └─ caseId
+   |     └─ userId
+   |     └─ date
+   |     └─ content
+   ├─ importantContacts
+   |  └─ contactId
+   |     └─ name
+   |     └─ numbers
+   |     └─ userId
+   |     └─ address
+   |     └─ avgRate
+   |     └─ totalRate
+   |     └─ totalUserRate
+   |     └─ contactId
+   ├─ userContacts
+   |  └─ userId
+   |     └─ contactIds
+   ├─ comments
+   |  └─ contactId
+   |     └─ userId
+   |     └─ date
+   |     └─ content
+   └─ bookmarkContacts
+      └─ userId
+         └─ contactIds
+```
+
+## Project File Structure
+```
+└─ id.satusatudua.sigap
+   ├─ data
+   |  ├─ local
+   |  |  └─ Database.java
+   |  |  └─ SharedPreferences.java
+   |  └─ api
+   |  |  ├─ response
+   |  |  |  └─ Response.java
+   |  |  └─ Api.java
+   |  └─ model
+   |     └─ Model.java
+   ├─ event
+   |  └─ Event.java
+   ├─ presenter
+   |  └─ Presenter.java
+   ├─ service
+   |  └─ Service.java
+   |  └─ BroadcastReceiver.java
+   ├─ util
+   |  └─ Utilities.java
+   ├─ ui
+   |  ├─ adapter
+   |  |  ├─ viewholder
+   |  |  |  └─ ViewHolder.java
+   |  |  └─ Adapter.java
+   |  ├─ fragment
+   |  |  └─ Fragment.java
+   |  ├─ view
+   |  |  └─ View.java
+   |  └─ Activity.java
+   └─ App.java
+```
+
 ## Other Notes
 
 **TODO**
+
+License
+-------
+    Copyright (c) 2015 SatuSatuDua.
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
