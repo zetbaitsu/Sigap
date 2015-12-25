@@ -3,6 +3,8 @@ package id.satusatudua.sigap.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 
 /**
@@ -96,6 +98,7 @@ public class User implements Parcelable {
         this.fromApps = fromApps;
     }
 
+    @JsonIgnore
     public Location getLocation() {
         return location;
     }

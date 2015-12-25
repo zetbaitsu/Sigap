@@ -51,12 +51,22 @@
 
         <service
             android:name=".service.LocationService"/>
+        <service
+            android:name=".service.NearbyService"/>
+
         <receiver
             android:name=".service.LocationReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="id.satusatudua.sigap.ACTION_START"/>
                 <action android:name="android.location.PROVIDERS_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".service.NearbyReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="id.satusatudua.sigap.ACTION_START"/>
             </intent-filter>
         </receiver>
     </application>

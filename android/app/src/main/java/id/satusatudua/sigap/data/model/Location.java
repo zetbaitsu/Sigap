@@ -58,6 +58,10 @@ public class Location implements Parcelable {
         this.longitude = longitude;
     }
 
+    public double getDistance(Location location) {
+        return Math.sqrt(Math.exp(location.getLatitude() - latitude) + Math.exp(location.getLongitude() - longitude));
+    }
+
     @Override
     public String toString() {
         return "Location{" +

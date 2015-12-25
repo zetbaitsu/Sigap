@@ -56,7 +56,7 @@ public class UserPresenter extends BenihPresenter<UserPresenter.View> {
     }
 
     private void listenCurrentUser() {
-        CacheManager.pluck().getCurrentUser()
+        CacheManager.pluck().listenCurrentUser()
                 .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .subscribe(user -> {
                     if (user != null) {

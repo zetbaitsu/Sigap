@@ -25,6 +25,7 @@ import id.satusatudua.sigap.data.model.User;
 import id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnItemClickListener;
 import id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnLongItemClickListener;
 import id.zelory.benih.ui.adapter.viewholder.BenihItemViewHolder;
+import timber.log.Timber;
 
 /**
  * Created on : November 22, 2015
@@ -46,8 +47,9 @@ public class UserViewHolder extends BenihItemViewHolder<User> {
 
     @Override
     public void bind(User user) {
+        Timber.d(user.toString());
         email.setText(user.getEmail());
         name.setText(user.getName());
-        location.setText(String.format("Latitude: %s, Longitude: %s", user.getLocation().getLatitude(), user.getLocation().getLongitude()));
+        //location.setText(String.format("Latitude: %s, Longitude: %s", user.getLocation().getLatitude(), user.getLocation().getLongitude()));
     }
 }

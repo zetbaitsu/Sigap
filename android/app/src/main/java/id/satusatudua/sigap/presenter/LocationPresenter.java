@@ -18,6 +18,7 @@ package id.satusatudua.sigap.presenter;
 
 import android.os.Bundle;
 
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.LocationRequest;
 
 import id.satusatudua.sigap.SigapApp;
@@ -56,7 +57,7 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
     }
 
     private void listenCurrentUser() {
-        CacheManager.pluck().getCurrentUser()
+        CacheManager.pluck().listenCurrentUser()
                 .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .subscribe(user -> {
                     if (user != null) {
@@ -78,6 +79,10 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
                     if (StateManager.pluck().getState().equals(StateManager.State.LOGGED)) {
                         currentUser.setLocation(location);
                         FirebaseApi.pluck().getApi().child("users").child(currentUser.getUid()).setValue(currentUser);
+                        FirebaseApi.pluck()
+                                .getGeoFire()
+                                .setLocation(currentUser.getUid(),
+                                             new GeoLocation(location.getLatitude(), location.getLongitude()));
                         if (view != null) {
                             view.onLocationUpdated(location);
                         }

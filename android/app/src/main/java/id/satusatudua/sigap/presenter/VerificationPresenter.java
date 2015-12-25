@@ -48,7 +48,7 @@ public class VerificationPresenter extends BenihPresenter<VerificationPresenter.
     }
 
     private void listenCurrentUser() {
-        CacheManager.pluck().getCurrentUser()
+        CacheManager.pluck().listenCurrentUser()
                 .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.NEW_THREAD))
                 .subscribe(user -> {
                     if (user != null) {

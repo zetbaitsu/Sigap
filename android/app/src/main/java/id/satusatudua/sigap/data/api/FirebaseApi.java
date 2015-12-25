@@ -20,7 +20,7 @@ public enum FirebaseApi {
 
     FirebaseApi() {
         firebase = new Firebase("https://sigap.firebaseio.com/");
-        geoFire = new GeoFire(firebase);
+        geoFire = new GeoFire(firebase.child("locations"));
     }
 
     public static FirebaseApi pluck() {
