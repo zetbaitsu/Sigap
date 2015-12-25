@@ -45,7 +45,7 @@
         app:rb_color="@color/colorAccent"
         app:rb_duration="3000"
         app:rb_radius="64dp"
-        app:rb_rippleAmount="3"
+        app:rb_rippleAmount="5"
         app:rb_scale="3"
         app:rb_strokeWidth="1dp"
         app:rb_type="strokeRipple">
