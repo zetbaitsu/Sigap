@@ -20,8 +20,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
     android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/back"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -36,6 +41,7 @@
         android:id="@+id/ripple"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/button_main"
         app:rb_color="@color/colorAccent"
         app:rb_duration="3000"
         app:rb_radius="64dp"
@@ -45,10 +51,20 @@
         app:rb_type="strokeRipple">
 
         <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_emergency"
+            android:layout_marginTop="-96dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/back_yellow"/>
+
+        <ImageView
+            android:id="@+id/button_emergency"
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_centerInParent="true"
-            android:src="@drawable/big_icon"/>
+            android:src="@drawable/ic_darurat"/>
     </com.skyfishjy.library.RippleBackground>
 
     <Button
@@ -58,7 +74,7 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
         android:background="@color/colorAccent"
-        android:text="Halaman Utama"
+        android:text="@string/halaman_utama"
         android:textColor="@color/white"/>
 
 </RelativeLayout>

@@ -16,11 +16,16 @@
 
 package id.satusatudua.sigap.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 
 import com.skyfishjy.library.RippleBackground;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.zelory.benih.ui.BenihActivity;
 
@@ -44,5 +49,23 @@ public class TombolActivity extends BenihActivity {
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
         rippleBackground.startRippleAnimation();
+    }
+
+    @OnClick(R.id.button_emergency)
+    public void onEmergency() {
+        new AlertDialog.Builder(this)
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(R.string.app_name)
+                .setCancelable(false)
+                .setMessage("Kami telah mengirimkan permintaan tolong untuk anda kepada 5 orang yang telah anda percayai, dan 5 orang terdekat dari lokasi anda sekarang.")
+                .setPositiveButton("OK", (dialog, which) -> {})
+                .show()
+                .getButton(DialogInterface.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+    }
+
+    @OnClick(R.id.button_main)
+    public void startMain() {
+        startActivity(new Intent(this, MainActivity.class));
     }
 }
