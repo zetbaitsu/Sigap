@@ -44,63 +44,52 @@ The communication flow between those layers are strictly sequential, in the sens
    |     └─ name
    |     └─ status
    |     └─ userId
-   |
    ├─ userLocations
    |  └─ userId
    |     └─ g
    |     └─ l
    |        └─ 0
    |        └─ 1
-   |
    ├─ userTrusted
    |  └─ userId
    |     └─ userIds
-   |
    ├─ covers
    |  └─ userId
    |     └─ owner
    |     └─ destination
    |     └─ open
    |     └─ userIds
-   |
    ├─ coverMessages
    |  └─ userId
    |     └─ userId
    |     └─ date
    |     └─ content
-   |
    ├─ cases
    |  └─ caseId
    |     └─ date
    |     └─ owner
    |     └─ open
    |     └─ caseId
-   |
    ├─ caseLocations
    |  └─ caseId
    |     └─ g
    |     └─ l
    |        └─ 0
    |        └─ 1
-   |
    ├─ userCases
    |  └─ userId
    |     └─ caseIds
-   |
    ├─ helperCases
    |  └─ caseId
    |     └─ userIds
-   |
    ├─ userHelps
    |  └─ userId
    |     └─ caseIds
-   |
    ├─ caseMessages
    |  └─ caseId
    |     └─ userId
    |     └─ date
    |     └─ content
-   |
    ├─ importantContacts
    |  └─ contactId
    |     └─ name
@@ -111,22 +100,53 @@ The communication flow between those layers are strictly sequential, in the sens
    |     └─ totalRate
    |     └─ totalUserRate
    |     └─ contactId
-   |
    ├─ userContacts
    |  └─ userId
    |     └─ contactIds
-   |
    ├─ comments
    |  └─ contactId
    |     └─ userId
    |     └─ date
    |     └─ content
-   |
    └─ bookmarkContacts
       └─ userId
          └─ contactIds
 ```
 
+## Project File Structure
+```
+└─ id.satusatudua.sigap
+   ├─ data
+   |  ├─ local
+   |  |  └─ Database.java
+   |  |  └─ SharedPreferences.java
+   |  └─ api
+   |  |  ├─ response
+   |  |  |  └─ Response.java
+   |  |  └─ Api.java
+   |  └─ model
+   |     └─ Model.java
+   ├─ event
+   |  └─ Event.java
+   ├─ presenter
+   |  └─ Presenter.java
+   ├─ service
+   |  └─ Service.java
+   |  └─ BroadcastReceiver.java
+   ├─ util
+   |  └─ Utilities.java
+   ├─ ui
+   |  ├─ adapter
+   |  |  ├─ viewholder
+   |  |  |  └─ ViewHolder.java
+   |  |  └─ Adapter.java
+   |  ├─ fragment
+   |  |  └─ Fragment.java
+   |  ├─ view
+   |  |  └─ View.java
+   |  └─ Activity.java
+   └─ App.java
+```
 
 ## Other Notes
 
