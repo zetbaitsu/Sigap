@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.zelory.benih.util.BenihUtils;
 
 /**
@@ -30,13 +31,18 @@ import id.zelory.benih.util.BenihUtils;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class NearbyReceiver extends BroadcastReceiver {
+public class AppReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (CacheManager.pluck().getUserLocation() != null) {
+            if (!BenihUtils.isMyServiceRunning(context, NearbyService.class)) {
+                context.startService(new Intent(context, NearbyService.class));
+            }
 
-        if (!BenihUtils.isMyServiceRunning(context, NearbyService.class)) {
-            context.startService(new Intent(context, NearbyService.class));
+            if (!BenihUtils.isMyServiceRunning(context, EmergencyService.class)) {
+                context.startService(new Intent(context, EmergencyService.class));
+            }
         }
     }
 }

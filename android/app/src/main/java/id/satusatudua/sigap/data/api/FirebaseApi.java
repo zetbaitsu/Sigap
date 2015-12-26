@@ -57,6 +57,10 @@ public enum FirebaseApi {
         return firebase.child("coverMessages").child(userId);
     }
 
+    public Firebase cases() {
+        return firebase.child("cases");
+    }
+
     public Firebase cases(String caseId) {
         return firebase.child("cases").child(caseId);
     }

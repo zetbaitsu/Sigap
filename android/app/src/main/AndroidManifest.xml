@@ -53,6 +53,8 @@
             android:name=".service.LocationService"/>
         <service
             android:name=".service.NearbyService"/>
+        <service
+            android:name=".service.EmergencyService"/>
 
         <receiver
             android:name=".service.LocationReceiver">
@@ -63,10 +65,11 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".service.NearbyReceiver">
+            android:name=".service.AppReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="id.satusatudua.sigap.ACTION_START"/>
+                <action android:name="id.satusatudua.sigap.GOT_LOCATION"/>
             </intent-filter>
         </receiver>
     </application>

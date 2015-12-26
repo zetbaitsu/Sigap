@@ -23,6 +23,7 @@ import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.data.model.UserLocation;
+import timber.log.Timber;
 
 /**
  * Created on : December 25, 2015
@@ -37,6 +38,9 @@ public class Sorter {
     public static List<UserLocation> sortUserLocation(List<UserLocation> locations) {
         Location currentLocation = CacheManager.pluck().getUserLocation();
         Collections.sort(locations, (lhs, rhs) -> {
+            Timber.d("currentLocation: " + currentLocation.toString());
+            Timber.d("lhs: " + lhs.toString());
+            Timber.d("rhs: " + rhs.toString());
             Double distance1 = currentLocation.getDistance(lhs);
             Double distance2 = currentLocation.getDistance(rhs);
             return distance1.compareTo(distance2);

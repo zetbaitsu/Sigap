@@ -17,6 +17,7 @@
 package id.satusatudua.sigap.data.local;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.f2prateek.rx.preferences.RxSharedPreferences;
@@ -31,6 +32,7 @@ import id.satusatudua.sigap.data.model.UserLocation;
 import id.satusatudua.sigap.util.Sorter;
 import id.zelory.benih.util.Bson;
 import rx.Observable;
+import timber.log.Timber;
 
 /**
  * Created on : December 22, 2015
@@ -49,6 +51,7 @@ public enum CacheManager {
     CacheManager() {
         sharedPreferences = SigapApp.pluck().getSharedPreferences("sigap.zl", Context.MODE_PRIVATE);
         rxPreferences = RxSharedPreferences.create(sharedPreferences);
+        Timber.tag(getClass().getSimpleName());
     }
 
     public static CacheManager pluck() {
@@ -71,7 +74,12 @@ public enum CacheManager {
     }
 
     public void cacheUserLocation(UserLocation userLocation) {
+        if (getUserLocation() == null) {
+            SigapApp.pluck().sendBroadcast(new Intent("id.satusatudua.sigap.GOT_LOCATION"));
+        }
+        Timber.d("cacheUserLocation " + userLocation);
         sharedPreferences.edit().putString("user_location", Bson.pluck().getParser().toJson(userLocation)).apply();
+
     }
 
     public Observable<UserLocation> listenUserLocation() {
@@ -93,12 +101,15 @@ public enum CacheManager {
         if (userLocations == null) {
             userLocations = new ArrayList<>();
         }
-        userLocations.add(userLocation);
-        userLocations = Sorter.sortUserLocation(userLocations);
-        if (userLocations.size() > 5) {
-            userLocations = userLocations.subList(0, 5);
+        if (!userLocations.contains(userLocation)) {
+            userLocations.add(userLocation);
+            userLocations = Sorter.sortUserLocation(userLocations);
+            if (userLocations.size() > 10) {
+                userLocations = userLocations.subList(0, 10);
+            }
+
+            sharedPreferences.edit().putString("nearby_users", Bson.pluck().getParser().toJson(userLocations)).apply();
         }
-        sharedPreferences.edit().putString("nearby_users", Bson.pluck().getParser().toJson(userLocations)).apply();
     }
 
     public Observable<List<UserLocation>> listenNearbyUsers() {
@@ -110,5 +121,21 @@ public enum CacheManager {
     public List<UserLocation> getNearbyUsers() {
         String json = sharedPreferences.getString("nearby_users", "");
         return Bson.pluck().getParser().fromJson(json, new TypeToken<List<UserLocation>>() {}.getType());
+    }
+
+    public void cacheCase(String caseId) {
+        List<String> lastCase = getLastCases();
+        if (lastCase == null) {
+            lastCase = new ArrayList<>();
+        }
+        if (!lastCase.contains(caseId)) {
+            lastCase.add(caseId);
+            sharedPreferences.edit().putString("last_cases", Bson.pluck().getParser().toJson(lastCase)).apply();
+        }
+    }
+
+    public List<String> getLastCases() {
+        String json = sharedPreferences.getString("last_cases", "");
+        return Bson.pluck().getParser().fromJson(json, new TypeToken<List<String>>() {}.getType());
     }
 }

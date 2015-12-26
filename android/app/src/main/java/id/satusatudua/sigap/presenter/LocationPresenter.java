@@ -74,11 +74,11 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
                         userLocation.setUserId(currentUser.getUserId());
                         userLocation.setLatitude(location.getLatitude());
                         userLocation.setLongitude(location.getLongitude());
+                        CacheManager.pluck().cacheUserLocation(userLocation);
                         FirebaseApi.pluck()
                                 .userLocations()
                                 .setLocation(currentUser.getUserId(),
                                              new GeoLocation(userLocation.getLatitude(), userLocation.getLongitude()));
-                        CacheManager.pluck().cacheUserLocation(userLocation);
                         if (view != null) {
                             view.onLocationUpdated(userLocation);
                         }
