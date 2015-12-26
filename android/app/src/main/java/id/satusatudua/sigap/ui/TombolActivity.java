@@ -26,8 +26,6 @@ import android.support.v4.content.ContextCompat;
 
 import com.skyfishjy.library.RippleBackground;
 
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
@@ -47,6 +45,8 @@ import timber.log.Timber;
 public class TombolActivity extends BenihActivity implements NearbyPresenter.View {
 
     @Bind(R.id.ripple) RippleBackground rippleBackground;
+
+    private NearbyPresenter nearbyPresenter;
     private ProgressDialog progressDialog;
 
     @Override
@@ -57,8 +57,7 @@ public class TombolActivity extends BenihActivity implements NearbyPresenter.Vie
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
         rippleBackground.startRippleAnimation();
-        NearbyPresenter nearbyPresenter = new NearbyPresenter(this);
-        nearbyPresenter.loadNearbyUsers();
+        nearbyPresenter = new NearbyPresenter(this);
     }
 
     @OnClick(R.id.button_emergency)
@@ -68,7 +67,9 @@ public class TombolActivity extends BenihActivity implements NearbyPresenter.Vie
                 .setTitle(R.string.app_name)
                 .setCancelable(false)
                 .setMessage("Kami telah mengirimkan permintaan tolong untuk anda kepada 5 orang yang telah anda percayai, dan 5 orang terdekat dari lokasi anda sekarang.")
-                .setPositiveButton("OK", (dialog, which) -> {})
+                .setPositiveButton("OK", (dialog, which) -> {
+                    nearbyPresenter.loadNearbyUsers();
+                })
                 .show()
                 .getButton(DialogInterface.BUTTON_POSITIVE)
                 .setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
@@ -80,7 +81,7 @@ public class TombolActivity extends BenihActivity implements NearbyPresenter.Vie
     }
 
     @Override
-    public void showNearbyUsers(List<User> nearbyUsers) {
+    public void showNearbyUsers(User nearbyUsers) {
         Timber.d(nearbyUsers.toString());
     }
 

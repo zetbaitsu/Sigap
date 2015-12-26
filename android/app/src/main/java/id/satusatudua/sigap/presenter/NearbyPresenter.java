@@ -53,11 +53,10 @@ public class NearbyPresenter extends BenihPresenter<NearbyPresenter.View> {
         } else {
             Observable.from(nearbyUsers)
                     .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
-                    .map(user -> RxFirebase.observeOnce(FirebaseApi.pluck().users(user.getUserId()))
+                    .map(userLocation -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userLocation.getUserId()))
                             .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                             .map(dataSnapshot -> dataSnapshot.getValue(User.class)))
                     .flatMap(userObservable -> userObservable)
-                    .toList()
                     .subscribe(users -> {
                         if (view != null) {
                             view.showNearbyUsers(users);
@@ -83,6 +82,6 @@ public class NearbyPresenter extends BenihPresenter<NearbyPresenter.View> {
     }
 
     public interface View extends BenihPresenter.View {
-        void showNearbyUsers(List<User> nearbyUsers);
+        void showNearbyUsers(User nearbyUsers);
     }
 }
