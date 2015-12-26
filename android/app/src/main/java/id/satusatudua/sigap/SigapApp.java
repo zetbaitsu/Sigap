@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.firebase.client.Firebase;
 
-import rx.Observable;
 import timber.log.Timber;
 
 /**

@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.data.model.UserLocation;
 
 /**
  * Created on : December 25, 2015
@@ -30,16 +32,16 @@ import id.satusatudua.sigap.data.model.User;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class UsersSorter {
+public class Sorter {
 
-    public static List<User> sortByLocation(List<User> users) {
-        User currentUser = CacheManager.pluck().getCurrentUser();
-        Collections.sort(users, (lhs, rhs) -> {
-            Double distance1 = currentUser.getLocation().getDistance(lhs.getLocation());
-            Double distance2 = currentUser.getLocation().getDistance(rhs.getLocation());
+    public static List<UserLocation> sortUserLocation(List<UserLocation> locations) {
+        Location currentLocation = CacheManager.pluck().getUserLocation();
+        Collections.sort(locations, (lhs, rhs) -> {
+            Double distance1 = currentLocation.getDistance(lhs);
+            Double distance2 = currentLocation.getDistance(rhs);
             return distance1.compareTo(distance2);
         });
 
-        return users;
+        return locations;
     }
 }

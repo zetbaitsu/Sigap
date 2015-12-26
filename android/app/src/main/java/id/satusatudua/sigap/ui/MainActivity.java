@@ -60,7 +60,7 @@ public class MainActivity extends BenihActivity implements UserPresenter.View,
         });
 
         userAdapter.setOnLongItemClickListener((view, position) ->
-                                                       userPresenter.loadUser(userAdapter.getData().get(position).getUid()));
+                                                       userPresenter.loadUser(userAdapter.getData().get(position).getUserId()));
 
         recyclerView.setUpAsList();
         recyclerView.setAdapter(userAdapter);

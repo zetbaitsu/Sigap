@@ -53,12 +53,10 @@ public class LoginPresenter extends BenihPresenter<LoginPresenter.View> {
                 .authWithPassword(email, PasswordUtils.hashPassword(password), new Firebase.AuthResultHandler() {
                     @Override
                     public void onAuthenticated(AuthData authData) {
-                        RxFirebase.observeOnce(FirebaseApi.pluck().getApi().child("users").child(authData.getUid()))
+                        RxFirebase.observeOnce(FirebaseApi.pluck().users(authData.getUid()))
                                 .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                                 .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                                 .subscribe(user -> {
-                                    Timber.d("get logged data: " + user.toString());
-                                    Timber.d("is user logged: " + user.isFromApps());
                                     if (user.isFromApps()) {
                                         FirebaseApi.pluck().getApi().unauth();
                                         if (view != null) {
@@ -66,12 +64,10 @@ public class LoginPresenter extends BenihPresenter<LoginPresenter.View> {
                                             view.dismissLoading();
                                         }
                                     } else {
-                                        user.setUid(authData.getUid());
+                                        user.setUserId(authData.getUid());
                                         user.setFromApps(true);
                                         FirebaseApi.pluck()
-                                                .getApi()
-                                                .child("users")
-                                                .child(user.getUid())
+                                                .users(user.getUserId())
                                                 .setValue(user, (firebaseError, firebase) -> {
                                                     if (firebaseError != null) {
                                                         Timber.d(firebaseError.getMessage());

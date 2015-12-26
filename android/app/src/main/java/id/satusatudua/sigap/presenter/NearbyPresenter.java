@@ -18,12 +18,12 @@ package id.satusatudua.sigap.presenter;
 
 import android.os.Bundle;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.data.model.UserLocation;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
 import id.zelory.benih.util.BenihScheduler;
@@ -40,47 +40,36 @@ import timber.log.Timber;
  */
 public class NearbyPresenter extends BenihPresenter<NearbyPresenter.View> {
 
-    private List<User> nearbyUsers;
-
     public NearbyPresenter(View view) {
         super(view);
-        nearbyUsers = CacheManager.pluck().getNearbyUsers();
-        if (nearbyUsers == null) {
-            nearbyUsers = new ArrayList<>();
-        }
-        listenNearby();
-    }
-
-    private void listenNearby() {
-        CacheManager.pluck()
-                .listenNearbyUsers()
-                .subscribe(users -> {
-                    if (users != null) {
-                        nearbyUsers = users;
-                    }
-                });
     }
 
     public void loadNearbyUsers() {
         view.showLoading();
-        Observable.from(nearbyUsers)
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
-                .map(user -> RxFirebase.observeOnce(FirebaseApi.pluck().getApi().child("users").child(user.getUid()))
-                        .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
-                        .map(dataSnapshot -> dataSnapshot.getValue(User.class)))
-                .flatMap(userObservable -> userObservable)
-                .toList()
-                .subscribe(users -> {
-                    if (view != null) {
-                        view.showNearbyUsers(users);
-                        view.dismissLoading();
-                    }
-                }, throwable -> {
-                    Timber.e(throwable.getMessage());
-                    if (view != null) {
-                        view.showError(throwable.getMessage());
-                    }
-                });
+        List<UserLocation> nearbyUsers = CacheManager.pluck().getNearbyUsers();
+        if (nearbyUsers == null) {
+            view.showError("Tidak dapat menemukan pengguna lain disekitar anda.");
+            view.dismissLoading();
+        } else {
+            Observable.from(nearbyUsers)
+                    .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                    .map(user -> RxFirebase.observeOnce(FirebaseApi.pluck().users(user.getUserId()))
+                            .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                            .map(dataSnapshot -> dataSnapshot.getValue(User.class)))
+                    .flatMap(userObservable -> userObservable)
+                    .toList()
+                    .subscribe(users -> {
+                        if (view != null) {
+                            view.showNearbyUsers(users);
+                            view.dismissLoading();
+                        }
+                    }, throwable -> {
+                        Timber.e(throwable.getMessage());
+                        if (view != null) {
+                            view.showError(throwable.getMessage());
+                        }
+                    });
+        }
     }
 
     @Override

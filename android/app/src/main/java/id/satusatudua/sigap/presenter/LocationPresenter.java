@@ -27,8 +27,8 @@ import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.data.model.UserLocation;
 import id.zelory.benih.presenter.BenihPresenter;
-import id.zelory.benih.util.BenihScheduler;
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import timber.log.Timber;
 
@@ -44,11 +44,9 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
 
     private LocationRequest request;
     private ReactiveLocationProvider locationProvider;
-    private User currentUser;
 
     public LocationPresenter(View view, int priority) {
         super(view);
-        listenCurrentUser();
         request = LocationRequest.create()
                 .setPriority(priority)
                 .setInterval(100);
@@ -56,33 +54,23 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
         listenLocationUpdate();
     }
 
-    private void listenCurrentUser() {
-        CacheManager.pluck().listenCurrentUser()
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
-                .subscribe(user -> {
-                    if (user != null) {
-                        currentUser = user;
-                    }
-                }, throwable -> {
-                    Timber.e(throwable.getMessage());
-                    if (view != null) {
-                        view.showError(throwable.getMessage());
-                        view.dismissLoading();
-                    }
-                });
-    }
-
     private void listenLocationUpdate() {
+        User currentUser = CacheManager.pluck().getCurrentUser();
         locationProvider.getUpdatedLocation(request)
-                .map(location -> new Location(location.getLatitude(), location.getLongitude()))
+                .map(location -> {
+                    UserLocation userLocation = new UserLocation();
+                    userLocation.setUserId(currentUser.getUserId());
+                    userLocation.setLatitude(location.getLatitude());
+                    userLocation.setLongitude(location.getLongitude());
+                    return userLocation;
+                })
                 .subscribe(location -> {
                     if (StateManager.pluck().getState().equals(StateManager.State.LOGGED)) {
-                        currentUser.setLocation(location);
-                        FirebaseApi.pluck().getApi().child("users").child(currentUser.getUid()).setValue(currentUser);
                         FirebaseApi.pluck()
-                                .getGeoFire()
-                                .setLocation(currentUser.getUid(),
+                                .userLocations()
+                                .setLocation(currentUser.getUserId(),
                                              new GeoLocation(location.getLatitude(), location.getLongitude()));
+                        CacheManager.pluck().cacheUserLocation(location);
                         if (view != null) {
                             view.onLocationUpdated(location);
                         }

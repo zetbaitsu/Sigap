@@ -31,7 +31,6 @@ import android.widget.RadioButton;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.RegisterPresenter;
 import id.satusatudua.sigap.util.TimeUtils;
@@ -102,8 +101,8 @@ public class RegisterActivity extends BenihActivity implements RegisterPresenter
             user.setEmail(email);
             user.setBirthDate(TimeUtils.getBirthDate(tanggalLahir));
             user.setMale(laki.isChecked());
-            user.setLocation(new Location(123, 120));
             user.setFromApps(true);
+            user.setStatus(User.Status.SIAP);
             registerPresenter.register(user);
         }
     }

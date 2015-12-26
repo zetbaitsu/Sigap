@@ -13,8 +13,8 @@ import android.os.Parcelable;
  */
 
 public class Location implements Parcelable {
-    private double latitude;
-    private double longitude;
+    protected double latitude;
+    protected double longitude;
 
     public Location() {
 
@@ -59,7 +59,21 @@ public class Location implements Parcelable {
     }
 
     public double getDistance(Location location) {
-        return Math.sqrt(Math.exp(location.getLatitude() - latitude) + Math.exp(location.getLongitude() - longitude));
+        double earthRadius = 6371000;
+        double dLat = Math.toRadians(location.getLatitude() - latitude);
+        double dLng = Math.toRadians(location.getLongitude() - longitude);
+        double sindLat = Math.sin(dLat / 2);
+        double sindLng = Math.sin(dLng / 2);
+        double a = Math.pow(sindLat, 2) + Math.pow(sindLng, 2)
+                * Math.cos(Math.toRadians(latitude)) * Math.cos(Math.toRadians(location.getLatitude()));
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return earthRadius * c;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Location && ((Location) o).getDistance(this) < 100;
     }
 
     @Override

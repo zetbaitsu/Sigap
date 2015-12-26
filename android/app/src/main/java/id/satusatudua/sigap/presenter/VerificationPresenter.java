@@ -65,12 +65,13 @@ public class VerificationPresenter extends BenihPresenter<VerificationPresenter.
 
     public void verify(String token) {
         view.showLoading();
+        User currentUser = CacheManager.pluck().getCurrentUser();
         FirebaseApi.pluck()
                 .getApi()
                 .authWithPassword(currentUser.getEmail(), token, new Firebase.AuthResultHandler() {
                     @Override
                     public void onAuthenticated(AuthData authData) {
-                        currentUser.setUid(authData.getUid());
+                        currentUser.setUserId(authData.getUid());
                         CacheManager.pluck().cacheCurrentUser(currentUser);
                         StateManager.pluck().setState(StateManager.State.SET_PASSWORD);
                         StateManager.pluck().setToken(token);

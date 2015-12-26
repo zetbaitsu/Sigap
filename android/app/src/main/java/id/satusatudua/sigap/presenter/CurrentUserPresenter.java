@@ -65,9 +65,7 @@ public class CurrentUserPresenter extends BenihPresenter<CurrentUserPresenter.Vi
         view.showLoading();
         currentUser.setFromApps(false);
         FirebaseApi.pluck()
-                .getApi()
-                .child("users")
-                .child(currentUser.getUid())
+                .users(currentUser.getUserId())
                 .setValue(currentUser, (firebaseError, firebase) -> {
                     if (firebaseError != null) {
                         Timber.d(firebaseError.getMessage());

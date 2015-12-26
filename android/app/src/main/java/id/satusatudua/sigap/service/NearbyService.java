@@ -23,12 +23,12 @@ import android.support.annotation.Nullable;
 
 import com.firebase.client.FirebaseError;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
-import id.satusatudua.sigap.data.model.Location;
-import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.data.model.UserLocation;
 import timber.log.Timber;
 
 /**
@@ -52,21 +52,39 @@ public class NearbyService extends Service implements GeoQueryEventListener {
         super.onCreate();
         Timber.tag(getClass().getSimpleName());
         Timber.d(getClass().getSimpleName() + " is creating");
-        User currentUser = CacheManager.pluck().getCurrentUser();
-        GeoLocation location = new GeoLocation(currentUser.getLocation().getLatitude(), currentUser.getLocation().getLongitude());
-        FirebaseApi.pluck()
-                .getGeoFire()
-                .queryAtLocation(location, 20)
-                .addGeoQueryEventListener(this);
+
+        UserLocation currentLocation = CacheManager.pluck().getUserLocation();
+        if (currentLocation == null) {
+            currentLocation = new UserLocation();
+            currentLocation.setLatitude(-7.76772);
+            currentLocation.setLongitude(110.37863);
+        }
+        GeoLocation location = new GeoLocation(currentLocation.getLatitude(), currentLocation.getLongitude());
+
+        GeoQuery query = FirebaseApi.pluck().userLocations().queryAtLocation(location, 20);
+
+        CacheManager.pluck().listenUserLocation()
+                .subscribe(userLocation -> {
+                    if (userLocation != null) {
+                        GeoLocation newLocation = new GeoLocation(userLocation.getLatitude(),
+                                                                  userLocation.getLongitude());
+                        query.setCenter(newLocation);
+                    }
+                }, throwable -> {
+                    Timber.e(throwable.getMessage());
+                });
+
+        query.addGeoQueryEventListener(this);
     }
 
     @Override
     public void onKeyEntered(String key, GeoLocation location) {
         Timber.d("onKeyEntered(" + key + ")");
-        User user = new User();
-        user.setUid(key);
-        user.setLocation(new Location(location.latitude, location.latitude));
-        CacheManager.pluck().cacheNearbyUser(user);
+        UserLocation userLocation = new UserLocation();
+        userLocation.setUserId(key);
+        userLocation.setLatitude(location.latitude);
+        userLocation.setLongitude(location.longitude);
+        CacheManager.pluck().cacheNearbyUser(userLocation);
     }
 
     @Override

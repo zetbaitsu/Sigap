@@ -95,9 +95,9 @@ public class UserPresenter extends BenihPresenter<UserPresenter.View> {
                 });
     }
 
-    public void loadUser(String uid) {
+    public void loadUser(String userId) {
         view.showLoading();
-        RxFirebase.observeOnce(FirebaseApi.pluck().getApi().child("users").child(uid))
+        RxFirebase.observeOnce(FirebaseApi.pluck().users(userId))
                 .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                 .subscribe(user -> {

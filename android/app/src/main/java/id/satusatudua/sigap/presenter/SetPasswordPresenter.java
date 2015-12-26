@@ -27,7 +27,6 @@ import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.util.PasswordUtils;
 import id.zelory.benih.presenter.BenihPresenter;
-import id.zelory.benih.util.BenihScheduler;
 import timber.log.Timber;
 
 /**
@@ -40,30 +39,13 @@ import timber.log.Timber;
  */
 public class SetPasswordPresenter extends BenihPresenter<SetPasswordPresenter.View> {
 
-    private User currentUser;
-
     public SetPasswordPresenter(View view) {
         super(view);
-        listenCurrentUser();
-    }
-
-    private void listenCurrentUser() {
-        CacheManager.pluck().listenCurrentUser()
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
-                .subscribe(user -> {
-                    if (user != null) {
-                        currentUser = user;
-                    }
-                }, throwable -> {
-                    Timber.e(throwable.getMessage());
-                    if (view != null) {
-                        view.showError(throwable.getMessage());
-                    }
-                });
     }
 
     public void updatePassword(String newPassword) {
         view.showLoading();
+        User currentUser = CacheManager.pluck().getCurrentUser();
         FirebaseApi.pluck()
                 .getApi()
                 .changePassword(currentUser.getEmail(),
@@ -73,9 +55,7 @@ public class SetPasswordPresenter extends BenihPresenter<SetPasswordPresenter.Vi
                                     @Override
                                     public void onSuccess() {
                                         FirebaseApi.pluck()
-                                                .getApi()
-                                                .child("users")
-                                                .child(currentUser.getUid())
+                                                .users(currentUser.getUserId())
                                                 .setValue(currentUser, (firebaseError, firebase) -> {
                                                     if (firebaseError != null) {
                                                         Timber.e(firebaseError.getMessage());

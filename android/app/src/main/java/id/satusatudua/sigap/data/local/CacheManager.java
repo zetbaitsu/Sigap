@@ -27,7 +27,8 @@ import java.util.List;
 
 import id.satusatudua.sigap.SigapApp;
 import id.satusatudua.sigap.data.model.User;
-import id.satusatudua.sigap.util.UsersSorter;
+import id.satusatudua.sigap.data.model.UserLocation;
+import id.satusatudua.sigap.util.Sorter;
 import id.zelory.benih.util.Bson;
 import rx.Observable;
 
@@ -69,30 +70,45 @@ public enum CacheManager {
         return Bson.pluck().getParser().fromJson(json, User.class);
     }
 
-    public void cacheNearbyUser(User user) {
-        if (user.equals(getCurrentUser())) {
+    public void cacheUserLocation(UserLocation userLocation) {
+        sharedPreferences.edit().putString("user_location", Bson.pluck().getParser().toJson(userLocation)).apply();
+    }
+
+    public Observable<UserLocation> listenUserLocation() {
+        return rxPreferences.getString("user_location", "")
+                .asObservable()
+                .map(s -> Bson.pluck().getParser().fromJson(s, UserLocation.class));
+    }
+
+    public UserLocation getUserLocation() {
+        String json = sharedPreferences.getString("user_location", "");
+        return Bson.pluck().getParser().fromJson(json, UserLocation.class);
+    }
+
+    public void cacheNearbyUser(UserLocation userLocation) {
+        if (userLocation.getUserId().equals(getCurrentUser().getUserId())) {
             return;
         }
-        List<User> users = getNearbyUsers();
-        if (users == null) {
-            users = new ArrayList<>();
+        List<UserLocation> userLocations = getNearbyUsers();
+        if (userLocations == null) {
+            userLocations = new ArrayList<>();
         }
-        users.add(user);
-        users = UsersSorter.sortByLocation(users);
-        if (users.size() > 5) {
-            users = users.subList(0, 5);
+        userLocations.add(userLocation);
+        userLocations = Sorter.sortUserLocation(userLocations);
+        if (userLocations.size() > 5) {
+            userLocations = userLocations.subList(0, 5);
         }
-        sharedPreferences.edit().putString("nearby_users", Bson.pluck().getParser().toJson(users)).apply();
+        sharedPreferences.edit().putString("nearby_users", Bson.pluck().getParser().toJson(userLocations)).apply();
     }
 
-    public Observable<List<User>> listenNearbyUsers() {
+    public Observable<List<UserLocation>> listenNearbyUsers() {
         return rxPreferences.getString("nearby_users", "")
                 .asObservable()
-                .map(s -> Bson.pluck().getParser().fromJson(s, new TypeToken<List<User>>() {}.getType()));
+                .map(s -> Bson.pluck().getParser().fromJson(s, new TypeToken<List<UserLocation>>() {}.getType()));
     }
 
-    public List<User> getNearbyUsers() {
+    public List<UserLocation> getNearbyUsers() {
         String json = sharedPreferences.getString("nearby_users", "");
-        return Bson.pluck().getParser().fromJson(json, new TypeToken<List<User>>() {}.getType());
+        return Bson.pluck().getParser().fromJson(json, new TypeToken<List<UserLocation>>() {}.getType());
     }
 }

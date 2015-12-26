@@ -31,8 +31,8 @@ import java.util.List;
  */
 public class IteratorUtils {
 
-    public static <User> List<User> toList(Iterable<DataSnapshot> dataSnapshots, Class<User> classFile) {
-        List<User> list = new ArrayList<>();
+    public static <Item> List<Item> toList(Iterable<DataSnapshot> dataSnapshots, Class<Item> classFile) {
+        List<Item> list = new ArrayList<>();
         for (DataSnapshot dataSnapshot : dataSnapshots) {
             list.add(dataSnapshot.getValue(classFile));
         }
