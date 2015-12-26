@@ -44,9 +44,11 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
 
     private LocationRequest request;
     private ReactiveLocationProvider locationProvider;
+    private User currentUser;
 
     public LocationPresenter(View view, int priority) {
         super(view);
+        listenCurrentUser();
         request = LocationRequest.create()
                 .setPriority(priority)
                 .setInterval(100);
@@ -54,25 +56,31 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
         listenLocationUpdate();
     }
 
+    private void listenCurrentUser() {
+        CacheManager.pluck()
+                .listenCurrentUser()
+                .subscribe(user -> {
+                    if (user != null){
+                        currentUser = user;
+                    }
+                });
+    }
+
     private void listenLocationUpdate() {
-        User currentUser = CacheManager.pluck().getCurrentUser();
         locationProvider.getUpdatedLocation(request)
-                .map(location -> {
-                    UserLocation userLocation = new UserLocation();
-                    userLocation.setUserId(currentUser.getUserId());
-                    userLocation.setLatitude(location.getLatitude());
-                    userLocation.setLongitude(location.getLongitude());
-                    return userLocation;
-                })
                 .subscribe(location -> {
                     if (StateManager.pluck().getState().equals(StateManager.State.LOGGED)) {
+                        UserLocation userLocation = new UserLocation();
+                        userLocation.setUserId(currentUser.getUserId());
+                        userLocation.setLatitude(location.getLatitude());
+                        userLocation.setLongitude(location.getLongitude());
                         FirebaseApi.pluck()
                                 .userLocations()
                                 .setLocation(currentUser.getUserId(),
-                                             new GeoLocation(location.getLatitude(), location.getLongitude()));
-                        CacheManager.pluck().cacheUserLocation(location);
+                                             new GeoLocation(userLocation.getLatitude(), userLocation.getLongitude()));
+                        CacheManager.pluck().cacheUserLocation(userLocation);
                         if (view != null) {
-                            view.onLocationUpdated(location);
+                            view.onLocationUpdated(userLocation);
                         }
                     }
                 }, throwable -> {
