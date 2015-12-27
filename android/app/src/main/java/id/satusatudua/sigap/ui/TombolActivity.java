@@ -26,9 +26,6 @@ import com.skyfishjy.library.RippleBackground;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.model.Case;
-import id.satusatudua.sigap.data.model.User;
-import id.satusatudua.sigap.presenter.NearbyPresenter;
 import id.satusatudua.sigap.presenter.TombolPresenter;
 import id.zelory.benih.ui.BenihActivity;
 import timber.log.Timber;
@@ -41,12 +38,10 @@ import timber.log.Timber;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class TombolActivity extends BenihActivity implements NearbyPresenter.View,
-        TombolPresenter.View {
+public class TombolActivity extends BenihActivity implements TombolPresenter.View {
 
     @Bind(R.id.ripple) RippleBackground rippleBackground;
 
-    private NearbyPresenter nearbyPresenter;
     private ProgressDialog progressDialog;
     private TombolPresenter tombolPresenter;
 
@@ -58,7 +53,6 @@ public class TombolActivity extends BenihActivity implements NearbyPresenter.Vie
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
         rippleBackground.startRippleAnimation();
-        nearbyPresenter = new NearbyPresenter(this);
         tombolPresenter = new TombolPresenter(this);
     }
 
@@ -70,11 +64,6 @@ public class TombolActivity extends BenihActivity implements NearbyPresenter.Vie
     @OnClick(R.id.button_main)
     public void startMain() {
         startActivity(new Intent(this, MainActivity.class));
-    }
-
-    @Override
-    public void showNearbyUsers(User nearbyUsers) {
-        Timber.d(nearbyUsers.toString());
     }
 
     @Override
@@ -97,17 +86,7 @@ public class TombolActivity extends BenihActivity implements NearbyPresenter.Vie
     }
 
     @Override
-    public void onCaseCreated(Case theCase) {
-        Timber.d("case created: " + theCase.toString());
-    }
-
-    @Override
-    public void onChatRoomCreated(String caseId) {
-        Timber.d("chat room created: " + caseId);
-    }
-
-    @Override
-    public void onHelperFound(User user) {
-        Timber.d("Alhamdulillah helper found " + user.toString());
+    public void onCaseCreated(String caseId) {
+        Timber.d("case created with id: " + caseId);
     }
 }
