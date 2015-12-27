@@ -119,6 +119,12 @@ public class TombolPresenter extends BenihPresenter<TombolPresenter.View> {
                 //kalo gagal ya gpp :v, nanti kapan-kapan bakal di update
                 createCaseLocation(caseKey);
 
+                //dont forget to cache current user data offline
+                User currentUser = CacheManager.pluck().getCurrentUser();
+                currentUser.setStatus(User.Status.BAHAYA);
+                CacheManager.pluck()
+                        .cacheCurrentUser(currentUser);
+
                 //akhirnya rangkaian proses selesai, loading pun dihilangkan
                 if (view != null) {
                     view.onCaseCreated(caseKey);
