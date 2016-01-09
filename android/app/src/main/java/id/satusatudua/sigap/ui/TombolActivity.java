@@ -58,7 +58,8 @@ public class TombolActivity extends BenihActivity implements TombolPresenter.Vie
 
     @OnClick(R.id.button_emergency)
     public void onEmergency() {
-        tombolPresenter.createCase();
+        //tombolPresenter.createCase();
+        onCaseCreated("");
     }
 
     @OnClick(R.id.button_main)
@@ -87,6 +88,6 @@ public class TombolActivity extends BenihActivity implements TombolPresenter.Vie
 
     @Override
     public void onCaseCreated(String caseId) {
-        Timber.d("case created with id: " + caseId);
+        startActivity(EmergencyActivity.generateIntent(this, caseId));
     }
 }

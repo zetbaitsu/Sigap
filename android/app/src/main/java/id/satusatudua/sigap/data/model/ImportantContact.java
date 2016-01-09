@@ -19,6 +19,8 @@ package id.satusatudua.sigap.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 /**
@@ -38,6 +40,7 @@ public class ImportantContact implements Parcelable {
     private double avgRate;
     private double totalRate;
     private double totalUserRate;
+    private boolean bookmarked;
 
     public ImportantContact() {
 
@@ -52,6 +55,7 @@ public class ImportantContact implements Parcelable {
         avgRate = in.readDouble();
         totalRate = in.readDouble();
         totalUserRate = in.readDouble();
+        bookmarked = in.readByte() != 0;
     }
 
     public static final Creator<ImportantContact> CREATOR = new Creator<ImportantContact>() {
@@ -130,6 +134,16 @@ public class ImportantContact implements Parcelable {
         this.totalUserRate = totalUserRate;
     }
 
+    @JsonIgnore
+    public boolean isBookmarked() {
+        return bookmarked;
+    }
+
+    @JsonIgnore
+    public void setBookmarked(boolean bookmarked) {
+        this.bookmarked = bookmarked;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof ImportantContact && ((ImportantContact) o).contactId.equals(contactId);
@@ -150,6 +164,7 @@ public class ImportantContact implements Parcelable {
         dest.writeDouble(avgRate);
         dest.writeDouble(totalRate);
         dest.writeDouble(totalUserRate);
+        dest.writeByte((byte) (bookmarked ? 1 : 0));
     }
 
     @Override
@@ -163,6 +178,7 @@ public class ImportantContact implements Parcelable {
                 ", avgRate=" + avgRate +
                 ", totalRate=" + totalRate +
                 ", totalUserRate=" + totalUserRate +
+                ", bookmarked=" + bookmarked +
                 '}';
     }
 }

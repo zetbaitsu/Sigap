@@ -57,4 +57,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:8.1.0'
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'com.skyfishjy.ripplebackground:library:1.0.1'
+    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
 }
