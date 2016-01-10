@@ -20,4 +20,8 @@
     <string name="simpan">Simpan</string>
     <string name="mohon_isi">Mohon isi form ini</string>
     <string name="halaman_utama">Halaman Utama</string>
+    <string name="masukan_email_kontak">Masukan email daftar kontak terpercaya anda, 3 hingga 5 kontak yang akan di hubungi jika kondisi bahaya terjadi pada anda.</string>
+    <string name="masukan_email_hint">Masukan email kontak terpercaya anda</string>
+    <string name="tambah_kontak">TAMBAHKAN KONTAK</string>
+    <string name="daftar_kontak">Daftar Kontak Terpercaya</string>
 </resources>
