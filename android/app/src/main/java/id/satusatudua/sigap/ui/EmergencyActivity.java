@@ -17,16 +17,12 @@
 package id.satusatudua.sigap.ui;
 
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,8 +31,9 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.satusatudua.sigap.data.model.ImportantContact;
-import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.presenter.EmergencyPresenter;
 import id.satusatudua.sigap.ui.adapter.ContactAdapter;
 import id.satusatudua.sigap.ui.adapter.HelperAdapter;
 import id.satusatudua.sigap.util.PasswordUtils;
@@ -57,21 +54,18 @@ import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScrol
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class EmergencyActivity extends BenihActivity {
-    private final static String KEY_CASE_ID = "extra_case_id";
+public class EmergencyActivity extends BenihActivity implements EmergencyPresenter.View {
 
     @Bind(R.id.et_search) EditText searchField;
     @Bind(R.id.list_helper) BenihRecyclerView listHelper;
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerViewContact;
     @Bind(R.id.fast_scroller) VerticalRecyclerViewFastScroller fastScroller;
     @Bind(R.id.fast_scroller_section_title_indicator) SectionTitleIndicator indicator;
-    private List<ImportantContact> contacts;
 
-    public static Intent generateIntent(Context context, String caseId) {
-        Intent intent = new Intent(context, EmergencyActivity.class);
-        intent.putExtra(KEY_CASE_ID, caseId);
-        return intent;
-    }
+    private List<ImportantContact> contacts;
+    private EmergencyPresenter presenter;
+    private ProgressDialog progressDialog;
+    private HelperAdapter helperAdapter;
 
     @Override
     protected int getResourceLayout() {
@@ -80,6 +74,7 @@ public class EmergencyActivity extends BenihActivity {
 
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
+
         ContactAdapter adapter = new ContactAdapter(this);
         recyclerViewContact.setUpAsList();
         recyclerViewContact.setAdapter(adapter);
@@ -96,20 +91,26 @@ public class EmergencyActivity extends BenihActivity {
                     Timber.d(throwable.getMessage());
                 });
 
-        HelperAdapter helperAdapter = new HelperAdapter(this);
+        helperAdapter = new HelperAdapter(this);
         listHelper.setUpAsHorizontalList();
         listHelper.setAdapter(helperAdapter);
         helperAdapter.setOnItemClickListener((view, position) -> onItemHelperClicked(helperAdapter.getData().get(position)));
-        helperAdapter.add(generateDummyHelpers());
 
         searchField.setOnEditorActionListener((v, actionId, event) -> {
             search();
             return true;
         });
+
+        presenter = new EmergencyPresenter(this);
+        if (savedInstanceState == null) {
+            presenter.init();
+        } else {
+            presenter.loadState(savedInstanceState);
+        }
     }
 
-    private void onItemHelperClicked(User helper) {
-        Timber.d(helper.toString());
+    private void onItemHelperClicked(CandidateHelper candidateHelper) {
+        Timber.d(candidateHelper.toString());
     }
 
     private void onItemContactClicked(ImportantContact importantContact) {
@@ -168,34 +169,46 @@ public class EmergencyActivity extends BenihActivity {
         return bookmarkedContacts;
     }
 
-    private List<User> generateDummyHelpers() {
-        List<User> helpers = new ArrayList<>();
+    @Override
+    public void onNewHelperAdded(CandidateHelper candidateHelper) {
+        if (candidateHelper.getStatus() == CandidateHelper.Status.MENOLAK) {
+            helperAdapter.remove(candidateHelper);
+        } else {
+            helperAdapter.addOrUpdate(candidateHelper);
+        }
+    }
 
-        User user = new User();
-        user.setUserId("1");
-        user.setName("Zetra");
-        helpers.add(user);
+    @Override
+    public void onHelperStatusChanged(CandidateHelper candidateHelper) {
+        if (candidateHelper.getStatus() == CandidateHelper.Status.MENOLAK) {
+            helperAdapter.remove(candidateHelper);
+        } else {
+            helperAdapter.addOrUpdate(candidateHelper);
+        }
+    }
 
-        user = new User();
-        user.setUserId("2");
-        user.setName("Rya Meyvriska");
-        helpers.add(user);
+    @Override
+    public void showError(String errorMessage) {
+        Snackbar snackbar = Snackbar.make(recyclerViewContact, errorMessage, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundResource(R.color.colorAccent);
+        snackbar.show();
+    }
 
-        user = new User();
-        user.setUserId("3");
-        user.setName("Arif Sholehuddin");
-        helpers.add(user);
+    @Override
+    public void showLoading() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Silahkan tunggu...");
+        progressDialog.show();
+    }
 
-        user = new User();
-        user.setUserId("4");
-        user.setName("Fafilia Masrofin");
-        helpers.add(user);
+    @Override
+    public void dismissLoading() {
+        progressDialog.dismiss();
+    }
 
-        user = new User();
-        user.setUserId("5");
-        user.setName("Anindia Cyntia");
-        helpers.add(user);
-
-        return helpers;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        presenter.saveState(outState);
+        super.onSaveInstanceState(outState);
     }
 }

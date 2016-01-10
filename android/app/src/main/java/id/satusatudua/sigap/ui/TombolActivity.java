@@ -28,7 +28,6 @@ import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.presenter.TombolPresenter;
 import id.zelory.benih.ui.BenihActivity;
-import timber.log.Timber;
 
 /**
  * Created on : December 24, 2015
@@ -58,8 +57,7 @@ public class TombolActivity extends BenihActivity implements TombolPresenter.Vie
 
     @OnClick(R.id.button_emergency)
     public void onEmergency() {
-        //tombolPresenter.createCase();
-        onCaseCreated("");
+        tombolPresenter.createCase();
     }
 
     @OnClick(R.id.button_main)
@@ -88,6 +86,8 @@ public class TombolActivity extends BenihActivity implements TombolPresenter.Vie
 
     @Override
     public void onCaseCreated(String caseId) {
-        startActivity(EmergencyActivity.generateIntent(this, caseId));
+        Intent intent = new Intent(this, EmergencyActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

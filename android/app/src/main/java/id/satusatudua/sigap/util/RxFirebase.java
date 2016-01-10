@@ -150,12 +150,14 @@ public class RxFirebase {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         subscriber.onNext(dataSnapshot);
+                        subscriber.onCompleted();
                     }
 
                     @Override
                     public void onCancelled(FirebaseError error) {
                         // Turn the FirebaseError into a throwable to conform to the API
                         subscriber.onError(new FirebaseException(error.getMessage()));
+                        subscriber.onCompleted();
                     }
                 });
             }

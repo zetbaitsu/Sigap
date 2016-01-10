@@ -19,66 +19,47 @@ package id.satusatudua.sigap.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
-
 /**
- * Created on : December 26, 2015
+ * Created on : January 09, 2016
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class Case implements Parcelable {
-    private String caseId;
-    private Date date;
-    private String userId;
+public class CandidateHelper implements Parcelable {
+    private String candidateId;
     private Status status;
+    private User candidate;
 
-    public Case() {
+    public CandidateHelper() {
 
     }
 
-    protected Case(Parcel in) {
-        caseId = in.readString();
-        userId = in.readString();
+    protected CandidateHelper(Parcel in) {
+        candidateId = in.readString();
         status = Status.valueOf(in.readString());
+        candidate = in.readParcelable(User.class.getClassLoader());
     }
 
-    public static final Creator<Case> CREATOR = new Creator<Case>() {
+    public static final Creator<CandidateHelper> CREATOR = new Creator<CandidateHelper>() {
         @Override
-        public Case createFromParcel(Parcel in) {
-            return new Case(in);
+        public CandidateHelper createFromParcel(Parcel in) {
+            return new CandidateHelper(in);
         }
 
         @Override
-        public Case[] newArray(int size) {
-            return new Case[size];
+        public CandidateHelper[] newArray(int size) {
+            return new CandidateHelper[size];
         }
     };
 
-    public String getCaseId() {
-        return caseId;
+    public String getCandidateId() {
+        return candidateId;
     }
 
-    public void setCaseId(String caseId) {
-        this.caseId = caseId;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setCandidateId(String candidateId) {
+        this.candidateId = candidateId;
     }
 
     public Status getStatus() {
@@ -89,9 +70,17 @@ public class Case implements Parcelable {
         this.status = status;
     }
 
+    public User getCandidate() {
+        return candidate;
+    }
+
+    public void setCandidate(User candidate) {
+        this.candidate = candidate;
+    }
+
     @Override
     public boolean equals(Object o) {
-        return o instanceof Case && ((Case) o).caseId.equals(caseId);
+        return o instanceof CandidateHelper && ((CandidateHelper) o).candidateId.equals(candidateId);
     }
 
     @Override
@@ -101,22 +90,21 @@ public class Case implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(caseId);
-        dest.writeString(userId);
+        dest.writeString(candidateId);
         dest.writeString(status.name());
+        dest.writeParcelable(candidate, flags);
     }
 
     @Override
     public String toString() {
-        return "Case{" +
-                "caseId='" + caseId + '\'' +
-                ", date=" + date +
-                ", userId='" + userId + '\'' +
+        return "CandidateHelper{" +
+                "candidateId='" + candidateId + '\'' +
                 ", status=" + status +
+                ", candidate=" + candidate +
                 '}';
     }
 
     public enum Status {
-        BARU, BERJALAN, DITUTUP
+        MENUNGGU, MENOLONG, MENOLAK
     }
 }

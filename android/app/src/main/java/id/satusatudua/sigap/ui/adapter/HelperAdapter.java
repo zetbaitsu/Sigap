@@ -20,7 +20,7 @@ import android.content.Context;
 import android.view.ViewGroup;
 
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.satusatudua.sigap.ui.adapter.viewholder.HelperViewHolder;
 import id.zelory.benih.ui.adapter.BenihRecyclerAdapter;
 
@@ -32,7 +32,7 @@ import id.zelory.benih.ui.adapter.BenihRecyclerAdapter;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class HelperAdapter extends BenihRecyclerAdapter<User, HelperViewHolder> {
+public class HelperAdapter extends BenihRecyclerAdapter<CandidateHelper, HelperViewHolder> {
     public HelperAdapter(Context context) {
         super(context);
     }

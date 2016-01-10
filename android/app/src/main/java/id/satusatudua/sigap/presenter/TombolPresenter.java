@@ -27,6 +27,8 @@ import java.util.Map;
 
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.local.StateManager;
+import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.Location;
 import id.satusatudua.sigap.data.model.User;
 import id.zelory.benih.presenter.BenihPresenter;
@@ -45,6 +47,8 @@ import timber.log.Timber;
  * Flow data yang terjadi ketika tombol merah itu ditekan akan dihandle disini
  */
 public class TombolPresenter extends BenihPresenter<TombolPresenter.View> {
+
+    private Case caseTemp;
 
     public TombolPresenter(TombolPresenter.View view) {
         super(view);
@@ -72,9 +76,15 @@ public class TombolPresenter extends BenihPresenter<TombolPresenter.View> {
         newCase.put("caseId", caseKey);
         newCase.put("userId", currentUser.getUserId());
         newCase.put("date", new Date().getTime());
-        newCase.put("open", true);
+        newCase.put("status", "BARU");
         newCase.put("latitude", currentLocation.getLatitude());
         newCase.put("longitude", currentLocation.getLongitude());
+
+        caseTemp = new Case();
+        caseTemp.setCaseId(caseKey);
+        caseTemp.setUserId(currentUser.getUserId());
+        caseTemp.setDate(new Date());
+        caseTemp.setStatus(Case.Status.BARU);
 
         //buat pesan awal di grup chat nantinya
         Map<String, Object> message = new HashMap<>();
@@ -124,6 +134,11 @@ public class TombolPresenter extends BenihPresenter<TombolPresenter.View> {
                 currentUser.setStatus(User.Status.BAHAYA);
                 CacheManager.pluck()
                         .cacheCurrentUser(currentUser);
+
+                //Cache last case from this user
+                CacheManager.pluck().cacheLastCase(caseTemp);
+
+                StateManager.pluck().setState(StateManager.State.DITOLONG);
 
                 //akhirnya rangkaian proses selesai, loading pun dihilangkan
                 if (view != null) {

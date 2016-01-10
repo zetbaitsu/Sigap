@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.zelory.benih.ui.adapter.viewholder.BenihItemViewHolder;
 
 import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnItemClickListener;
@@ -35,7 +35,7 @@ import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnLongItemClickLis
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class HelperViewHolder extends BenihItemViewHolder<User> {
+public class HelperViewHolder extends BenihItemViewHolder<CandidateHelper> {
 
     @Bind(R.id.name) TextView name;
 
@@ -44,7 +44,12 @@ public class HelperViewHolder extends BenihItemViewHolder<User> {
     }
 
     @Override
-    public void bind(User user) {
-        name.setText(user.getName());
+    public void bind(CandidateHelper candidateHelper) {
+        name.setText(candidateHelper.getCandidate().getName());
+        if (candidateHelper.getStatus() == CandidateHelper.Status.MENUNGGU) {
+            name.setBackgroundResource(R.color.secondary_text);
+        } else if (candidateHelper.getStatus() == CandidateHelper.Status.MENOLONG) {
+            name.setBackgroundResource(R.color.colorAccent);
+        }
     }
 }

@@ -59,6 +59,6 @@ public enum StateManager {
     }
 
     public enum State {
-        NEW, VERIFY_EMAIL, SET_PASSWORD, LOGGED, LOGOUT
+        NEW, VERIFY_EMAIL, SET_PASSWORD, LOGGED, LOGOUT, DITOLONG
     }
 }

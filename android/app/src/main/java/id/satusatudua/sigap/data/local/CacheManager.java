@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.satusatudua.sigap.SigapApp;
+import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.data.model.UserLocation;
 import id.satusatudua.sigap.util.Sorter;
@@ -137,5 +138,14 @@ public enum CacheManager {
     public List<String> getLastCases() {
         String json = sharedPreferences.getString("last_cases", "");
         return Bson.pluck().getParser().fromJson(json, new TypeToken<List<String>>() {}.getType());
+    }
+
+    public void cacheLastCase(Case caseTemp) {
+        sharedPreferences.edit().putString("last_case", Bson.pluck().getParser().toJson(caseTemp)).apply();
+    }
+
+    public Case getLastCase() {
+        String json = sharedPreferences.getString("last_case", "");
+        return Bson.pluck().getParser().fromJson(json, Case.class);
     }
 }
