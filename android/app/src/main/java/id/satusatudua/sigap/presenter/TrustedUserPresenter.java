@@ -20,7 +20,9 @@ import android.os.Bundle;
 
 import com.firebase.client.DataSnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import id.satusatudua.sigap.data.api.FirebaseApi;
@@ -32,6 +34,7 @@ import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
 import id.zelory.benih.util.BenihScheduler;
 import id.zelory.benih.util.BenihWorker;
+import rx.Observable;
 import timber.log.Timber;
 
 /**
@@ -45,10 +48,12 @@ import timber.log.Timber;
 public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.View> {
 
     private User currentUser;
+    private List<UserTrusted> trusteds;
 
     public TrustedUserPresenter(View view) {
         super(view);
         currentUser = CacheManager.pluck().getCurrentUser();
+        trusteds = new ArrayList<>();
         listenTrustedUserAdded();
         listenTrustedUserChanged();
     }
@@ -104,22 +109,44 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
         }
     }
 
-    private void listenTrustedUserAdded() {
+    public void loadTrustedUser() {
         view.showLoading();
-        final DataSnapshot[] temp = new DataSnapshot[1];
-        RxFirebase.observeChildAdded(FirebaseApi.pluck().userTrusted(currentUser.getUserId()))
+        RxFirebase.observeOnce(FirebaseApi.pluck().userTrusted(currentUser.getUserId()))
                 .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
-                .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
-                .doOnNext(dataSnapshot -> temp[0] = dataSnapshot)
-                .flatMap(dataSnapshot -> RxFirebase.observeOnce(FirebaseApi.pluck().users(dataSnapshot.getKey()))
+                .doOnNext(dataSnapshots -> {
+                    if (dataSnapshots.getValue() == null) {
+                        if (view != null) {
+                            view.dismissLoading();
+                        }
+                    }
+                })
+                .flatMap(dataSnapshots -> Observable.from(dataSnapshots.getChildren()))
+                .map(dataSnapshot -> {
+                    UserTrusted userTrusted = new UserTrusted();
+                    userTrusted.setUserTrustedId(dataSnapshot.getKey());
+                    userTrusted.setStatus(UserTrusted.Status.valueOf(dataSnapshot.child("status").getValue().toString()));
+
+                    int x = trusteds.indexOf(userTrusted);
+                    if (x >= 0) {
+                        trusteds.get(x).setStatus(userTrusted.getStatus());
+                    } else {
+                        trusteds.add(userTrusted);
+                    }
+                    return userTrusted;
+                })
+                .flatMap(userTrusted -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userTrusted.getUserTrustedId()))
                         .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                         .map(dataSnapshot1 -> dataSnapshot1.getValue(User.class)))
                 .map(user -> {
                     UserTrusted userTrusted = new UserTrusted();
-                    userTrusted.setUserTrustedId(temp[0].getKey());
-                    userTrusted.setStatus(UserTrusted.Status.valueOf(temp[0].child("status").getValue().toString()));
-                    userTrusted.setUser(user);
-                    return userTrusted;
+                    userTrusted.setUserTrustedId(user.getUserId());
+
+                    int x = trusteds.indexOf(userTrusted);
+                    if (x >= 0) {
+                        trusteds.get(x).setUser(user);
+                    }
+
+                    return trusteds.get(x);
                 })
                 .subscribe(userTrusted -> {
                     if (view != null) {
@@ -135,39 +162,110 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
                 });
     }
 
-    private void listenTrustedUserChanged() {
-        view.showLoading();
-        final DataSnapshot[] temp = new DataSnapshot[1];
-        RxFirebase.observeChildChanged(FirebaseApi.pluck().userTrusted(currentUser.getUserId()))
+    private void listenTrustedUserAdded() {
+        RxFirebase.observeChildAdded(FirebaseApi.pluck().userTrusted(currentUser.getUserId()))
                 .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
-                .doOnNext(dataSnapshot -> temp[0] = dataSnapshot)
-                .flatMap(dataSnapshot -> RxFirebase.observeOnce(FirebaseApi.pluck().users(dataSnapshot.getKey()))
+                .map(dataSnapshot -> {
+                    UserTrusted userTrusted = new UserTrusted();
+                    userTrusted.setUserTrustedId(dataSnapshot.getKey());
+                    userTrusted.setStatus(UserTrusted.Status.valueOf(dataSnapshot.child("status").getValue().toString()));
+
+                    int x = trusteds.indexOf(userTrusted);
+                    if (x >= 0) {
+                        trusteds.get(x).setStatus(userTrusted.getStatus());
+                    } else {
+                        trusteds.add(userTrusted);
+                    }
+                    return userTrusted;
+                })
+                .flatMap(userTrusted -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userTrusted.getUserTrustedId()))
                         .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                         .map(dataSnapshot1 -> dataSnapshot1.getValue(User.class)))
                 .map(user -> {
                     UserTrusted userTrusted = new UserTrusted();
-                    userTrusted.setUserTrustedId(temp[0].getKey());
-                    userTrusted.setStatus(UserTrusted.Status.valueOf(temp[0].child("status").getValue().toString()));
-                    userTrusted.setUser(user);
-                    return userTrusted;
+                    userTrusted.setUserTrustedId(user.getUserId());
+
+                    int x = trusteds.indexOf(userTrusted);
+                    if (x >= 0) {
+                        trusteds.get(x).setUser(user);
+                    }
+
+                    return trusteds.get(x);
                 })
                 .subscribe(userTrusted -> {
                     if (view != null) {
-                        view.onTrustedUserChanged(userTrusted);
-                        view.dismissLoading();
+                        view.onTrustedUserAdded(userTrusted);
                     }
                 }, throwable -> {
                     Timber.e(throwable.getMessage());
                     if (view != null) {
                         view.showError(throwable.getMessage());
-                        view.dismissLoading();
+                    }
+                });
+    }
+
+    private void listenTrustedUserChanged() {
+        RxFirebase.observeChildChanged(FirebaseApi.pluck().userTrusted(currentUser.getUserId()))
+                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
+                .map(dataSnapshot -> {
+                    UserTrusted userTrusted = new UserTrusted();
+                    userTrusted.setUserTrustedId(dataSnapshot.getKey());
+                    userTrusted.setStatus(UserTrusted.Status.valueOf(dataSnapshot.child("status").getValue().toString()));
+
+                    int x = trusteds.indexOf(userTrusted);
+                    if (x >= 0) {
+                        trusteds.get(x).setStatus(userTrusted.getStatus());
+                    } else {
+                        trusteds.add(userTrusted);
+                    }
+                    return userTrusted;
+                })
+                .flatMap(userTrusted -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userTrusted.getUserTrustedId()))
+                        .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                        .map(dataSnapshot1 -> dataSnapshot1.getValue(User.class)))
+                .map(user -> {
+                    UserTrusted userTrusted = new UserTrusted();
+                    userTrusted.setUserTrustedId(user.getUserId());
+
+                    int x = trusteds.indexOf(userTrusted);
+                    if (x >= 0) {
+                        trusteds.get(x).setUser(user);
+                    }
+
+                    return trusteds.get(x);
+                })
+                .subscribe(userTrusted -> {
+                    if (view != null) {
+                        view.onTrustedUserChanged(userTrusted);
+                    }
+                }, throwable -> {
+                    Timber.e(throwable.getMessage());
+                    if (view != null) {
+                        view.showError(throwable.getMessage());
                     }
                 });
     }
 
     public void addTrustedUser(User user) {
         view.showLoading();
+        RxFirebase.observeOnce(FirebaseApi.pluck().userTrusted(currentUser.getUserId()).child(user.getUserId()))
+                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                .subscribe(dataSnapshot -> {
+                    if (dataSnapshot.getValue() != null) {
+                        if (view != null) {
+                            view.showError("Anda telah memasukan email tersebut!");
+                            view.dismissLoading();
+                        }
+                    } else {
+                        sendData(user);
+                    }
+                });
+
+    }
+
+    private void sendData(User user) {
         Map<String, Object> data = new HashMap<>();
         data.put("userTrusted/" + currentUser.getUserId() + "/" + user.getUserId() + "/status/", "MENUNGGU");
         data.put("trustedOf/" + user.getUserId() + "/" + currentUser.getUserId() + "/status/", "MENUNGGU");
