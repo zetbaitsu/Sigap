@@ -31,6 +31,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.satusatudua.sigap.data.model.ImportantContact;
 import id.satusatudua.sigap.presenter.EmergencyPresenter;
@@ -124,7 +125,9 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
                 .setTitle("Klarifikasi")
                 .setMessage("Apakah kamu yakin kamu telah selamat?")
                 .setPositiveButton("YA, Saya Selamat", (dialog, which) -> {
+                    StateManager.pluck().setState(StateManager.State.LOGGED);
                     dialog.dismiss();
+                    onBackPressed();
                 })
                 .setNegativeButton("TIDAK", (dialog, which1) -> {
                     dialog.dismiss();

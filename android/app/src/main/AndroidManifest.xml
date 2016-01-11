@@ -51,6 +51,10 @@
         <activity
             android:name=".ui.EmergencyActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.ConfirmHelpingActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>

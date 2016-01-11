@@ -1,38 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_opening"
-        android:layout_margin="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
+        android:layout_margin="16dp"
+        android:gravity="center"
         android:text="@string/masukan_email_kontak"
-        android:textSize="12sp"
-        android:textColor="@color/secondary_text"/>
+        android:textColor="@color/secondary_text"
+        android:textSize="12sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:background="@drawable/rounded_grey"
         android:padding="1dp">
 
         <EditText
             android:id="@+id/et_add_email"
-            android:layout_margin="1dp"
-            android:paddingLeft="8dp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:hint="@string/masukan_email_hint"
-            android:textSize="14sp"
+            android:layout_margin="1dp"
             android:background="@drawable/rounded_white"
-            />
+            android:hint="@string/masukan_email_hint"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:singleLine="true"
+            android:textSize="14sp"/>
     </LinearLayout>
 
     <Button
@@ -52,22 +56,22 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/daftar_kontak" />
+            android:text="@string/daftar_kontak"/>
 
         <TextView
             android:id="@+id/tv_count_contact"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="(0)"/>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <View
@@ -76,7 +80,6 @@
         android:background="@color/divider"/>
 
     <id.zelory.benih.ui.view.BenihRecyclerView
-        android:layout_margin="16dp"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

@@ -17,6 +17,7 @@
 package id.satusatudua.sigap.service;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -24,12 +25,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 
+import com.firebase.client.DataSnapshot;
+
 import java.util.List;
 
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.SigapApp;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.ui.ConfirmHelpingActivity;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.util.BenihScheduler;
 import timber.log.Timber;
@@ -65,7 +69,9 @@ public class EmergencyService extends Service {
             RxFirebase.observeChildAdded(FirebaseApi.pluck().userHelps(CacheManager.pluck().getCurrentUser().getUserId()))
                     .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                     .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
-                    .map(dataSnapshot -> dataSnapshot.child("caseId").getValue(String.class))
+                    .doOnNext(dataSnapshot -> Timber.d("Got notif: " + dataSnapshot))
+                    .map(DataSnapshot::getKey)
+                    .doOnNext(s -> Timber.d("Case : " + s))
                     .subscribe(caseId -> {
                         List<String> lastCaseIds = CacheManager.pluck().getLastCases();
                         if (lastCaseIds == null || !lastCaseIds.contains(caseId)) {
@@ -77,6 +83,9 @@ public class EmergencyService extends Service {
     }
 
     private void showNotification(String caseId) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                                                                ConfirmHelpingActivity.generateIntent(this, caseId),
+                                                                PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification = new NotificationCompat.Builder(getApplicationContext())
                 .setContentTitle("Sigap")
                 .setContentText("Seseorang membutuhkan bantuan mu!!!")
@@ -87,6 +96,7 @@ public class EmergencyService extends Service {
                         .v4.app.NotificationCompat
                         .BigTextStyle()
                                   .bigText("caseId: " + caseId))
+                .setContentIntent(pendingIntent)
                 .build();
 
         NotificationManagerCompat.from(SigapApp.pluck().getApplicationContext()).notify(24051995, notification);
