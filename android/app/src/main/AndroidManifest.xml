@@ -55,6 +55,9 @@
             android:name=".ui.ConfirmHelpingActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.AddTrustedUserActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>

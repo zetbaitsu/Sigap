@@ -19,8 +19,6 @@ package id.satusatudua.sigap.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
-
 /**
  * Created on : December 26, 2015
  * Author     : zetbaitsu
@@ -30,16 +28,18 @@ import java.util.List;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class UserTrusted implements Parcelable {
-    private String userId;
-    private List<String> trustedUserIds;
+    private String userTrustedId;
+    private Status status;
+    private User user;
 
     public UserTrusted() {
 
     }
 
     protected UserTrusted(Parcel in) {
-        userId = in.readString();
-        trustedUserIds = in.createStringArrayList();
+        userTrustedId = in.readString();
+        status = Status.valueOf(in.readString());
+        user = in.readParcelable(User.class.getClassLoader());
     }
 
     public static final Creator<UserTrusted> CREATOR = new Creator<UserTrusted>() {
@@ -54,25 +54,33 @@ public class UserTrusted implements Parcelable {
         }
     };
 
-    public String getUserId() {
-        return userId;
+    public String getUserTrustedId() {
+        return userTrustedId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserTrustedId(String userTrustedId) {
+        this.userTrustedId = userTrustedId;
     }
 
-    public List<String> getTrustedUserIds() {
-        return trustedUserIds;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setTrustedUserIds(List<String> trustedUserIds) {
-        this.trustedUserIds = trustedUserIds;
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof UserTrusted && ((UserTrusted) o).userId.equals(userId);
+        return o instanceof UserTrusted && ((UserTrusted) o).userTrustedId.equals(userTrustedId);
     }
 
     @Override
@@ -82,15 +90,21 @@ public class UserTrusted implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(userId);
-        dest.writeStringList(trustedUserIds);
+        dest.writeString(userTrustedId);
+        dest.writeString(status.name());
+        dest.writeParcelable(user, flags);
     }
 
     @Override
     public String toString() {
         return "UserTrusted{" +
-                "userId='" + userId + '\'' +
-                ", trustedUserIds=" + trustedUserIds +
+                "userTrustedId='" + userTrustedId + '\'' +
+                ", status=" + status +
+                ", user=" + user +
                 '}';
+    }
+
+    public enum Status {
+        MENUNGGU, DITERIMA, DITOLAK
     }
 }

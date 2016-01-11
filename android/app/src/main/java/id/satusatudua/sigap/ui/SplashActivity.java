@@ -42,6 +42,8 @@ public class SplashActivity extends BenihActivity {
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
 
+        StateManager.pluck().setState(StateManager.State.ADDING_TRUSTED_USER);
+
         sendBroadcast(new Intent("id.satusatudua.sigap.ACTION_START"));
 
         switch (StateManager.pluck().getState()) {
@@ -59,6 +61,9 @@ public class SplashActivity extends BenihActivity {
                 break;
             case DITOLONG:
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, EmergencyActivity.class)), 1800);
+                break;
+            case ADDING_TRUSTED_USER:
+                new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, AddTrustedUserActivity.class)), 1800);
                 break;
             case LOGOUT:
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, LoginActivity.class)), 1800);
