@@ -26,6 +26,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Patterns;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -59,6 +60,7 @@ public class AddTrustedUserActivity extends BenihActivity implements TrustedUser
     @Bind(R.id.tv_count_contact) TextView trustedCounter;
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerView;
     @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.button_add_contact) Button addContact;
 
     private TrustedUserPresenter presenter;
     private ProgressDialog progressDialog;
@@ -73,7 +75,7 @@ public class AddTrustedUserActivity extends BenihActivity implements TrustedUser
     protected void onViewReady(Bundle savedInstanceState) {
         BenihBus.pluck().receive().subscribe(o -> {
             if (o instanceof RemoveTrustedUserClick) {
-                presenter.removeTrustedUser(((RemoveTrustedUserClick) o).getUserTrusted());
+                removeTrustedUser(((RemoveTrustedUserClick) o).getUserTrusted());
             }
         }, throwable -> Timber.e(throwable.getMessage()));
 
@@ -85,6 +87,27 @@ public class AddTrustedUserActivity extends BenihActivity implements TrustedUser
 
         presenter = new TrustedUserPresenter(this);
         presenter.loadTrustedUser();
+    }
+
+    private void removeTrustedUser(UserTrusted userTrusted) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(R.string.app_name)
+                .setMessage("Apakah anda ingin menghapus " + userTrusted.getUser().getName() + " dari daftar kontak terpercaya anda?")
+                .setPositiveButton("YA, Hapus Dia", (dialog, which) -> {
+                    presenter.removeTrustedUser(userTrusted);
+                    dialog.dismiss();
+                })
+                .setNegativeButton("TIDAK", (dialog, which1) -> {
+                    dialog.dismiss();
+                })
+                .show();
+
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+                .setTextColor(ContextCompat.getColor(this, R.color.primary_text));
+        alertDialog.show();
     }
 
     @OnClick(R.id.button_add_contact)
@@ -158,16 +181,28 @@ public class AddTrustedUserActivity extends BenihActivity implements TrustedUser
         alertDialog.show();
     }
 
+    private void toggleAddContactButton() {
+        if (adapter.getData().size() >= 5) {
+            addContact.setEnabled(false);
+            addContact.setBackgroundResource(R.color.secondary_text);
+        } else {
+            addContact.setEnabled(true);
+            addContact.setBackgroundResource(R.color.colorAccent);
+        }
+    }
+
     @Override
     public void onTrustedUserAdded(UserTrusted userTrusted) {
         adapter.addOrUpdate(userTrusted);
         trustedCounter.setText("(" + adapter.getData().size() + ")");
+        toggleAddContactButton();
     }
 
     @Override
     public void onTrustedUserRemoved(UserTrusted userTrusted) {
         adapter.remove(userTrusted);
         trustedCounter.setText("(" + adapter.getData().size() + ")");
+        toggleAddContactButton();
     }
 
     @Override
