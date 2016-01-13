@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.text.Html;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -50,6 +51,8 @@ public class ConfirmHelpingActivity extends BenihActivity implements ConfirmHelp
     @Bind(R.id.name) TextView reporterName;
     @Bind(R.id.address) TextView caseAddress;
     @Bind(R.id.map_capture) BenihImageView mapCapture;
+    @Bind(R.id.root_content) LinearLayout content;
+    @Bind(R.id.root_declined) LinearLayout declinedContent;
 
     private ConfirmHelpingPresenter presenter;
     private String caseId;
@@ -101,6 +104,11 @@ public class ConfirmHelpingActivity extends BenihActivity implements ConfirmHelp
         presenter.decline();
     }
 
+    @OnClick(R.id.button_close)
+    public void close() {
+        finish();
+    }
+
     @Override
     public void showCaseData(Case theCase) {
         presenter.loadCaseAddress(theCase);
@@ -127,7 +135,8 @@ public class ConfirmHelpingActivity extends BenihActivity implements ConfirmHelp
 
     @Override
     public void onDeclined() {
-        onBackPressed();
+        content.setVisibility(View.GONE);
+        declinedContent.setVisibility(View.VISIBLE);
     }
 
     @Override
