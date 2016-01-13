@@ -58,6 +58,9 @@
         <activity
             android:name=".ui.AddTrustedUserActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.ConfirmTrustedOfActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>
@@ -65,6 +68,8 @@
             android:name=".service.NearbyService"/>
         <service
             android:name=".service.EmergencyService"/>
+        <service
+            android:name=".service.NotificationService"/>
 
         <receiver
             android:name=".service.LocationReceiver">

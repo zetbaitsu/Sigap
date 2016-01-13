@@ -45,6 +45,10 @@ public enum FirebaseApi {
         return firebase.child("userTrusted").child(userId);
     }
 
+    public Firebase trustedOf(String userId) {
+        return firebase.child("trustedOf").child(userId);
+    }
+
     public Firebase covers(String userId) {
         return firebase.child("covers").child(userId);
     }

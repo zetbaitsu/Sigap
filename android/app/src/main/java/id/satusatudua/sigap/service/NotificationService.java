@@ -28,27 +28,25 @@ import android.support.v7.app.NotificationCompat;
 
 import com.firebase.client.DataSnapshot;
 
-import java.util.List;
-
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.SigapApp;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
-import id.satusatudua.sigap.ui.ConfirmHelpingActivity;
+import id.satusatudua.sigap.ui.ConfirmTrustedOfActivity;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.util.BenihScheduler;
 import id.zelory.benih.util.BenihUtils;
 import timber.log.Timber;
 
 /**
- * Created on : December 26, 2015
+ * Created on : January 13, 2016
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class EmergencyService extends Service {
+public class NotificationService extends Service {
 
     @Nullable
     @Override
@@ -62,32 +60,25 @@ public class EmergencyService extends Service {
         Timber.tag(getClass().getSimpleName());
         Timber.d(getClass().getSimpleName() + " is creating");
 
-        listenEmergency();
+        listenTrustedOf();
     }
 
-    private void listenEmergency() {
-        if (CacheManager.pluck().getUserLocation() != null) {
-            RxFirebase.observeChildAdded(FirebaseApi.pluck().userHelps(CacheManager.pluck().getCurrentUser().getUserId()))
-                    .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
-                    .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
-                    .map(DataSnapshot::getKey)
-                    .subscribe(caseId -> {
-                        List<String> lastCaseIds = CacheManager.pluck().getLastCases();
-                        if (lastCaseIds == null || !lastCaseIds.contains(caseId)) {
-                            CacheManager.pluck().cacheCase(caseId);
-                            showNotification(caseId);
-                        }
-                    }, throwable -> Timber.e(throwable.getMessage()));
-        }
+    private void listenTrustedOf() {
+        RxFirebase.observeChildAdded(FirebaseApi.pluck().trustedOf(CacheManager.pluck().getCurrentUser().getUserId()))
+                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
+                .filter(dataSnapshot -> dataSnapshot.child("status").getValue().equals("MENUNGGU"))
+                .map(DataSnapshot::getKey)
+                .subscribe(this::showNotification, throwable -> Timber.e(throwable.getMessage()));
     }
 
-    private void showNotification(String caseId) {
+    private void showNotification(String userId) {
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                                                                ConfirmHelpingActivity.generateIntent(this, caseId),
+                                                                ConfirmTrustedOfActivity.generateIntent(this, userId),
                                                                 PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification = new NotificationCompat.Builder(getApplicationContext())
                 .setContentTitle("Sigap")
-                .setContentText("Seseorang membutuhkan bantuan mu!!!")
+                .setContentText("Seseorang menambahkanmu kedalam kontak terpercayanya!")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setVibrate(new long[]{100, 300, 500, 1000})
@@ -95,7 +86,7 @@ public class EmergencyService extends Service {
                 .setStyle(new android.support
                         .v4.app.NotificationCompat
                         .BigTextStyle()
-                                  .bigText("Seseorang membutuhkan bantuan mu!!!, Ayo segera bantu dia!"))
+                                  .bigText("Seseorang menambahkanmu kedalam kontak terpercayanya!, klik untuk mengkonfirmasi."))
                 .setContentIntent(pendingIntent)
                 .build();
 
