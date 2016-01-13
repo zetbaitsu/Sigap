@@ -20,6 +20,7 @@ import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.location.LocationManager;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
@@ -54,6 +55,7 @@ public class LocationReceiver extends BroadcastReceiver {
             Notification notification = new NotificationCompat.Builder(context)
                     .setContentTitle("Sigap")
                     .setContentText("Fitur lokasi tidak aktif.")
+                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setOngoing(true)
                     .setAutoCancel(true)

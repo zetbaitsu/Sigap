@@ -43,6 +43,10 @@ public class AppReceiver extends BroadcastReceiver {
             if (!BenihUtils.isMyServiceRunning(context, EmergencyService.class)) {
                 context.startService(new Intent(context, EmergencyService.class));
             }
+
+            if (!BenihUtils.isMyServiceRunning(context, NotificationService.class)) {
+                context.startService(new Intent(context, NotificationService.class));
+            }
         }
     }
 }

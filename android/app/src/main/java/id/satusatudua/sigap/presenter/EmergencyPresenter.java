@@ -29,6 +29,7 @@ import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.data.model.UserLocation;
+import id.satusatudua.sigap.data.model.UserTrusted;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
 import id.zelory.benih.util.BenihScheduler;
@@ -47,6 +48,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
 
     private Case theCase;
     private List<CandidateHelper> candidateHelpers;
+    private List<UserTrusted> trusteds;
     private boolean trustedUserDone = false;
     private boolean findHelperDone = false;
 
@@ -54,6 +56,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
         super(view);
         theCase = CacheManager.pluck().getLastCase();
         candidateHelpers = new ArrayList<>();
+        trusteds = new ArrayList<>();
         listenHelperStatus();
     }
 
@@ -87,23 +90,72 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
         CacheManager.pluck().cacheLastCase(theCase);
     }
 
-    //TODO get trusted user from sigap io
     public void addTrustedUser() {
         if (theCase.getStatus() == Case.Status.BARU) {
             RxFirebase.observeOnce(FirebaseApi.pluck().userTrusted(CacheManager.pluck().getCurrentUser().getUserId()))
                     .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
-                    .subscribe(userTrusted -> {
-                        Timber.d("Trusted: " + userTrusted.toString());
+                    .flatMap(dataSnapshots -> Observable.from(dataSnapshots.getChildren()))
+                    .map(dataSnapshot -> {
+                        UserTrusted userTrusted = new UserTrusted();
+                        userTrusted.setUserTrustedId(dataSnapshot.getKey());
+                        userTrusted.setStatus(UserTrusted.Status.valueOf(dataSnapshot.child("status").getValue().toString()));
+
+                        int x = trusteds.indexOf(userTrusted);
+                        if (x >= 0) {
+                            trusteds.get(x).setStatus(userTrusted.getStatus());
+                        } else {
+                            trusteds.add(userTrusted);
+                        }
+                        return userTrusted;
+                    })
+                    .filter(userTrusted -> userTrusted.getStatus() == UserTrusted.Status.DITERIMA)
+                    .flatMap(userTrusted -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userTrusted.getUserTrustedId()))
+                            .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                            .map(dataSnapshot1 -> dataSnapshot1.getValue(User.class)))
+                    .filter(user -> user.getStatus() == User.Status.SIAP)
+                    .map(user -> {
+                        UserTrusted userTrusted = new UserTrusted();
+                        userTrusted.setUserTrustedId(user.getUserId());
+
+                        int x = trusteds.indexOf(userTrusted);
+                        if (x >= 0) {
+                            trusteds.get(x).setUser(user);
+                        }
+
+                        return trusteds.get(x);
+                    })
+                    .toList()
+                    .doOnNext(userTrusteds -> {
+                        for (int i = 0; i < userTrusteds.size(); i++) {
+                            CandidateHelper candidateHelper = new CandidateHelper();
+                            candidateHelper.setCandidateId(userTrusteds.get(i).getUser().getUserId());
+                            candidateHelper.setStatus(CandidateHelper.Status.MENUNGGU);
+                            candidateHelper.setCandidate(userTrusteds.get(i).getUser());
+
+                            int x = candidateHelpers.indexOf(candidateHelper);
+                            if (x >= 0) {
+                                candidateHelpers.set(x, candidateHelper);
+                            } else {
+                                candidateHelpers.add(candidateHelper);
+                            }
+                        }
+
                         trustedUserDone = true;
                         if (findHelperDone) {
                             sendData();
                         }
+                    })
+                    .flatMap(users -> Observable.from(candidateHelpers))
+                    .subscribe(candidateHelper -> {
                         if (view != null) {
+                            view.onNewHelperAdded(candidateHelper);
                             view.dismissLoading();
                         }
                     }, throwable -> {
-                        Timber.e("Trusted error: " + throwable.getMessage());
+                        findHelperDone = true;
+                        Timber.e("Error: " + throwable.getMessage());
                         if (view != null) {
+                            view.showError(throwable.getMessage());
                             view.dismissLoading();
                         }
                     });

@@ -64,7 +64,7 @@ public class SetPasswordPresenter extends BenihPresenter<SetPasswordPresenter.Vi
                                                             view.dismissLoading();
                                                         }
                                                     } else {
-                                                        StateManager.pluck().setState(StateManager.State.LOGGED);
+                                                        StateManager.pluck().setState(StateManager.State.ADDING_TRUSTED_USER);
                                                         if (view != null) {
                                                             view.onPasswordUpdated(currentUser);
                                                             view.dismissLoading();
