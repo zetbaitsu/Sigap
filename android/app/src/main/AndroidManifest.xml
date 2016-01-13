@@ -61,6 +61,9 @@
         <activity
             android:name=".ui.ConfirmTrustedOfActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.HelpingActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>
