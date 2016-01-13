@@ -18,11 +18,22 @@ package id.satusatudua.sigap.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.widget.TextView;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.view.View;
+import android.widget.ImageView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.model.CandidateHelper;
+import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.ui.adapter.HelperAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
+import id.zelory.benih.ui.view.BenihRecyclerView;
+import timber.log.Timber;
 
 /**
  * Created on : January 13, 2016
@@ -34,7 +45,11 @@ import id.zelory.benih.ui.fragment.BenihFragment;
  */
 public class ChatFragment extends BenihFragment {
 
-    @Bind(R.id.text) TextView textView;
+    @Bind(R.id.list_helper) BenihRecyclerView listHelper;
+    @Bind(R.id.button_helpers) ImageView buttonHelpers;
+    @Bind(R.id.divider) View divider;
+
+    private HelperAdapter helperAdapter;
 
     @Override
     protected int getResourceLayout() {
@@ -43,6 +58,47 @@ public class ChatFragment extends BenihFragment {
 
     @Override
     protected void onViewReady(@Nullable Bundle savedInstanceState) {
-        textView.setText(getClass().getSimpleName());
+        helperAdapter = new HelperAdapter(getActivity());
+        listHelper.setUpAsHorizontalList();
+        listHelper.setAdapter(helperAdapter);
+        helperAdapter.setOnItemClickListener((view, position) -> onItemHelperClicked(helperAdapter.getData().get(position)));
+        helperAdapter.add(generateDummyData());
+    }
+
+    private void onItemHelperClicked(CandidateHelper candidateHelper) {
+        Timber.d(candidateHelper.toString());
+    }
+
+    @OnClick(R.id.button_send)
+    public void sendMessage() {
+
+    }
+
+    @OnClick(R.id.button_helpers)
+    public void toggleHelpers() {
+        if (listHelper.getVisibility() == View.VISIBLE) {
+            listHelper.setVisibility(View.GONE);
+            divider.setVisibility(View.GONE);
+            DrawableCompat.setTint(buttonHelpers.getDrawable(), R.color.divider);
+        } else {
+            listHelper.setVisibility(View.VISIBLE);
+            divider.setVisibility(View.VISIBLE);
+            DrawableCompat.setTint(buttonHelpers.getDrawable(), R.color.colorPrimary);
+        }
+    }
+
+    private List<CandidateHelper> generateDummyData() {
+        List<CandidateHelper> helpers = new ArrayList<>();
+
+        CandidateHelper helper = new CandidateHelper();
+        helper.setCandidateId("1");
+        helper.setStatus(CandidateHelper.Status.MENOLONG);
+        User user = new User();
+        user.setUserId("1");
+        user.setName("Rya Meyvriska");
+        helper.setCandidate(user);
+        helpers.add(helper);
+
+        return helpers;
     }
 }
