@@ -59,8 +59,7 @@
                 android:layout_height="48dp"
                 android:layout_gravity="bottom"
                 android:padding="8dp"
-                android:src="@drawable/ic_orang"
-                android:tint="@color/divider"/>
+                android:src="@drawable/ic_orang"/>
 
             <EditText
                 android:id="@+id/field_message"
@@ -88,7 +87,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
-            android:src="@drawable/ic_send"/>
+            android:src="@drawable/ic_grey_send"/>
 
     </LinearLayout>
 

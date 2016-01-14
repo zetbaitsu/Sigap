@@ -18,7 +18,6 @@ package id.satusatudua.sigap.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,6 +28,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.CandidateHelper;
@@ -55,6 +55,7 @@ public class ChatFragment extends BenihFragment {
     @Bind(R.id.button_helpers) ImageView buttonHelpers;
     @Bind(R.id.divider) View divider;
     @Bind(R.id.field_message) EditText messageField;
+    @Bind(R.id.button_send) ImageView buttonSend;
 
     private ChatAdapter chatAdapter;
     private HelperAdapter helperAdapter;
@@ -77,6 +78,15 @@ public class ChatFragment extends BenihFragment {
         listHelper.setAdapter(helperAdapter);
         helperAdapter.setOnItemClickListener((view, position) -> onItemHelperClicked(helperAdapter.getData().get(position)));
         helperAdapter.add(generateDummyData());
+    }
+
+    @OnTextChanged(R.id.field_message)
+    public void fieldMessageChanged(CharSequence message) {
+        if (message == null || "".equals(message.toString())) {
+            buttonSend.setImageResource(R.drawable.ic_grey_send);
+        } else {
+            buttonSend.setImageResource(R.drawable.ic_send);
+        }
     }
 
     private List<Message> generateMessages() {
@@ -130,11 +140,11 @@ public class ChatFragment extends BenihFragment {
         if (listHelper.getVisibility() == View.VISIBLE) {
             listHelper.setVisibility(View.GONE);
             divider.setVisibility(View.GONE);
-            DrawableCompat.setTint(buttonHelpers.getDrawable(), R.color.divider);
+            buttonHelpers.setImageResource(R.drawable.ic_grey_orang);
         } else {
             listHelper.setVisibility(View.VISIBLE);
             divider.setVisibility(View.VISIBLE);
-            DrawableCompat.setTint(buttonHelpers.getDrawable(), R.color.colorPrimary);
+            buttonHelpers.setImageResource(R.drawable.ic_orang);
         }
     }
 
