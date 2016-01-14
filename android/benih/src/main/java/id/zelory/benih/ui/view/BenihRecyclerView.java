@@ -48,6 +48,13 @@ public class BenihRecyclerView extends RecyclerView {
         setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
+    public void setUpAsBottomList() {
+        setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setStackFromEnd(true);
+        setLayoutManager(layoutManager);
+    }
+
     public void setUpAsHorizontalList() {
         setHasFixedSize(true);
         setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));

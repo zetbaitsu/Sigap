@@ -20,16 +20,21 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.CandidateHelper;
+import id.satusatudua.sigap.data.model.Message;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.ui.adapter.ChatAdapter;
 import id.satusatudua.sigap.ui.adapter.HelperAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
@@ -45,10 +50,13 @@ import timber.log.Timber;
  */
 public class ChatFragment extends BenihFragment {
 
+    @Bind(R.id.list_message) BenihRecyclerView listMessage;
     @Bind(R.id.list_helper) BenihRecyclerView listHelper;
     @Bind(R.id.button_helpers) ImageView buttonHelpers;
     @Bind(R.id.divider) View divider;
+    @Bind(R.id.field_message) EditText messageField;
 
+    private ChatAdapter chatAdapter;
     private HelperAdapter helperAdapter;
 
     @Override
@@ -58,11 +66,36 @@ public class ChatFragment extends BenihFragment {
 
     @Override
     protected void onViewReady(@Nullable Bundle savedInstanceState) {
+
+        chatAdapter = new ChatAdapter(getActivity());
+        listMessage.setUpAsBottomList();
+        listMessage.setAdapter(chatAdapter);
+        chatAdapter.add(generateMessages());
+
         helperAdapter = new HelperAdapter(getActivity());
         listHelper.setUpAsHorizontalList();
         listHelper.setAdapter(helperAdapter);
         helperAdapter.setOnItemClickListener((view, position) -> onItemHelperClicked(helperAdapter.getData().get(position)));
         helperAdapter.add(generateDummyData());
+    }
+
+    private List<Message> generateMessages() {
+        List<Message> messages = new ArrayList<>();
+
+        Message message = new Message();
+        message.setMessageId("1");
+        message.setContent("Halo apa kabar?");
+        message.setDate(new Date());
+        message.setFromMe(false);
+        message.setSenderId("1");
+        User sender = new User();
+        sender.setUserId("1");
+        sender.setName("Rya Meyvriska");
+        message.setSender(sender);
+
+        messages.add(message);
+
+        return messages;
     }
 
     private void onItemHelperClicked(CandidateHelper candidateHelper) {
@@ -71,7 +104,25 @@ public class ChatFragment extends BenihFragment {
 
     @OnClick(R.id.button_send)
     public void sendMessage() {
+        String content = messageField.getText().toString();
+        if (!content.isEmpty()) {
+            messageField.setText("");
+            chatAdapter.add(generateTempMessage(content));
+            listMessage.post(() -> listMessage.smoothScrollToPosition(chatAdapter.getItemCount() - 1));
+        }
+    }
 
+    private Message generateTempMessage(String content) {
+        User currentUser = CacheManager.pluck().getCurrentUser();
+        Message message = new Message();
+        message.setMessageId(chatAdapter.getItemCount() + "");
+        message.setContent(content);
+        message.setDate(new Date());
+        message.setFromMe(true);
+        message.setSenderId(currentUser.getUserId());
+        message.setSender(currentUser);
+
+        return message;
     }
 
     @OnClick(R.id.button_helpers)
