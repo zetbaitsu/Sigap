@@ -30,18 +30,24 @@ import java.util.Date;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class Message implements Parcelable {
-    private String userId;
+    private String messageId;
+    private String senderId;
     private Date date;
     private String content;
+    private User sender;
+    private boolean fromMe;
 
     public Message() {
 
     }
 
     protected Message(Parcel in) {
-        userId = in.readString();
+        messageId = in.readString();
+        senderId = in.readString();
         date = new Date(in.readLong());
         content = in.readString();
+        sender = in.readParcelable(User.class.getClassLoader());
+        fromMe = in.readByte() != 0;
     }
 
     public static final Creator<Message> CREATOR = new Creator<Message>() {
@@ -56,12 +62,20 @@ public class Message implements Parcelable {
         }
     };
 
-    public String getUserId() {
-        return userId;
+    public String getMessageId() {
+        return messageId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
     public Date getDate() {
@@ -80,9 +94,37 @@ public class Message implements Parcelable {
         this.content = content;
     }
 
+    public User getSender() {
+        return sender;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+
+    public boolean isFromMe() {
+        return fromMe;
+    }
+
+    public void setFromMe(boolean fromMe) {
+        this.fromMe = fromMe;
+    }
+
     @Override
     public boolean equals(Object o) {
-        return o instanceof Message && ((Message) o).userId.equals(userId);
+        return o instanceof Message && ((Message) o).messageId.equals(messageId);
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "messageId='" + messageId + '\'' +
+                ", senderId='" + senderId + '\'' +
+                ", date=" + date +
+                ", content='" + content + '\'' +
+                ", sender=" + sender +
+                ", fromMe=" + fromMe +
+                '}';
     }
 
     @Override
@@ -92,17 +134,11 @@ public class Message implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(userId);
+        dest.writeString(messageId);
+        dest.writeString(senderId);
         dest.writeLong(date.getTime());
         dest.writeString(content);
-    }
-
-    @Override
-    public String toString() {
-        return "Message{" +
-                "userId='" + userId + '\'' +
-                ", date=" + date +
-                ", content='" + content + '\'' +
-                '}';
+        dest.writeParcelable(sender, flags);
+        dest.writeByte((byte) (fromMe ? 1 : 0));
     }
 }

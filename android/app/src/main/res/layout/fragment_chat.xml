@@ -19,11 +19,77 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/text"
+    <id.zelory.benih.ui.view.BenihRecyclerView
+        android:id="@+id/list_helper"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"/>
+
+    <id.zelory.benih.ui.view.BenihRecyclerView
+        android:id="@+id/list_message"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/light_grey"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/button_helpers"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                android:padding="8dp"
+                android:src="@drawable/ic_orang"
+                android:tint="@color/divider"/>
+
+            <EditText
+                android:id="@+id/field_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="Tulis pesan disini..."
+                android:imeOptions="actionSend"
+                android:inputType="textAutoComplete|textLongMessage|textMultiLine"
+                android:maxLines="5"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="12dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_balon"
+            android:tint="@color/light_grey"/>
+
+        <ImageView
+            android:id="@+id/button_send"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="bottom"
+            android:src="@drawable/ic_send"/>
+
+    </LinearLayout>
 
 </LinearLayout>
