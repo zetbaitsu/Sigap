@@ -19,6 +19,7 @@ package id.satusatudua.sigap.ui.adapter.viewholder;
 import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -44,6 +45,7 @@ public class MessageViewHolder extends BenihItemViewHolder<Message> {
     @Bind(R.id.date) TextView date;
     @Bind(R.id.time) TextView time;
     @Bind(R.id.message) TextView content;
+    @Nullable @Bind(R.id.icon_check) ImageView checkIcon;
     @Nullable @Bind(R.id.sender) TextView sender;
 
     private boolean showDate;
@@ -74,6 +76,10 @@ public class MessageViewHolder extends BenihItemViewHolder<Message> {
             sender.setText("~Sigap");
         } else if (!message.isFromMe() && sender != null) {
             sender.setText("~" + message.getSender().getName());
+        }
+
+        if (checkIcon != null) {
+            checkIcon.setImageResource(message.isSending() ? R.drawable.ic_non_centang : R.drawable.ic_centang);
         }
     }
 }

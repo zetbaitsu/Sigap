@@ -133,7 +133,7 @@ public class ChatPresenter extends BenihPresenter<ChatPresenter.View> {
         String messageId = api.child("caseMessages").child(theCase.getCaseId()).push().getKey();
         Message message = generateTempMessage(content);
         message.setMessageId(messageId);
-
+        message.setSending(true);
         view.onSendingMessage(message);
 
         Map<String, Object> msgData = new HashMap<>();
@@ -152,6 +152,7 @@ public class ChatPresenter extends BenihPresenter<ChatPresenter.View> {
                     view.showError("Gagal mengirimkan pesan!");
                 }
             } else {
+                message.setSending(false);
                 if (view != null) {
                     view.onSuccessSendMessage(message);
                 }
