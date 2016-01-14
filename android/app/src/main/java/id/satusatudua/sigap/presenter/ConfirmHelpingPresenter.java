@@ -23,6 +23,7 @@ import java.util.Map;
 
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.util.MapUtils;
@@ -126,6 +127,8 @@ public class ConfirmHelpingPresenter extends BenihPresenter<ConfirmHelpingPresen
                 User currentUser = CacheManager.pluck().getCurrentUser();
                 currentUser.setStatus(User.Status.MENOLONG);
                 CacheManager.pluck().cacheCurrentUser(currentUser);
+                StateManager.pluck().setState(StateManager.State.MENOLONG);
+                CacheManager.pluck().cacheHelpingCase(theCase, reporter);
 
                 if (view != null) {
                     view.onConfirmed(theCase, reporter);

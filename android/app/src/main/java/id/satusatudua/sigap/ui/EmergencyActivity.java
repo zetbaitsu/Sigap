@@ -31,6 +31,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.satusatudua.sigap.data.model.ImportantContact;
@@ -93,6 +94,7 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
                 });
 
         helperAdapter = new HelperAdapter(this);
+        helperAdapter.add(transformReporter());
         listHelper.setUpAsHorizontalList();
         listHelper.setAdapter(helperAdapter);
         helperAdapter.setOnItemClickListener((view, position) -> onItemHelperClicked(helperAdapter.getData().get(position)));
@@ -108,6 +110,15 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
         } else {
             presenter.loadState(savedInstanceState);
         }
+    }
+
+    private CandidateHelper transformReporter() {
+        CandidateHelper reporter = new CandidateHelper();
+        reporter.setCandidate(CacheManager.pluck().getCurrentUser());
+        reporter.setCandidateId(CacheManager.pluck().getCurrentUser().getUserId());
+        reporter.setStatus(CandidateHelper.Status.MENOLONG);
+        Timber.d("Reporter: " + reporter);
+        return reporter;
     }
 
     private void onItemHelperClicked(CandidateHelper candidateHelper) {

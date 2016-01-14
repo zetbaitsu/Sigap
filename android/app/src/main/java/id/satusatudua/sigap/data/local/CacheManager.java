@@ -148,4 +148,19 @@ public enum CacheManager {
         String json = sharedPreferences.getString("last_case", "");
         return Bson.pluck().getParser().fromJson(json, Case.class);
     }
+
+    public void cacheHelpingCase(Case theCase, User reporter) {
+        sharedPreferences.edit().putString("helping_case", Bson.pluck().getParser().toJson(theCase)).apply();
+        sharedPreferences.edit().putString("last_case_reporter", Bson.pluck().getParser().toJson(reporter)).apply();
+    }
+
+    public Case getLastHelpingCase() {
+        String json = sharedPreferences.getString("helping_case", "");
+        return Bson.pluck().getParser().fromJson(json, Case.class);
+    }
+
+    public User getLastCaseReporter() {
+        String json = sharedPreferences.getString("last_case_reporter", "");
+        return Bson.pluck().getParser().fromJson(json, User.class);
+    }
 }

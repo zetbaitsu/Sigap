@@ -36,6 +36,7 @@ public class Message implements Parcelable {
     private String content;
     private User sender;
     private boolean fromMe;
+    private boolean sending;
 
     public Message() {
 
@@ -48,6 +49,7 @@ public class Message implements Parcelable {
         content = in.readString();
         sender = in.readParcelable(User.class.getClassLoader());
         fromMe = in.readByte() != 0;
+        sending = in.readByte() != 0;
     }
 
     public static final Creator<Message> CREATOR = new Creator<Message>() {
@@ -110,6 +112,14 @@ public class Message implements Parcelable {
         this.fromMe = fromMe;
     }
 
+    public boolean isSending() {
+        return sending;
+    }
+
+    public void setSending(boolean sending) {
+        this.sending = sending;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof Message && ((Message) o).messageId.equals(messageId);
@@ -124,6 +134,7 @@ public class Message implements Parcelable {
                 ", content='" + content + '\'' +
                 ", sender=" + sender +
                 ", fromMe=" + fromMe +
+                ", sending=" + sending +
                 '}';
     }
 
@@ -140,5 +151,6 @@ public class Message implements Parcelable {
         dest.writeString(content);
         dest.writeParcelable(sender, flags);
         dest.writeByte((byte) (fromMe ? 1 : 0));
+        dest.writeByte((byte) (sending ? 1 : 0));
     }
 }

@@ -70,7 +70,9 @@ public class MessageViewHolder extends BenihItemViewHolder<Message> {
         time.setText(new SimpleDateFormat("hh:mm").format(message.getDate()));
         content.setText(message.getContent());
 
-        if (!message.isFromMe() && sender != null) {
+        if (message.getSenderId().equals("Sigap") && sender != null) {
+            sender.setText("~Sigap");
+        } else if (!message.isFromMe() && sender != null) {
             sender.setText("~" + message.getSender().getName());
         }
     }

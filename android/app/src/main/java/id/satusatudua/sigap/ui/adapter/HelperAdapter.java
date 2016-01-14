@@ -46,4 +46,14 @@ public class HelperAdapter extends BenihRecyclerAdapter<CandidateHelper, HelperV
     public HelperViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new HelperViewHolder(getView(parent, viewType), itemClickListener, longItemClickListener);
     }
+
+    @Override
+    public void onBindViewHolder(HelperViewHolder holder, int position) {
+        if (position == 0) {
+            holder.setReporter(true);
+        } else {
+            holder.setReporter(false);
+        }
+        super.onBindViewHolder(holder, position);
+    }
 }

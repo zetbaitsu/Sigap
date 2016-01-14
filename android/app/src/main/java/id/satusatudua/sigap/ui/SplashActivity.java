@@ -21,7 +21,10 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.local.StateManager;
+import id.satusatudua.sigap.data.model.Case;
+import id.satusatudua.sigap.data.model.User;
 import id.zelory.benih.ui.BenihActivity;
 
 /**
@@ -66,7 +69,9 @@ public class SplashActivity extends BenihActivity {
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, AddTrustedUserActivity.class)), 1800);
                 break;
             case MENOLONG:
-                new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, HelpingActivity.class)), 1800);
+                Case theCase = CacheManager.pluck().getLastHelpingCase();
+                User reporter = CacheManager.pluck().getLastCaseReporter();
+                new Handler().postDelayed(() -> startActivity(HelpingActivity.generateIntent(this, theCase, reporter)), 1800);
                 break;
             case LOGOUT:
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, LoginActivity.class)), 1800);
