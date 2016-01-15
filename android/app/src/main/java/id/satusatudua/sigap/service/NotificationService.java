@@ -105,7 +105,8 @@ public class NotificationService extends Service {
                     .setStyle(new android.support
                             .v4.app.NotificationCompat
                             .BigTextStyle()
-                                      .bigText(danger ? content : "Isi pesan: " + content))
+                                      .bigText(danger ? content :
+                                                       "Seseorang mengirimkan pesan baru kedalam percakapan\nIsi pesan: " + content))
                     .setContentIntent(pendingIntent)
                     .build();
 
