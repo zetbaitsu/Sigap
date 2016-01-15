@@ -136,9 +136,10 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
                 .setTitle("Klarifikasi")
                 .setMessage("Apakah kamu yakin kamu telah selamat?")
                 .setPositiveButton("YA, Saya Selamat", (dialog, which) -> {
-                    StateManager.pluck().setState(StateManager.State.LOGGED);
+                    startActivity(CloseCaseActivity.generateIntent(this, presenter.getTheCase(), presenter.getHelpers()));
+                    //StateManager.pluck().setState(StateManager.State.LOGGED);
                     dialog.dismiss();
-                    onBackPressed();
+                    //onBackPressed();
                 })
                 .setNegativeButton("TIDAK", (dialog, which1) -> {
                     dialog.dismiss();

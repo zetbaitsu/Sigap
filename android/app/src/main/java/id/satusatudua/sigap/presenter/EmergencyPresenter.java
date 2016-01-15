@@ -281,6 +281,13 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                 });
     }
 
+    public Case getTheCase() {
+        return theCase;
+    }
+
+    public List<CandidateHelper> getHelpers() {
+        return candidateHelpers;
+    }
 
     @Override
     public void saveState(Bundle bundle) {
