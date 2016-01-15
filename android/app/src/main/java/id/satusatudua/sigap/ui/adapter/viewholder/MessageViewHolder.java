@@ -70,14 +70,22 @@ public class MessageViewHolder extends BenihItemViewHolder<Message> {
         }
 
         time.setText(new SimpleDateFormat("HH:mm").format(message.getDate()));
-        content.setText(message.getContent());
 
-        if (message.getSenderId().equals("Sigap") && sender != null) {
-            sender.setText("~Sigap");
-        } else if (!message.isFromMe() && sender != null) {
-            sender.setText("~" + message.getSender().getName());
+        if (message.getContent().startsWith("[DANGER]") && message.getContent().endsWith("[/DANGER]")) {
+            content.setText(message.getContent().replace("[DANGER]", "").replace("[/DANGER]", ""));
+        } else {
+            content.setText(message.getContent());
         }
 
+        if (sender != null) {
+            if (message.getSenderId().equals("Sigap")) {
+                sender.setText("~Sigap");
+            } else if (message.getContent().startsWith("[DANGER]") && message.getContent().endsWith("[/DANGER]")) {
+                sender.setText("~" + message.getSender().getName());
+            } else if (!message.isFromMe()) {
+                sender.setText("~" + message.getSender().getName());
+            }
+        }
         if (checkIcon != null) {
             checkIcon.setImageResource(message.isSending() ? R.drawable.ic_non_centang : R.drawable.ic_centang);
         }

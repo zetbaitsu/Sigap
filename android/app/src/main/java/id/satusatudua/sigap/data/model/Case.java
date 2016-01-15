@@ -36,6 +36,7 @@ public class Case implements Parcelable {
     private Status status;
     private double latitude;
     private double longitude;
+    private String detail;
 
     public Case() {
 
@@ -47,6 +48,7 @@ public class Case implements Parcelable {
         status = Status.valueOf(in.readString());
         latitude = in.readDouble();
         longitude = in.readDouble();
+        detail = in.readString();
     }
 
     public static final Creator<Case> CREATOR = new Creator<Case>() {
@@ -109,6 +111,14 @@ public class Case implements Parcelable {
         this.longitude = longitude;
     }
 
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof Case && ((Case) o).caseId.equals(caseId);
@@ -126,6 +136,7 @@ public class Case implements Parcelable {
         dest.writeString(status.name());
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
+        dest.writeString(detail);
     }
 
     @Override
@@ -137,6 +148,7 @@ public class Case implements Parcelable {
                 ", status=" + status +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
+                ", detail='" + detail + '\'' +
                 '}';
     }
 

@@ -36,6 +36,7 @@ import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.Message;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.ChatPresenter;
+import id.satusatudua.sigap.ui.HelpingActivity;
 import id.satusatudua.sigap.ui.MainActivity;
 import id.satusatudua.sigap.ui.adapter.ChatAdapter;
 import id.satusatudua.sigap.ui.adapter.HelperAdapter;
@@ -156,11 +157,20 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
 
     @OnClick(R.id.button_send)
     public void sendMessage() {
-        String content = messageField.getText().toString();
-        if (!content.isEmpty()) {
-            messageField.setText("");
-            chatPresenter.sendMessage(content);
+        if (theCase.getStatus() != Case.Status.DITUTUP) {
+            String content = messageField.getText().toString();
+            if (!content.isEmpty()) {
+                messageField.setText("");
+                chatPresenter.sendMessage(content);
+            }
+        } else {
+            HelpingActivity activity = (HelpingActivity) getActivity();
+            activity.onCaseClosed(theCase);
         }
+    }
+
+    public void sendDangerMessage() {
+        chatPresenter.sendMessage("[DANGER]BAHAYA!!!! BAHAYA!!! BAHAYA!!! SEGERA HUBUNGI PIHAK BERWAJIB!!!!![/DANGER]");
     }
 
     @OnClick(R.id.button_helpers)

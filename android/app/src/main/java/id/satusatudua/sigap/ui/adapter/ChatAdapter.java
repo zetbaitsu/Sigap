@@ -36,6 +36,7 @@ import id.zelory.benih.ui.adapter.BenihRecyclerAdapter;
 public class ChatAdapter extends BenihRecyclerAdapter<Message, MessageViewHolder> {
     private static final int TYPE_MESSAGE_ME = 1;
     private static final int TYPE_MESSAGE_OTHER = 2;
+    private static final int TYPE_MESSAGE_DANGER = 3;
 
     public ChatAdapter(Context context) {
         super(context);
@@ -43,11 +44,18 @@ public class ChatAdapter extends BenihRecyclerAdapter<Message, MessageViewHolder
 
     @Override
     public int getItemViewType(int position) {
+        Message message = data.get(position);
+        if (message.getContent().startsWith("[DANGER]") && message.getContent().endsWith("[/DANGER]")) {
+            return TYPE_MESSAGE_DANGER;
+        }
         return data.get(position).isFromMe() ? TYPE_MESSAGE_ME : TYPE_MESSAGE_OTHER;
     }
 
     @Override
     protected int getItemResourceLayout(int viewType) {
+        if (viewType == TYPE_MESSAGE_DANGER) {
+            return R.layout.item_message_danger;
+        }
         return viewType == TYPE_MESSAGE_ME ? R.layout.item_message_me : R.layout.item_message;
     }
 

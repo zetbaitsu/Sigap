@@ -67,6 +67,9 @@
         <activity
             android:name=".ui.CloseCaseActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.FeedbackCaseActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>

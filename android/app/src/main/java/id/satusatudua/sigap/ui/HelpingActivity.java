@@ -16,13 +16,15 @@
 
 package id.satusatudua.sigap.ui;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +34,7 @@ import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.presenter.HelpingPresenter;
 import id.satusatudua.sigap.ui.adapter.HelpingPagerAdapter;
 import id.satusatudua.sigap.ui.fragment.ChatFragment;
 import id.satusatudua.sigap.ui.fragment.ImportantContactFragment;
@@ -46,7 +49,7 @@ import id.zelory.benih.ui.fragment.BenihFragment;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class HelpingActivity extends BenihActivity {
+public class HelpingActivity extends BenihActivity implements HelpingPresenter.View {
     private static final String KEY_CASE = "extra_case";
     private static final String KEY_REPORTER = "extra_reporter";
 
@@ -55,6 +58,7 @@ public class HelpingActivity extends BenihActivity {
 
     private Case theCase;
     private User reporter;
+    private HelpingPagerAdapter helpingPagerAdapter;
 
     public static Intent generateIntent(Context context, Case theCase, User reporter) {
         Intent intent = new Intent(context, HelpingActivity.class);
@@ -74,9 +78,16 @@ public class HelpingActivity extends BenihActivity {
         resolveTheCase(savedInstanceState);
         resolveReporter(savedInstanceState);
 
-        HelpingPagerAdapter helpingPagerAdapter = new HelpingPagerAdapter(getSupportFragmentManager(), getFragments());
+        helpingPagerAdapter = new HelpingPagerAdapter(getSupportFragmentManager(), getFragments());
         viewPager.setAdapter(helpingPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+        if (theCase.getStatus() == Case.Status.DITUTUP) {
+            onCaseClosed(theCase);
+        } else {
+            HelpingPresenter presenter = new HelpingPresenter(this, theCase);
+            presenter.refreshData();
+        }
     }
 
     private void resolveTheCase(Bundle savedInstanceState) {
@@ -111,7 +122,8 @@ public class HelpingActivity extends BenihActivity {
 
     @OnClick(R.id.button_danger)
     public void danger() {
-        Toast.makeText(this, "Danger", Toast.LENGTH_SHORT).show();
+        ChatFragment chatFragment = (ChatFragment) helpingPagerAdapter.getItem(0);
+        chatFragment.sendDangerMessage();
     }
 
     @OnClick(R.id.button_map)
@@ -128,5 +140,38 @@ public class HelpingActivity extends BenihActivity {
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_CASE, theCase);
         outState.putParcelable(KEY_REPORTER, reporter);
+    }
+
+    @Override
+    public void onCaseClosed(Case theCase) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle("Pelapor Selamat")
+                .setMessage("Pelapor telah menyatakan bahwa dia selamat, terimakasih atas partisipasi anda.")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    startActivity(FeedbackCaseActivity.generateIntent(this, theCase));
+                    dialog.dismiss();
+                })
+                .setCancelable(false)
+                .show();
+
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        alertDialog.show();
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void dismissLoading() {
+
     }
 }
