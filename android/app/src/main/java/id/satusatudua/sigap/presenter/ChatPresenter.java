@@ -196,6 +196,7 @@ public class ChatPresenter extends BenihPresenter<ChatPresenter.View> {
 
                     return message;
                 })
+                .doOnNext(message -> CacheManager.pluck().cacheLastMessageTime(message.getDate().getTime()))
                 .subscribe(message -> {
                     if (view != null) {
                         view.onNewMessage(message);

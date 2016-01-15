@@ -32,7 +32,10 @@ import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.SigapApp;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.model.Case;
+import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.ui.ConfirmTrustedOfActivity;
+import id.satusatudua.sigap.ui.HelpingActivity;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.util.BenihUtils;
 import timber.log.Timber;
@@ -60,6 +63,54 @@ public class NotificationService extends Service {
         Timber.d(getClass().getSimpleName() + " is creating");
 
         listenTrustedOf();
+        listenNewMessage();
+    }
+
+    private void listenNewMessage() {
+        User currentUser = CacheManager.pluck().getCurrentUser();
+        CacheManager.pluck()
+                .listenLastHelpingCase()
+                .filter(theCase -> theCase.getStatus() != Case.Status.DITUTUP)
+                .flatMap(theCase -> RxFirebase.observeChildAdded(FirebaseApi.pluck().caseMessages(theCase.getCaseId()))
+                        .map(firebaseChildEvent -> firebaseChildEvent.snapshot))
+                .filter(dataSnapshot -> dataSnapshot.child("date").getValue(Long.class) > CacheManager.pluck().getLastMessageTime())
+                .filter(dataSnapshot -> !dataSnapshot.child("userId").getValue().toString().equals(currentUser.getUserId()))
+                .doOnNext(dataSnapshot -> CacheManager.pluck().cacheLastMessageTime(dataSnapshot.child("date").getValue(Long.class)))
+                .subscribe(this::showNewMessageNotif, throwable -> Timber.e(throwable.getMessage()));
+    }
+
+    private void showNewMessageNotif(DataSnapshot dataSnapshot) {
+        if (!BenihUtils.isMyAppRunning(getApplicationContext(), getPackageName())) {
+            String content = dataSnapshot.child("content").getValue().toString();
+            boolean danger = false;
+            if (content.startsWith("[DANGER]") && content.endsWith("[/DANGER]")) {
+                danger = true;
+                content = content.replace("[DANGER]", "").replace("[/DANGER]", "");
+            }
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                                                                    HelpingActivity
+                                                                            .generateIntent(this,
+                                                                                            CacheManager.pluck().getLastHelpingCase(),
+                                                                                            CacheManager.pluck().getLastCaseReporter()),
+                                                                    PendingIntent.FLAG_UPDATE_CURRENT);
+            Notification notification = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle("Sigap")
+                    .setContentText(danger ? content : "Seseorang mengirimkan pesan baru kedalam percakapan!")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                    .setVibrate(new long[]{100, 300, 500, 1000})
+                    .setAutoCancel(true)
+                    .setStyle(new android.support
+                            .v4.app.NotificationCompat
+                            .BigTextStyle()
+                                      .bigText(danger ? content : "Isi pesan: " + content))
+                    .setContentIntent(pendingIntent)
+                    .build();
+
+            NotificationManagerCompat
+                    .from(SigapApp.pluck().getApplicationContext())
+                    .notify(396, notification);
+        }
     }
 
     private void listenTrustedOf() {

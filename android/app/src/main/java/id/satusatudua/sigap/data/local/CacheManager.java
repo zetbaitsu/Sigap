@@ -159,8 +159,22 @@ public enum CacheManager {
         return Bson.pluck().getParser().fromJson(json, Case.class);
     }
 
+    public Observable<Case> listenLastHelpingCase() {
+        return rxPreferences.getString("helping_case", "")
+                .asObservable()
+                .map(s -> Bson.pluck().getParser().fromJson(s, Case.class));
+    }
+
     public User getLastCaseReporter() {
         String json = sharedPreferences.getString("last_case_reporter", "");
         return Bson.pluck().getParser().fromJson(json, User.class);
+    }
+
+    public void cacheLastMessageTime(long time) {
+        sharedPreferences.edit().putLong("last_time_message", time).apply();
+    }
+
+    public long getLastMessageTime() {
+        return sharedPreferences.getLong("last_time_message", 0);
     }
 }
