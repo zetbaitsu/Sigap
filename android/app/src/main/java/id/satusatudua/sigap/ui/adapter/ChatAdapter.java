@@ -34,8 +34,8 @@ import id.zelory.benih.ui.adapter.BenihRecyclerAdapter;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class ChatAdapter extends BenihRecyclerAdapter<Message, MessageViewHolder> {
-    private final int TYPE_MESSAGE_ME = 1;
-    private final int TYPE_MESSAGE_OTHER = 2;
+    private static final int TYPE_MESSAGE_ME = 1;
+    private static final int TYPE_MESSAGE_OTHER = 2;
 
     public ChatAdapter(Context context) {
         super(context);
