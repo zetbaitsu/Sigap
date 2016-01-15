@@ -78,8 +78,11 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="12dp"
             android:layout_marginStart="10dp"
+            android:autoLink="web"
+            android:linksClickable="true"
             android:minWidth="32dp"
             android:textColor="@color/primary_text"
+            android:textColorLink="@color/primary_text"
             android:textSize="16sp"/>
 
         <TextView
