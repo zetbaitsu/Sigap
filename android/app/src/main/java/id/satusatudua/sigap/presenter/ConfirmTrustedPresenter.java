@@ -48,7 +48,9 @@ public class ConfirmTrustedPresenter extends BenihPresenter<ConfirmTrustedPresen
     public void loadUser(String userId) {
         view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().users(userId))
+                .doOnNext(dataSnapshot -> Timber.d("Load data: " + dataSnapshot))
                 .map(dataSnapshot -> dataSnapshot.getValue(User.class))
+                .doOnNext(user -> Timber.d("Adding me: " + user))
                 .subscribe(user -> {
                     if (view != null) {
                         view.showUser(user);

@@ -45,7 +45,7 @@ public class SplashActivity extends BenihActivity {
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
 
-        //StateManager.pluck().setState(StateManager.State.MENOLONG);
+        //StateManager.pluck().setState(StateManager.State.ADDING_TRUSTED_USER);
 
         sendBroadcast(new Intent("id.satusatudua.sigap.ACTION_START"));
 

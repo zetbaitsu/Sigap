@@ -30,6 +30,7 @@ import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.ConfirmTrustedPresenter;
 import id.zelory.benih.ui.BenihActivity;
+import timber.log.Timber;
 
 /**
  * Created on : January 13, 2016
@@ -95,6 +96,7 @@ public class ConfirmTrustedOfActivity extends BenihActivity implements
 
     @Override
     public void showUser(User user) {
+        Timber.d("Show user: " + user);
         desc.setText(Html.fromHtml("Pengguna bernama <b>" + user.getName() + "</b> dengan email <b>" + user.getEmail() + "</b> memasukan anda kedalam daftar kontak yang ia percaya. Apakah anda bersedia untuk menerimanya?"));
     }
 
