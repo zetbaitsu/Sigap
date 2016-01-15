@@ -28,7 +28,6 @@ import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.data.model.UserLocation;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
-import id.zelory.benih.util.BenihScheduler;
 import rx.Observable;
 import timber.log.Timber;
 
@@ -53,9 +52,7 @@ public class FindHelperPresenter extends BenihPresenter<FindHelperPresenter.View
             view.dismissLoading();
         } else {
             Observable.from(nearbyUsers)
-                    .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                     .map(userLocation -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userLocation.getUserId()))
-                            .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                             .map(dataSnapshot -> dataSnapshot.getValue(User.class)))
                     .flatMap(userObservable -> userObservable)
                     .filter(user -> user.getStatus() == User.Status.SIAP)

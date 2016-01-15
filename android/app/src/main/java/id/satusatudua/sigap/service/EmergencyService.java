@@ -36,7 +36,6 @@ import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.ui.ConfirmHelpingActivity;
 import id.satusatudua.sigap.util.RxFirebase;
-import id.zelory.benih.util.BenihScheduler;
 import id.zelory.benih.util.BenihUtils;
 import timber.log.Timber;
 
@@ -68,7 +67,6 @@ public class EmergencyService extends Service {
     private void listenEmergency() {
         if (CacheManager.pluck().getUserLocation() != null) {
             RxFirebase.observeChildAdded(FirebaseApi.pluck().userHelps(CacheManager.pluck().getCurrentUser().getUserId()))
-                    .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                     .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
                     .map(DataSnapshot::getKey)
                     .subscribe(caseId -> {

@@ -26,7 +26,6 @@ import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
-import id.zelory.benih.util.BenihScheduler;
 import timber.log.Timber;
 
 /**
@@ -49,7 +48,6 @@ public class ConfirmTrustedPresenter extends BenihPresenter<ConfirmTrustedPresen
     public void loadUser(String userId) {
         view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().users(userId))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                 .subscribe(user -> {
                     if (view != null) {

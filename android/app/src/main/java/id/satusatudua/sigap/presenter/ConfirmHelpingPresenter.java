@@ -54,7 +54,6 @@ public class ConfirmHelpingPresenter extends BenihPresenter<ConfirmHelpingPresen
     public void loadCaseData(String caseId) {
         view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().cases(caseId))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(dataSnapshot -> dataSnapshot.getValue(Case.class))
                 .subscribe(theCase -> {
                     this.theCase = theCase;
@@ -92,7 +91,6 @@ public class ConfirmHelpingPresenter extends BenihPresenter<ConfirmHelpingPresen
     public void loadReporterData(Case theCase) {
         view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().users(theCase.getUserId()))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                 .subscribe(user -> {
                     reporter = user;

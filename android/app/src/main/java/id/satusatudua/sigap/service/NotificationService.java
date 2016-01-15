@@ -34,7 +34,6 @@ import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.ui.ConfirmTrustedOfActivity;
 import id.satusatudua.sigap.util.RxFirebase;
-import id.zelory.benih.util.BenihScheduler;
 import id.zelory.benih.util.BenihUtils;
 import timber.log.Timber;
 
@@ -65,7 +64,6 @@ public class NotificationService extends Service {
 
     private void listenTrustedOf() {
         RxFirebase.observeChildAdded(FirebaseApi.pluck().trustedOf(CacheManager.pluck().getCurrentUser().getUserId()))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
                 .filter(dataSnapshot -> dataSnapshot.child("status").getValue().equals("MENUNGGU"))
                 .map(DataSnapshot::getKey)
