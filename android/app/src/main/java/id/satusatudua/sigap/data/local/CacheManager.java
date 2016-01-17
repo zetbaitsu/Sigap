@@ -218,4 +218,12 @@ public enum CacheManager {
     public boolean isShakeToNotify() {
         return sharedPreferences.getBoolean("shaking", true);
     }
+
+    public void setShakeCount(int shakeCount) {
+        sharedPreferences.edit().putInt("shake_count", shakeCount).apply();
+    }
+
+    public int getShakeCount() {
+        return sharedPreferences.getInt("shake_count", 3);
+    }
 }

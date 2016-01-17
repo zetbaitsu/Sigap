@@ -24,4 +24,11 @@
     <string name="masukan_email_hint">Masukan email kontak terpercaya anda</string>
     <string name="tambah_kontak">TAMBAHKAN KONTAK</string>
     <string name="daftar_kontak">Daftar Kontak Terpercaya</string>
+
+    <string-array name="shake_count">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
 </resources>
