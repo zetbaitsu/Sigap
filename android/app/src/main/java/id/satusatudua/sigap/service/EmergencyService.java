@@ -21,7 +21,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
@@ -89,8 +89,8 @@ public class EmergencyService extends Service {
                 .setContentText("Seseorang membutuhkan bantuan mu!!!")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                .setVibrate(new long[]{100, 300, 500, 1000})
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setVibrate(CacheManager.pluck().isVibrate() ? new long[]{100, 300, 500, 1000} : new long[]{})
+                .setSound(Uri.parse(CacheManager.pluck().getRingtone()))
                 .setAutoCancel(true)
                 .setStyle(new android.support
                         .v4.app.NotificationCompat
