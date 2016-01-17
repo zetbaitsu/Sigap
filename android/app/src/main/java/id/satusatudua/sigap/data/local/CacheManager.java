@@ -19,6 +19,7 @@ package id.satusatudua.sigap.data.local;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
 
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.google.gson.reflect.TypeToken;
@@ -176,5 +177,45 @@ public enum CacheManager {
 
     public long getLastMessageTime() {
         return sharedPreferences.getLong("last_time_message", 0);
+    }
+
+    public void setRingtone(String path) {
+        sharedPreferences.edit().putString("ringtone", path).apply();
+    }
+
+    public String getRingtone() {
+        return sharedPreferences.getString("ringtone", RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString());
+    }
+
+    public void setVibrate(boolean isVibrate) {
+        sharedPreferences.edit().putBoolean("vibrate", isVibrate).apply();
+    }
+
+    public boolean isVibrate() {
+        return sharedPreferences.getBoolean("vibrate", true);
+    }
+
+    public void setNotifyNearby(boolean isNotifyNearby) {
+        sharedPreferences.edit().putBoolean("notify_nearby", isNotifyNearby).apply();
+    }
+
+    public boolean isNotifyNearby() {
+        return sharedPreferences.getBoolean("notify_nearby", true);
+    }
+
+    public void setShowOnStatusBar(boolean isShowOnStatusBar) {
+        sharedPreferences.edit().putBoolean("show_status_bar", isShowOnStatusBar).apply();
+    }
+
+    public boolean isShowOnStatusBar() {
+        return sharedPreferences.getBoolean("show_status_bar", true);
+    }
+
+    public void setShakeToNotify(boolean isShakeToNotify) {
+        sharedPreferences.edit().putBoolean("shaking", isShakeToNotify).apply();
+    }
+
+    public boolean isShakeToNotify() {
+        return sharedPreferences.getBoolean("shaking", true);
     }
 }
