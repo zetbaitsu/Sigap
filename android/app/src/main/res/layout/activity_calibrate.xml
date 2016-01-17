@@ -42,65 +42,15 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="@color/white"/>
 
-            <TextView
-                android:id="@+id/button_save"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_margin="8dp"
-                android:gravity="center"
-                android:text="@string/simpan"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="14sp"/>
-
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
 
     <TextView
-        android:id="@+id/title_shake"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_toLeftOf="@+id/spinner"
-        android:layout_toStartOf="@+id/spinner"
-        android:text="Jumlah Shake"
-        android:textColor="@color/primary_text"
-        android:textSize="16sp"/>
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="48dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/title_shake"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:dropDownWidth="64dp"
-        android:entries="@array/shake_count"/>
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/title_shake"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/divider"/>
-
-    <TextView
         android:id="@+id/test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/divider"
+        android:layout_below="@+id/toolbar"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
@@ -117,7 +67,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:text="Goyangkan ponsel sebanyak 3 kali."
+        android:text="Silahkan Goyangkan ponsel anda."
         android:textColor="@color/secondary_text"
         android:textSize="12sp"/>
 
@@ -148,6 +98,7 @@
         android:layout_below="@+id/image"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
+        android:text="Berhasil"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp"
         android:textStyle="bold"

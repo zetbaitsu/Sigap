@@ -16,16 +16,16 @@
 
 package id.satusatudua.sigap.ui;
 
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.squareup.seismic.ShakeDetector;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.local.CacheManager;
 import id.zelory.benih.ui.BenihActivity;
 
 /**
@@ -36,14 +36,10 @@ import id.zelory.benih.ui.BenihActivity;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class CalibrateActivity extends BenihActivity {
+public class CalibrateActivity extends BenihActivity implements ShakeDetector.Listener {
 
-    @Bind(R.id.spinner) Spinner spinner;
-    @Bind(R.id.test_message) TextView testMessage;
     @Bind(R.id.shaking_image) ImageView shakingImage;
     @Bind(R.id.status) TextView status;
-
-    private int currentCount;
 
     @Override
     protected int getResourceLayout() {
@@ -52,21 +48,14 @@ public class CalibrateActivity extends BenihActivity {
 
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        ShakeDetector shakeDetector = new ShakeDetector(this);
+        shakeDetector.start(sensorManager);
+    }
 
-        int pos = CacheManager.pluck().getShakeCount() - 2;
-        testMessage.setText("Goyangkan ponsel sebanyak " + (pos + 2) + " kali.");
-        spinner.setSelection(pos);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                CacheManager.pluck().setShakeCount(position + 2);
-                testMessage.setText("Goyangkan ponsel sebanyak " + (position + 2) + " kali.");
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+    @Override
+    public void hearShake() {
+        shakingImage.setVisibility(View.VISIBLE);
+        status.setVisibility(View.VISIBLE);
     }
 }

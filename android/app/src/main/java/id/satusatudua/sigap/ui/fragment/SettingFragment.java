@@ -110,7 +110,9 @@ public class SettingFragment extends BenihFragment implements CurrentUserPresent
 
     @OnClick(R.id.calibrate)
     public void calibrate() {
-        startActivity(new Intent(getActivity(), CalibrateActivity.class));
+        if (CacheManager.pluck().isShakeToNotify()) {
+            startActivity(new Intent(getActivity(), CalibrateActivity.class));
+        }
     }
 
     @OnClick(R.id.feedback)
