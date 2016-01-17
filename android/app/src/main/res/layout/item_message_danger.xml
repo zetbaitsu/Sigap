@@ -32,18 +32,43 @@
         android:textSize="16sp"
         android:visibility="gone"/>
 
+    <ImageView
+        android:id="@+id/ballon"
+        android:layout_width="wrap_content"
+        android:layout_height="8dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/date"
+        android:adjustViewBounds="true"
+        android:scaleType="fitEnd"
+        android:src="@drawable/ic_grey_balon"
+        android:tint="@color/colorPrimary"/>
+
     <LinearLayout
-        android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/date"
-        android:layout_marginLeft="64dp"
-        android:layout_marginStart="64dp"
-        android:layout_toLeftOf="@+id/ballon"
-        android:layout_toStartOf="@+id/ballon"
-        android:background="@color/primary_light"
+        android:layout_marginEnd="64dp"
+        android:layout_marginRight="64dp"
+        android:layout_toEndOf="@+id/ballon"
+        android:layout_toRightOf="@+id/ballon"
+        android:background="@color/colorPrimary"
         android:gravity="center_vertical"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/sender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_marginBottom="3dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/light_grey"
+            android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/message"
@@ -53,12 +78,11 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="12dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="8dp"
             android:autoLink="web"
             android:linksClickable="true"
             android:minWidth="32dp"
-            android:textColor="@color/primary_text"
-            android:textColorLink="@color/primary_text"
+            android:textColor="@color/white"
+            android:textColorLink="@color/white"
             android:textSize="16sp"/>
 
         <TextView
@@ -70,33 +94,9 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="3dp"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/light_grey"
             android:textSize="12sp"/>
 
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/ballon"
-        android:layout_width="16dp"
-        android:layout_height="8dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/date"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitStart"
-        android:src="@drawable/ic_balon"
-        android:tint="@color/primary_light"/>
-
-    <ImageView
-        android:id="@+id/icon_check"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
-        android:layout_alignBottom="@+id/content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginStart="4dp"
-        android:layout_toEndOf="@+id/content"
-        android:layout_toRightOf="@+id/content"/>
 
 </RelativeLayout>

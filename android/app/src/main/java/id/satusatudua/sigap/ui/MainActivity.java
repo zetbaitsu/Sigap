@@ -1,25 +1,24 @@
 package id.satusatudua.sigap.ui;
 
-import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.model.User;
-import id.satusatudua.sigap.presenter.CurrentUserPresenter;
-import id.satusatudua.sigap.presenter.UserPresenter;
-import id.satusatudua.sigap.ui.adapter.UserAdapter;
+import id.satusatudua.sigap.ui.adapter.MainPagerAdapter;
+import id.satusatudua.sigap.ui.fragment.HistoriesFragment;
+import id.satusatudua.sigap.ui.fragment.ImportantContactFragment;
+import id.satusatudua.sigap.ui.fragment.SettingFragment;
+import id.satusatudua.sigap.ui.fragment.TrustedsFragment;
 import id.zelory.benih.ui.BenihActivity;
-import id.zelory.benih.ui.view.BenihRecyclerView;
-import timber.log.Timber;
+import id.zelory.benih.ui.fragment.BenihFragment;
 
 /**
  * Created on : November 22, 2015
@@ -30,17 +29,12 @@ import timber.log.Timber;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 
-public class MainActivity extends BenihActivity implements UserPresenter.View,
-        CurrentUserPresenter.View {
+public class MainActivity extends BenihActivity implements TabLayout.OnTabSelectedListener {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.fab) FloatingActionButton fab;
-    @Bind(R.id.recycler_view) BenihRecyclerView recyclerView;
-
-    private UserPresenter userPresenter;
-    private ProgressDialog progressDialog;
-    private UserAdapter userAdapter;
-    private CurrentUserPresenter currentUserPresenter;
+    @Bind(R.id.title) TextView title;
+    @Bind(R.id.tab_layout) TabLayout tabLayout;
+    @Bind(R.id.view_pager) ViewPager viewPager;
 
     @Override
     protected int getResourceLayout() {
@@ -50,124 +44,65 @@ public class MainActivity extends BenihActivity implements UserPresenter.View,
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
         setSupportActionBar(toolbar);
-
-        userAdapter = new UserAdapter(this);
-        userAdapter.setOnItemClickListener((view, position) -> {
-            Snackbar snackbar = Snackbar.make(recyclerView, "Item clicked: " + userAdapter.getData()
-                    .get(position).getName(), Snackbar.LENGTH_LONG);
-            snackbar.getView().setBackgroundResource(R.color.colorPrimary);
-            snackbar.show();
-        });
-
-        userAdapter.setOnLongItemClickListener((view, position) ->
-                                                       userPresenter.loadUser(userAdapter.getData().get(position).getUserId()));
-
-        recyclerView.setUpAsList();
-        recyclerView.setAdapter(userAdapter);
-
-        setupController(savedInstanceState);
-        currentUserPresenter = new CurrentUserPresenter(this);
-        //locationController = new LocationPresenter(this);
+        setUpViewPager();
+        setUpTabLayout();
     }
 
-    private void setupController(Bundle savedInstanceState) {
-        if (userPresenter == null) {
-            userPresenter = new UserPresenter(this);
-        }
+    private void setUpViewPager() {
+        List<BenihFragment> fragments = new ArrayList<>();
+        fragments.add(ImportantContactFragment.newInstance(true));
+        fragments.add(new TrustedsFragment());
+        fragments.add(new HistoriesFragment());
+        fragments.add(new SettingFragment());
 
-        if (savedInstanceState != null) {
-            userPresenter.loadState(savedInstanceState);
-        } else {
-            userPresenter.loadUsers();
-        }
+        MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager(), fragments);
+        viewPager.setAdapter(adapter);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    private void setUpTabLayout() {
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_grey_orang);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_grey_orang);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_grey_orang);
+        tabLayout.getTabAt(3).setIcon(R.drawable.ic_grey_orang);
+        tabLayout.setOnTabSelectedListener(this);
+    }
+
+    @OnClick(R.id.button_profile)
+    public void openProfile() {
+
+    }
+
+    public void setTitle(String title) {
+        this.title.setText(title);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_logout:
-                currentUserPresenter.logout();
+    public void onTabSelected(TabLayout.Tab tab) {
+        switch (tab.getPosition()) {
+            case 0:
+                setTitle("Kontak Darurat");
+                break;
+            case 1:
+                setTitle("Daftar Terpercaya");
+                break;
+            case 2:
+                setTitle("Riwayat Aktifitas");
+                break;
+            case 3:
+                setTitle("Pengaturan");
                 break;
         }
-        return super.onOptionsItemSelected(item);
+        viewPager.setCurrentItem(tab.getPosition());
     }
 
     @Override
-    public void showUsers(List<User> users) {
-        userAdapter.clear();
-        userAdapter.add(users);
+    public void onTabUnselected(TabLayout.Tab tab) {
+
     }
 
     @Override
-    public void showUser(User user) {
-        Snackbar snackbar = Snackbar.make(recyclerView, "Show specific user: " + user, Snackbar.LENGTH_LONG);
-        snackbar.getView().setBackgroundResource(R.color.colorPrimary);
-        snackbar.show();
-    }
+    public void onTabReselected(TabLayout.Tab tab) {
 
-    @Override
-    public void onUserAdded(User user) {
-        userAdapter.add(user);
-    }
-
-    @Override
-    public void onUserChanged(User user) {
-        userAdapter.addOrUpdate(user);
-    }
-
-    @Override
-    public void onUserRemoved(User user) {
-        userAdapter.remove(user);
-    }
-
-    @Override
-    public void showError(String errorMessage) {
-        Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void showLoading() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Please wait...");
-        progressDialog.show();
-    }
-
-    @Override
-    public void dismissLoading() {
-        progressDialog.dismiss();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        userPresenter.saveState(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        userPresenter = null;
-        progressDialog = null;
-        userAdapter.clear();
-        userAdapter = null;
-    }
-
-    @Override
-    public void onCurrentUserChanged(User currentUser) {
-        Timber.d("Current user changed " + currentUser);
-    }
-
-    @Override
-    public void onSuccessLogout() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
 }

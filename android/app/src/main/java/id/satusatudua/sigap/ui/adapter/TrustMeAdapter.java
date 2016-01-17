@@ -20,40 +20,30 @@ import android.content.Context;
 import android.view.ViewGroup;
 
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.model.CandidateHelper;
-import id.satusatudua.sigap.ui.adapter.viewholder.HelperViewHolder;
+import id.satusatudua.sigap.data.model.UserTrusted;
+import id.satusatudua.sigap.ui.adapter.viewholder.TrustMeViewHolder;
 import id.zelory.benih.ui.adapter.BenihRecyclerAdapter;
 
 /**
- * Created on : January 09, 2016
+ * Created on : January 17, 2016
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class HelperAdapter extends BenihRecyclerAdapter<CandidateHelper, HelperViewHolder> {
-    public HelperAdapter(Context context) {
+public class TrustMeAdapter extends BenihRecyclerAdapter<UserTrusted, TrustMeViewHolder> {
+    public TrustMeAdapter(Context context) {
         super(context);
     }
 
     @Override
     protected int getItemResourceLayout(int viewType) {
-        return R.layout.item_helper_badge;
+        return R.layout.item_trust_me;
     }
 
     @Override
-    public HelperViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new HelperViewHolder(getView(parent, viewType), itemClickListener, longItemClickListener);
-    }
-
-    @Override
-    public void onBindViewHolder(HelperViewHolder holder, int position) {
-        if (position == 0) {
-            holder.setReporter(true);
-        } else {
-            holder.setReporter(false);
-        }
-        super.onBindViewHolder(holder, position);
+    public TrustMeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new TrustMeViewHolder(getView(parent, viewType), itemClickListener, longItemClickListener);
     }
 }

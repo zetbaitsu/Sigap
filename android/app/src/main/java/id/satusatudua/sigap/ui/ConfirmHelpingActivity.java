@@ -35,7 +35,6 @@ import id.satusatudua.sigap.presenter.ConfirmHelpingPresenter;
 import id.satusatudua.sigap.util.MapUtils;
 import id.zelory.benih.ui.BenihActivity;
 import id.zelory.benih.ui.view.BenihImageView;
-import timber.log.Timber;
 
 /**
  * Created on : January 10, 2016
@@ -130,7 +129,7 @@ public class ConfirmHelpingActivity extends BenihActivity implements ConfirmHelp
 
     @Override
     public void onConfirmed(Case theCase, User reporter) {
-        Timber.d("Oke confirmed :)");
+        startActivity(HelpingActivity.generateIntent(this, theCase, reporter));
     }
 
     @Override

@@ -74,7 +74,6 @@ public class UserPresenter extends BenihPresenter<UserPresenter.View> {
     public void loadUsers() {
         view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().getApi().child("users"))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(DataSnapshot::getChildren)
                 .map(dataSnapshots -> IteratorUtils.toList(dataSnapshots, User.class))
                 .map(users -> {
@@ -98,7 +97,6 @@ public class UserPresenter extends BenihPresenter<UserPresenter.View> {
     public void loadUser(String userId) {
         view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().users(userId))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                 .subscribe(user -> {
                     if (view != null) {
@@ -116,7 +114,6 @@ public class UserPresenter extends BenihPresenter<UserPresenter.View> {
 
     private void listenUserAdded() {
         RxFirebase.observeChildAdded(FirebaseApi.pluck().getApi().child("users"))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
                 .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                 .map(user -> {
@@ -140,7 +137,6 @@ public class UserPresenter extends BenihPresenter<UserPresenter.View> {
 
     private void listenUserChanged() {
         RxFirebase.observeChildChanged(FirebaseApi.pluck().getApi().child("users"))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
                 .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                 .map(user -> {
@@ -169,7 +165,6 @@ public class UserPresenter extends BenihPresenter<UserPresenter.View> {
 
     private void listenUserRemoved() {
         RxFirebase.observeChildRemoved(FirebaseApi.pluck().getApi().child("users"))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
                 .map(dataSnapshot -> dataSnapshot.getValue(User.class))
                 .map(user -> {

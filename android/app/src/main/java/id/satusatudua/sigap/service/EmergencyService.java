@@ -21,6 +21,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
@@ -36,7 +37,6 @@ import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.ui.ConfirmHelpingActivity;
 import id.satusatudua.sigap.util.RxFirebase;
-import id.zelory.benih.util.BenihScheduler;
 import id.zelory.benih.util.BenihUtils;
 import timber.log.Timber;
 
@@ -68,7 +68,6 @@ public class EmergencyService extends Service {
     private void listenEmergency() {
         if (CacheManager.pluck().getUserLocation() != null) {
             RxFirebase.observeChildAdded(FirebaseApi.pluck().userHelps(CacheManager.pluck().getCurrentUser().getUserId()))
-                    .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                     .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
                     .map(DataSnapshot::getKey)
                     .subscribe(caseId -> {
@@ -91,6 +90,7 @@ public class EmergencyService extends Service {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setVibrate(new long[]{100, 300, 500, 1000})
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setAutoCancel(true)
                 .setStyle(new android.support
                         .v4.app.NotificationCompat

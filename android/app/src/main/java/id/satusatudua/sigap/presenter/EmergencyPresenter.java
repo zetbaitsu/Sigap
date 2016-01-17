@@ -32,7 +32,6 @@ import id.satusatudua.sigap.data.model.UserLocation;
 import id.satusatudua.sigap.data.model.UserTrusted;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
-import id.zelory.benih.util.BenihScheduler;
 import rx.Observable;
 import timber.log.Timber;
 
@@ -93,7 +92,6 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
     public void addTrustedUser() {
         if (theCase.getStatus() == Case.Status.BARU) {
             RxFirebase.observeOnce(FirebaseApi.pluck().userTrusted(CacheManager.pluck().getCurrentUser().getUserId()))
-                    .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                     .flatMap(dataSnapshots -> Observable.from(dataSnapshots.getChildren()))
                     .map(dataSnapshot -> {
                         UserTrusted userTrusted = new UserTrusted();
@@ -110,7 +108,6 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                     })
                     .filter(userTrusted -> userTrusted.getStatus() == UserTrusted.Status.DITERIMA)
                     .flatMap(userTrusted -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userTrusted.getUserTrustedId()))
-                            .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                             .map(dataSnapshot1 -> dataSnapshot1.getValue(User.class)))
                     .filter(user -> user.getStatus() == User.Status.SIAP)
                     .map(user -> {
@@ -174,9 +171,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                 }
             } else {
                 Observable.from(nearbyUsers)
-                        .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                         .flatMap(userLocation -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userLocation.getUserId()))
-                                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                                 .map(dataSnapshot -> dataSnapshot.getValue(User.class)))
                         .filter(user -> user.getStatus() == User.Status.SIAP)
                         .take(5)
@@ -220,14 +215,10 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
     }
 
     public void loadHelper() {
-        Timber.d("Load helper");
         view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().helperCases(theCase.getCaseId()))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .flatMap(dataSnapshot -> Observable.from(dataSnapshot.getChildren()))
-                .doOnNext(dataSnapshot -> Timber.d("Data: " + dataSnapshot.toString()))
                 .flatMap(dataSnapshot -> RxFirebase.observeOnce(FirebaseApi.pluck().users(dataSnapshot.getKey()))
-                        .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                         .map(dataSnapshot1 -> dataSnapshot1.getValue(User.class))
                         .map(user -> {
                             CandidateHelper candidateHelper = new CandidateHelper();
@@ -264,7 +255,6 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
 
     private void listenHelperStatus() {
         RxFirebase.observeChildChanged(FirebaseApi.pluck().helperCases(theCase.getCaseId()))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
                 .map(dataSnapshot -> {
                     CandidateHelper candidateHelper = new CandidateHelper();
@@ -291,6 +281,13 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                 });
     }
 
+    public Case getTheCase() {
+        return theCase;
+    }
+
+    public List<CandidateHelper> getHelpers() {
+        return candidateHelpers;
+    }
 
     @Override
     public void saveState(Bundle bundle) {
@@ -301,9 +298,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
     public void loadState(Bundle bundle) {
         candidateHelpers = bundle.getParcelableArrayList("helpers");
         if (candidateHelpers == null) {
-            if (view != null) {
-                view.showError("Gagal memuat data penolong!");
-            }
+            loadHelper();
         } else {
             Observable.from(candidateHelpers)
                     .subscribe(candidateHelper -> {

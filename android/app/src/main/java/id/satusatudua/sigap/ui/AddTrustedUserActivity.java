@@ -129,9 +129,10 @@ public class AddTrustedUserActivity extends BenihActivity implements TrustedUser
     public void save() {
         if (adapter.getData().size() < 3) {
             showError("Anda harus memasukan minimal 3 kontak!");
-        } else if (notAllAccepted()) {
+        } else if (!allAccepted()) {
             showError("Akun yang mengkonfirmasi belum sampai 3!");
         } else {
+            Timber.d("Start home");
             StateManager.pluck().setState(StateManager.State.LOGGED);
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -139,7 +140,7 @@ public class AddTrustedUserActivity extends BenihActivity implements TrustedUser
         }
     }
 
-    private boolean notAllAccepted() {
+    private boolean allAccepted() {
         int count = 0;
         int size = adapter.getData().size();
         for (int i = 0; i < size; i++) {

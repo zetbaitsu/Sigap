@@ -32,7 +32,6 @@ import id.satusatudua.sigap.data.model.UserTrusted;
 import id.satusatudua.sigap.util.IteratorUtils;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
-import id.zelory.benih.util.BenihScheduler;
 import id.zelory.benih.util.BenihWorker;
 import rx.Observable;
 import timber.log.Timber;
@@ -67,7 +66,6 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
         } else {
             view.showLoading();
             RxFirebase.observeOnce(FirebaseApi.pluck().getApi().child("users"))
-                    .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                     .map(DataSnapshot::getChildren)
                     .map(dataSnapshots -> IteratorUtils.toList(dataSnapshots, User.class))
                     .subscribe(users -> {
@@ -112,7 +110,6 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
     public void loadTrustedUser() {
         view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().userTrusted(currentUser.getUserId()))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .doOnNext(dataSnapshots -> {
                     if (dataSnapshots.getValue() == null) {
                         if (view != null) {
@@ -135,7 +132,6 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
                     return userTrusted;
                 })
                 .flatMap(userTrusted -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userTrusted.getUserTrustedId()))
-                        .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                         .map(dataSnapshot1 -> dataSnapshot1.getValue(User.class)))
                 .map(user -> {
                     UserTrusted userTrusted = new UserTrusted();
@@ -164,7 +160,6 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
 
     private void listenTrustedUserAdded() {
         RxFirebase.observeChildAdded(FirebaseApi.pluck().userTrusted(currentUser.getUserId()))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
                 .map(dataSnapshot -> {
                     UserTrusted userTrusted = new UserTrusted();
@@ -180,7 +175,6 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
                     return userTrusted;
                 })
                 .flatMap(userTrusted -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userTrusted.getUserTrustedId()))
-                        .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                         .map(dataSnapshot1 -> dataSnapshot1.getValue(User.class)))
                 .map(user -> {
                     UserTrusted userTrusted = new UserTrusted();
@@ -207,7 +201,6 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
 
     private void listenTrustedUserChanged() {
         RxFirebase.observeChildChanged(FirebaseApi.pluck().userTrusted(currentUser.getUserId()))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
                 .map(dataSnapshot -> {
                     UserTrusted userTrusted = new UserTrusted();
@@ -223,7 +216,6 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
                     return userTrusted;
                 })
                 .flatMap(userTrusted -> RxFirebase.observeOnce(FirebaseApi.pluck().users(userTrusted.getUserTrustedId()))
-                        .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                         .map(dataSnapshot1 -> dataSnapshot1.getValue(User.class)))
                 .map(user -> {
                     UserTrusted userTrusted = new UserTrusted();
@@ -251,7 +243,6 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
     public void addTrustedUser(User user) {
         view.showLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().userTrusted(currentUser.getUserId()).child(user.getUserId()))
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                 .subscribe(dataSnapshot -> {
                     if (dataSnapshot.getValue() != null) {
                         if (view != null) {

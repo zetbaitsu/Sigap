@@ -38,15 +38,22 @@ import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnLongItemClickLis
 public class HelperViewHolder extends BenihItemViewHolder<CandidateHelper> {
 
     @Bind(R.id.name) TextView name;
+    private boolean reporter;
 
     public HelperViewHolder(View itemView, OnItemClickListener itemClickListener, OnLongItemClickListener longItemClickListener) {
         super(itemView, itemClickListener, longItemClickListener);
     }
 
+    public void setReporter(boolean reporter) {
+        this.reporter = reporter;
+    }
+
     @Override
     public void bind(CandidateHelper candidateHelper) {
         name.setText(candidateHelper.getCandidate().getName());
-        if (candidateHelper.getStatus() == CandidateHelper.Status.MENUNGGU) {
+        if (reporter) {
+            name.setBackgroundResource(R.color.colorPrimary);
+        } else if (candidateHelper.getStatus() == CandidateHelper.Status.MENUNGGU) {
             name.setBackgroundResource(R.color.secondary_text);
         } else if (candidateHelper.getStatus() == CandidateHelper.Status.MENOLONG) {
             name.setBackgroundResource(R.color.colorAccent);

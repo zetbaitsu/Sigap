@@ -105,7 +105,8 @@ public class TombolPresenter extends BenihPresenter<TombolPresenter.View> {
         data.put("userCases/" + currentUser.getUserId() + "/" + caseKey + "/caseId/", caseKey);
 
         //masukan pesan awal ke kumpulan data
-        data.put("caseMessages/" + caseKey + "/initial", message);
+        String messageId = api.child("caseMessages").child(caseKey).push().getKey();
+        data.put("caseMessages/" + caseKey + "/" + messageId + "/", message);
 
         //dan akhirnya kirim data ke server
         sendData(api, caseKey, data, 1);
