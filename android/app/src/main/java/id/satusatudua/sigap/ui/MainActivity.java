@@ -13,7 +13,10 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.ui.adapter.MainPagerAdapter;
+import id.satusatudua.sigap.ui.fragment.HistoriesFragment;
 import id.satusatudua.sigap.ui.fragment.ImportantContactFragment;
+import id.satusatudua.sigap.ui.fragment.SettingFragment;
+import id.satusatudua.sigap.ui.fragment.TrustedsFragment;
 import id.zelory.benih.ui.BenihActivity;
 import id.zelory.benih.ui.fragment.BenihFragment;
 
@@ -48,9 +51,9 @@ public class MainActivity extends BenihActivity implements TabLayout.OnTabSelect
     private void setUpViewPager() {
         List<BenihFragment> fragments = new ArrayList<>();
         fragments.add(ImportantContactFragment.newInstance(true));
-        fragments.add(new ImportantContactFragment());
-        fragments.add(new ImportantContactFragment());
-        fragments.add(new ImportantContactFragment());
+        fragments.add(new TrustedsFragment());
+        fragments.add(new HistoriesFragment());
+        fragments.add(new SettingFragment());
 
         MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(adapter);
