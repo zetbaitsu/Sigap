@@ -17,10 +17,20 @@
 package id.satusatudua.sigap.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 
+import java.util.List;
+
+import butterknife.Bind;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.model.ActivityHistory;
+import id.satusatudua.sigap.presenter.HistoriesPresenter;
+import id.satusatudua.sigap.ui.adapter.HistoryAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
+import id.zelory.benih.ui.view.BenihRecyclerView;
 
 /**
  * Created on : January 17, 2016
@@ -30,7 +40,15 @@ import id.zelory.benih.ui.fragment.BenihFragment;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class HistoriesFragment extends BenihFragment {
+public class HistoriesFragment extends BenihFragment implements HistoriesPresenter.View,
+        SwipeRefreshLayout.OnRefreshListener {
+
+    @Bind(R.id.recycler_view) BenihRecyclerView recyclerView;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
+
+    private HistoriesPresenter presenter;
+    private HistoryAdapter adapter;
+
     @Override
     protected int getResourceLayout() {
         return R.layout.fragment_histories;
@@ -39,5 +57,52 @@ public class HistoriesFragment extends BenihFragment {
     @Override
     protected void onViewReady(@Nullable Bundle savedInstanceState) {
 
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        adapter = new HistoryAdapter(getActivity());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setUpAsList();
+
+        presenter = new HistoriesPresenter(this);
+        if (savedInstanceState == null) {
+            new Handler().postDelayed(() -> presenter.loadHistories(), 800);
+        } else {
+            presenter.loadState(savedInstanceState);
+        }
+    }
+
+    @Override
+    public void showHistories(List<ActivityHistory> histories) {
+        adapter.clear();
+        adapter.add(histories);
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        Snackbar snackbar = Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundResource(R.color.colorAccent);
+        snackbar.show();
+    }
+
+    @Override
+    public void showLoading() {
+        swipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void dismissLoading() {
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        presenter.saveState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onRefresh() {
+        presenter.loadHistories();
     }
 }
