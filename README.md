@@ -39,6 +39,7 @@ The communication flow between those layers are strictly sequential, in the sens
    |  └─ userId
    |     └─ birthDate
    |     └─ email
+   |     └─ phoneNumber
    |     └─ fromApps
    |     └─ male
    |     └─ name
@@ -52,24 +53,20 @@ The communication flow between those layers are strictly sequential, in the sens
    |        └─ 1
    ├─ userTrusted
    |  └─ userId
-   |     └─ userIds
-   ├─ covers
+   |     └─ userTrustedId
+   |        └─ status
+   ├─ trustedOf
    |  └─ userId
-   |     └─ owner
-   |     └─ destination
-   |     └─ open
-   |     └─ userIds
-   ├─ coverMessages
-   |  └─ userId
-   |     └─ userId
-   |     └─ date
-   |     └─ content
+   |     └─ userTrustMeId
+   |        └─ status
    ├─ cases
    |  └─ caseId
-   |     └─ date
-   |     └─ owner
-   |     └─ open
    |     └─ caseId
+   |     └─ date
+   |     └─ userId
+   |     └─ status
+   |     └─ latitude
+   |     └─ longitude
    ├─ caseLocations
    |  └─ caseId
    |     └─ g
@@ -78,13 +75,15 @@ The communication flow between those layers are strictly sequential, in the sens
    |        └─ 1
    ├─ userCases
    |  └─ userId
-   |     └─ caseIds
+   |     └─ caseId
    ├─ helperCases
    |  └─ caseId
-   |     └─ userIds
+   |     └─ userId
+   |        └─ status
    ├─ userHelps
    |  └─ userId
-   |     └─ caseIds
+   |     └─ caseId
+   |        └─ status
    ├─ caseMessages
    |  └─ caseId
    |     └─ userId
