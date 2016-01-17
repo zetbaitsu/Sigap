@@ -61,10 +61,10 @@ public class MainActivity extends BenihActivity implements TabLayout.OnTabSelect
 
     private void setUpTabLayout() {
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_grey_orang);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_grey_orang);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_grey_orang);
-        tabLayout.getTabAt(3).setIcon(R.drawable.ic_grey_orang);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_contact);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_trusted_grey);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_case_grey);
+        tabLayout.getTabAt(3).setIcon(R.drawable.ic_setting_grey);
         tabLayout.setOnTabSelectedListener(this);
     }
 
@@ -82,15 +82,19 @@ public class MainActivity extends BenihActivity implements TabLayout.OnTabSelect
         switch (tab.getPosition()) {
             case 0:
                 setTitle("Kontak Darurat");
+                tab.setIcon(R.drawable.ic_contact);
                 break;
             case 1:
                 setTitle("Daftar Terpercaya");
+                tab.setIcon(R.drawable.ic_trusted);
                 break;
             case 2:
                 setTitle("Riwayat Aktifitas");
+                tab.setIcon(R.drawable.ic_case);
                 break;
             case 3:
                 setTitle("Pengaturan");
+                tab.setIcon(R.drawable.ic_setting);
                 break;
         }
         viewPager.setCurrentItem(tab.getPosition());
@@ -98,7 +102,20 @@ public class MainActivity extends BenihActivity implements TabLayout.OnTabSelect
 
     @Override
     public void onTabUnselected(TabLayout.Tab tab) {
-
+        switch (tab.getPosition()) {
+            case 0:
+                tab.setIcon(R.drawable.ic_contact_grey);
+                break;
+            case 1:
+                tab.setIcon(R.drawable.ic_trusted_grey);
+                break;
+            case 2:
+                tab.setIcon(R.drawable.ic_case_grey);
+                break;
+            case 3:
+                tab.setIcon(R.drawable.ic_setting_grey);
+                break;
+        }
     }
 
     @Override
