@@ -36,6 +36,7 @@ public class Case implements Parcelable {
     private Status status;
     private double latitude;
     private double longitude;
+    private String address;
     private String detail;
 
     public Case() {
@@ -48,6 +49,7 @@ public class Case implements Parcelable {
         status = Status.valueOf(in.readString());
         latitude = in.readDouble();
         longitude = in.readDouble();
+        address = in.readString();
         detail = in.readString();
     }
 
@@ -111,6 +113,14 @@ public class Case implements Parcelable {
         this.longitude = longitude;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getDetail() {
         return detail;
     }
@@ -136,6 +146,7 @@ public class Case implements Parcelable {
         dest.writeString(status.name());
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
+        dest.writeString(address);
         dest.writeString(detail);
     }
 
@@ -148,6 +159,7 @@ public class Case implements Parcelable {
                 ", status=" + status +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
+                ", address='" + address + '\'' +
                 ", detail='" + detail + '\'' +
                 '}';
     }
