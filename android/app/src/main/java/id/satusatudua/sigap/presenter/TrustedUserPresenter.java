@@ -312,12 +312,20 @@ public class TrustedUserPresenter extends BenihPresenter<TrustedUserPresenter.Vi
 
     @Override
     public void saveState(Bundle bundle) {
-
+        bundle.putParcelableArrayList("trusteds", (ArrayList<UserTrusted>) trusteds);
     }
 
     @Override
     public void loadState(Bundle bundle) {
-
+        trusteds = bundle.getParcelableArrayList("trusteds");
+        if (trusteds == null) {
+            loadTrustedUser();
+        } else {
+            int size = trusteds.size();
+            for (int i = 0; i < size; i++) {
+                view.onTrustedUserAdded(trusteds.get(i));
+            }
+        }
     }
 
     public interface View extends BenihPresenter.View {

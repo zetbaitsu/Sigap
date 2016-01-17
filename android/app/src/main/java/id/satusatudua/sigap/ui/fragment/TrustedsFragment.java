@@ -100,10 +100,18 @@ public class TrustedsFragment extends BenihFragment implements TrustedUserPresen
         trustMeAdapter = new TrustMeAdapter(getActivity());
 
         trustedUserPresenter = new TrustedUserPresenter(this);
-        trustedUserPresenter.loadTrustedUser();
+        if (savedInstanceState == null) {
+            trustedUserPresenter.loadTrustedUser();
+        } else {
+            trustedUserPresenter.loadState(savedInstanceState);
+        }
 
         trustMePresenter = new TrustMePresenter(this);
-        trustMePresenter.loadTrustMeUser();
+        if (savedInstanceState == null) {
+            trustMePresenter.loadTrustMeUser();
+        } else {
+            trustMePresenter.loadState(savedInstanceState);
+        }
     }
 
     private void declineTrustMe(UserTrusted userTrusted) {
@@ -291,5 +299,12 @@ public class TrustedsFragment extends BenihFragment implements TrustedUserPresen
     public void onTrustMeUserRemoved(UserTrusted userTrusted) {
         trustMeAdapter.remove(userTrusted);
         trustMeCount.setText("(" + trustMeAdapter.getData().size() + ")");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        trustedUserPresenter.saveState(outState);
+        trustMePresenter.saveState(outState);
+        super.onSaveInstanceState(outState);
     }
 }
