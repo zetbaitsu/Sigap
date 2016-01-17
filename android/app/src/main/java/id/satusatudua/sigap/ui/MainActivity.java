@@ -47,7 +47,7 @@ public class MainActivity extends BenihActivity implements TabLayout.OnTabSelect
 
     private void setUpViewPager() {
         List<BenihFragment> fragments = new ArrayList<>();
-        fragments.add(new ImportantContactFragment());
+        fragments.add(ImportantContactFragment.newInstance(true));
         fragments.add(new ImportantContactFragment());
         fragments.add(new ImportantContactFragment());
         fragments.add(new ImportantContactFragment());

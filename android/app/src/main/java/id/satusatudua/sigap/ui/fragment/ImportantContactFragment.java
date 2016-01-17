@@ -18,6 +18,8 @@ package id.satusatudua.sigap.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.view.View;
 import android.widget.EditText;
 
 import java.util.ArrayList;
@@ -48,13 +50,24 @@ import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScrol
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class ImportantContactFragment extends BenihFragment {
+    private static final String KEY_SHOW_FAB = "extra_show_fab";
 
     @Bind(R.id.et_search) EditText searchField;
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerViewContact;
     @Bind(R.id.fast_scroller) VerticalRecyclerViewFastScroller fastScroller;
     @Bind(R.id.fast_scroller_section_title_indicator) SectionTitleIndicator indicator;
+    @Bind(R.id.fab) FloatingActionButton fab;
 
     private List<ImportantContact> contacts;
+    private boolean showFab;
+
+    public static ImportantContactFragment newInstance(boolean showFab) {
+        ImportantContactFragment fragment = new ImportantContactFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(KEY_SHOW_FAB, showFab);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     @Override
     protected int getResourceLayout() {
@@ -63,6 +76,11 @@ public class ImportantContactFragment extends BenihFragment {
 
     @Override
     protected void onViewReady(@Nullable Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            showFab = getArguments().getBoolean(KEY_SHOW_FAB);
+        }
+        fab.setVisibility(showFab ? View.VISIBLE : View.GONE);
+
         ContactAdapter adapter = new ContactAdapter(getActivity());
         recyclerViewContact.setUpAsList();
         recyclerViewContact.setAdapter(adapter);
@@ -83,6 +101,11 @@ public class ImportantContactFragment extends BenihFragment {
             search();
             return true;
         });
+    }
+
+    @OnClick(R.id.fab)
+    public void addNewContact() {
+        Timber.d("addNewContact clicked");
     }
 
     private void onItemContactClicked(ImportantContact importantContact) {
