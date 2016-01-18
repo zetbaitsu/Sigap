@@ -60,7 +60,6 @@ public class ProfileActivity extends BenihActivity {
     @Bind(R.id.email) TextView emailAddress;
     @Bind(R.id.button_edit) ImageView buttonEdit;
 
-    private ProfilePagerAdapter profilePagerAdapter;
     private User user;
 
     public static Intent generateIntent(Context context, User user) {
@@ -78,7 +77,7 @@ public class ProfileActivity extends BenihActivity {
     protected void onViewReady(Bundle savedInstanceState) {
         resolveUser(savedInstanceState);
 
-        profilePagerAdapter = new ProfilePagerAdapter(getSupportFragmentManager(), getFragments());
+        ProfilePagerAdapter profilePagerAdapter = new ProfilePagerAdapter(getSupportFragmentManager(), getFragments());
         viewPager.setAdapter(profilePagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -109,7 +108,7 @@ public class ProfileActivity extends BenihActivity {
 
     @OnClick(R.id.button_edit)
     public void editProfile() {
-
+        startActivity(new Intent(this, EditProfileActivity.class));
     }
 
     private List<BenihFragment> getFragments() {

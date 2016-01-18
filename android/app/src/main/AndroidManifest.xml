@@ -76,6 +76,9 @@
         <activity
             android:name=".ui.ProfileActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.EditProfileActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>
