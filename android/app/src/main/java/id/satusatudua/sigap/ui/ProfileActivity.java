@@ -36,7 +36,7 @@ import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.ui.adapter.ProfilePagerAdapter;
 import id.satusatudua.sigap.ui.fragment.HistoriesFragment;
-import id.satusatudua.sigap.ui.fragment.ImportantContactFragment;
+import id.satusatudua.sigap.ui.fragment.MyContactFragment;
 import id.satusatudua.sigap.ui.fragment.OtherHistoriesFragment;
 import id.zelory.benih.ui.BenihActivity;
 import id.zelory.benih.ui.fragment.BenihFragment;
@@ -82,7 +82,7 @@ public class ProfileActivity extends BenihActivity {
         viewPager.setAdapter(profilePagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-        if (user.equals(CacheManager.pluck().getCurrentUser())) {
+        if (!user.equals(CacheManager.pluck().getCurrentUser())) {
             buttonEdit.setVisibility(View.GONE);
             emailAddress.setVisibility(View.GONE);
         }
@@ -114,9 +114,9 @@ public class ProfileActivity extends BenihActivity {
 
     private List<BenihFragment> getFragments() {
         if (user.equals(CacheManager.pluck().getCurrentUser())) {
-            return Arrays.asList(new HistoriesFragment(), new ImportantContactFragment());
+            return Arrays.asList(new HistoriesFragment(), MyContactFragment.newInstance(user));
         }
-        return Arrays.asList(OtherHistoriesFragment.newInstance(user), new ImportantContactFragment());
+        return Arrays.asList(OtherHistoriesFragment.newInstance(user), MyContactFragment.newInstance(user));
     }
 
     @Override
