@@ -73,6 +73,9 @@
         <activity
             android:name=".ui.CalibrateActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.ProfileActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>

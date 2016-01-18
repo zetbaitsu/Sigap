@@ -1,5 +1,6 @@
 package id.satusatudua.sigap.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -70,7 +71,7 @@ public class MainActivity extends BenihActivity implements TabLayout.OnTabSelect
 
     @OnClick(R.id.button_profile)
     public void openProfile() {
-
+        startActivity(new Intent(this, ProfileActivity.class));
     }
 
     public void setTitle(String title) {
