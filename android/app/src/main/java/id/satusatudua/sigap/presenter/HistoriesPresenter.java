@@ -53,6 +53,12 @@ public class HistoriesPresenter extends BenihPresenter<HistoriesPresenter.View> 
         currentUser = CacheManager.pluck().getCurrentUser();
     }
 
+    public HistoriesPresenter(View view, User user) {
+        super(view);
+        histories = new ArrayList<>();
+        currentUser = user;
+    }
+
     public void loadHistories() {
         view.showLoading();
         myCaseDone = false;
