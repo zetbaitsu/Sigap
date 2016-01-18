@@ -89,13 +89,13 @@ public class ImportantContactFragment extends BenihFragment {
         recyclerViewContact.addOnScrollListener(fastScroller.getOnScrollListener());
         fastScroller.setSectionIndicator(indicator);
 
-        /*BenihWorker.pluck()
+        BenihWorker.pluck()
                 .doInComputation(() -> contacts = generateDummyData())
                 .subscribe(o -> {
                     adapter.add(contacts);
                 }, throwable -> {
                     Timber.d(throwable.getMessage());
-                });*/
+                });
 
         searchField.setOnEditorActionListener((v, actionId, event) -> {
             search();

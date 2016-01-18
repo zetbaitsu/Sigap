@@ -20,7 +20,9 @@ import android.content.Context;
 import android.view.ViewGroup;
 
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.ActivityHistory;
+import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.ui.adapter.viewholder.HistoryViewHolder;
 import id.zelory.benih.ui.adapter.BenihRecyclerAdapter;
 
@@ -33,9 +35,19 @@ import id.zelory.benih.ui.adapter.BenihRecyclerAdapter;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class HistoryAdapter extends BenihRecyclerAdapter<ActivityHistory, HistoryViewHolder> {
+    private User owner;
+    private boolean isMyHistory;
 
     public HistoryAdapter(Context context) {
         super(context);
+        this.owner = CacheManager.pluck().getCurrentUser();
+        isMyHistory = true;
+    }
+
+    public HistoryAdapter(Context context, User owner) {
+        super(context);
+        this.owner = owner;
+        isMyHistory = owner.equals(CacheManager.pluck().getCurrentUser());
     }
 
     @Override
@@ -45,6 +57,9 @@ public class HistoryAdapter extends BenihRecyclerAdapter<ActivityHistory, Histor
 
     @Override
     public HistoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new HistoryViewHolder(getView(parent, viewType), itemClickListener, longItemClickListener);
+        HistoryViewHolder viewHolder = new HistoryViewHolder(getView(parent, viewType), itemClickListener, longItemClickListener);
+        viewHolder.setMyHistory(isMyHistory);
+        viewHolder.setOwner(owner);
+        return viewHolder;
     }
 }

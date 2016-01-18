@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.ActivityHistory;
+import id.satusatudua.sigap.data.model.User;
 import id.zelory.benih.ui.adapter.viewholder.BenihItemViewHolder;
 
 import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnItemClickListener;
@@ -43,16 +44,37 @@ public class HistoryViewHolder extends BenihItemViewHolder<ActivityHistory> {
     @Bind(R.id.date) TextView date;
     @Bind(R.id.address) TextView address;
 
+    private boolean isMyHistory;
+    private User owner;
+
     public HistoryViewHolder(View itemView, OnItemClickListener itemClickListener, OnLongItemClickListener longItemClickListener) {
         super(itemView, itemClickListener, longItemClickListener);
     }
 
+    public void setMyHistory(boolean isMyHistory) {
+        this.isMyHistory = isMyHistory;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
     @Override
     public void bind(ActivityHistory history) {
-        if (history.isFromMe()) {
-            title.setText("Anda membutuhkan bantuan");
+
+        if (isMyHistory) {
+            if (history.isFromMe()) {
+                title.setText("Anda membutuhkan bantuan");
+            } else {
+                title.setText("Anda menolong " + history.getUser().getName());
+            }
         } else {
-            title.setText("Anda menolong " + history.getUser().getName());
+            String firstName = owner.getName().split(" ")[0];
+            if (history.isFromMe()) {
+                title.setText(firstName + " membutuhkan bantuan");
+            } else {
+                title.setText(firstName + " menolong " + history.getUser().getName());
+            }
         }
 
         date.setText(new SimpleDateFormat("dd MMMM yyyy").format(history.getTheCase().getDate()));

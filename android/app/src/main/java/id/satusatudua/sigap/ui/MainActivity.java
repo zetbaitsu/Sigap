@@ -12,6 +12,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.ui.adapter.MainPagerAdapter;
 import id.satusatudua.sigap.ui.fragment.HistoriesFragment;
 import id.satusatudua.sigap.ui.fragment.ImportantContactFragment;
@@ -70,7 +71,7 @@ public class MainActivity extends BenihActivity implements TabLayout.OnTabSelect
 
     @OnClick(R.id.button_profile)
     public void openProfile() {
-
+        startActivity(ProfileActivity.generateIntent(this, CacheManager.pluck().getCurrentUser()));
     }
 
     public void setTitle(String title) {
