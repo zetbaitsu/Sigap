@@ -57,6 +57,6 @@ public class MyContactViewHolder extends BenihItemViewHolder<ImportantContact> {
         date.setText(DateUtils.getRelativeTimeSpanString(new Date().getTime(),
                                                          System.currentTimeMillis(),
                                                          DateUtils.DAY_IN_MILLIS));
-        bookmarkedIcon.setVisibility(importantContact.isBookmarked() ? View.VISIBLE : View.GONE);
+        bookmarkedIcon.setImageResource(importantContact.isBookmarked() ? R.drawable.ic_star : R.drawable.ic_star_line);
     }
 }
