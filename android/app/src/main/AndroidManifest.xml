@@ -70,6 +70,9 @@
         <activity
             android:name=".ui.FeedbackCaseActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.CalibrateActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>

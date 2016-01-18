@@ -38,6 +38,7 @@ import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.CurrentUserPresenter;
+import id.satusatudua.sigap.ui.CalibrateActivity;
 import id.satusatudua.sigap.ui.LoginActivity;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.util.KeyboardUtil;
@@ -109,7 +110,9 @@ public class SettingFragment extends BenihFragment implements CurrentUserPresent
 
     @OnClick(R.id.calibrate)
     public void calibrate() {
-
+        if (CacheManager.pluck().isShakeToNotify()) {
+            startActivity(new Intent(getActivity(), CalibrateActivity.class));
+        }
     }
 
     @OnClick(R.id.feedback)
