@@ -27,6 +27,7 @@ import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.presenter.AddContactPresenter;
 import id.zelory.benih.ui.BenihActivity;
+import id.zelory.benih.util.KeyboardUtil;
 
 /**
  * Created on : January 19, 2016
@@ -71,6 +72,7 @@ public class AddContactActivity extends BenihActivity implements AddContactPrese
             address.setError("Mohon isi dengan alamat yang lengkap!");
         } else {
             addContactPresenter.addContact(name.getText().toString(), phone.getText().toString(), address.getText().toString());
+            KeyboardUtil.hideKeyboard(this, address);
         }
     }
 
