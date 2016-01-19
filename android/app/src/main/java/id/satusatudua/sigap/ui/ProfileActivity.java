@@ -40,6 +40,8 @@ import id.satusatudua.sigap.ui.fragment.MyContactFragment;
 import id.satusatudua.sigap.ui.fragment.OtherHistoriesFragment;
 import id.zelory.benih.ui.BenihActivity;
 import id.zelory.benih.ui.fragment.BenihFragment;
+import id.zelory.benih.util.BenihScheduler;
+import timber.log.Timber;
 
 /**
  * Created on : January 18, 2016
@@ -86,10 +88,24 @@ public class ProfileActivity extends BenihActivity {
             emailAddress.setVisibility(View.GONE);
         }
 
-        collapsingToolbarLayout.setTitle(user.getName());
-        gender.setText(user.isMale() ? "Laki - laki" : "Perempuan");
-        phoneNumber.setText("081377668034");
-        emailAddress.setText(user.getEmail());
+        if (user.equals(CacheManager.pluck().getCurrentUser())) {
+            CacheManager.pluck().listenCurrentUser()
+                    .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                    .compose(bindToLifecycle())
+                    .subscribe(user -> {
+                        collapsingToolbarLayout.setTitle(user.getName());
+                        collapsingToolbarLayout.invalidate();
+                        gender.setText(user.isMale() ? "Laki - laki" : "Perempuan");
+                        phoneNumber.setText("081377668034");
+                        emailAddress.setText(user.getEmail());
+                    }, throwable -> Timber.e(throwable.getMessage()));
+        } else {
+            collapsingToolbarLayout.setTitle(user.getName());
+            gender.setText(user.isMale() ? "Laki - laki" : "Perempuan");
+            phoneNumber.setText("081377668034");
+            emailAddress.setText(user.getEmail());
+        }
+
     }
 
     private void resolveUser(Bundle savedInstanceState) {

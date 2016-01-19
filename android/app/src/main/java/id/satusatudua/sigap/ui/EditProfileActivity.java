@@ -16,7 +16,9 @@
 
 package id.satusatudua.sigap.ui;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.util.Patterns;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -26,6 +28,7 @@ import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.presenter.EditProfilePresenter;
 import id.zelory.benih.ui.BenihActivity;
 
 /**
@@ -36,12 +39,15 @@ import id.zelory.benih.ui.BenihActivity;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class EditProfileActivity extends BenihActivity {
+public class EditProfileActivity extends BenihActivity implements EditProfilePresenter.View {
 
     @Bind(R.id.name) EditText name;
     @Bind(R.id.phone) EditText phoneNumber;
     @Bind(R.id.laki) RadioButton laki;
     @Bind(R.id.perempuan) RadioButton perempuan;
+
+    private EditProfilePresenter editProfilePresenter;
+    private ProgressDialog progressDialog;
 
     @Override
     protected int getResourceLayout() {
@@ -61,6 +67,8 @@ public class EditProfileActivity extends BenihActivity {
             perempuan.setChecked(true);
             laki.setChecked(false);
         }
+
+        editProfilePresenter = new EditProfilePresenter(this);
     }
 
     @OnClick(R.id.button_save)
@@ -73,8 +81,33 @@ public class EditProfileActivity extends BenihActivity {
         } else if (!Patterns.PHONE.matcher(phoneNumber).matches()) {
             this.phoneNumber.setError("Mohon masukan no ponsel yang valid!");
         } else {
-            //TODO implement ini edit profile
-            finish();
+            editProfilePresenter.updateProfile(nama, phoneNumber, laki.isChecked());
         }
+    }
+
+    @Override
+    public void onProfileUpdated() {
+        finish();
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        Snackbar snackbar = Snackbar.make(phoneNumber, errorMessage, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundResource(R.color.colorAccent);
+        snackbar.show();
+    }
+
+    @Override
+    public void showLoading() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Silahkan tungu....");
+        }
+        progressDialog.show();
+    }
+
+    @Override
+    public void dismissLoading() {
+        progressDialog.dismiss();
     }
 }
