@@ -21,78 +21,67 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.util.Patterns;
 import android.widget.EditText;
-import android.widget.RadioButton;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.local.CacheManager;
-import id.satusatudua.sigap.data.model.User;
-import id.satusatudua.sigap.presenter.EditProfilePresenter;
+import id.satusatudua.sigap.presenter.AddContactPresenter;
 import id.zelory.benih.ui.BenihActivity;
 
 /**
- * Created on : January 18, 2016
+ * Created on : January 19, 2016
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class EditProfileActivity extends BenihActivity implements EditProfilePresenter.View {
+public class AddContactActivity extends BenihActivity implements AddContactPresenter.View {
 
     @Bind(R.id.name) EditText name;
-    @Bind(R.id.phone) EditText phoneNumber;
-    @Bind(R.id.laki) RadioButton laki;
-    @Bind(R.id.perempuan) RadioButton perempuan;
+    @Bind(R.id.phone) EditText phone;
+    @Bind(R.id.address) EditText address;
 
-    private EditProfilePresenter editProfilePresenter;
+    private AddContactPresenter addContactPresenter;
     private ProgressDialog progressDialog;
 
     @Override
     protected int getResourceLayout() {
-        return R.layout.activity_edit_profile;
+        return R.layout.activity_add_contact;
     }
 
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
-        User currentUser = CacheManager.pluck().getCurrentUser();
-
-        name.setText(currentUser.getName());
-        phoneNumber.setText("");
-        if (currentUser.isMale()) {
-            laki.setChecked(true);
-            perempuan.setChecked(false);
-        } else {
-            perempuan.setChecked(true);
-            laki.setChecked(false);
-        }
-
-        editProfilePresenter = new EditProfilePresenter(this);
+        addContactPresenter = new AddContactPresenter(this);
     }
 
     @OnClick(R.id.button_save)
-    public void saveProfile() {
-        String nama = name.getText().toString();
-        String phoneNumber = this.phoneNumber.getText().toString();
-
-        if (nama.isEmpty()) {
-            name.setError("Mohon masukan nama anda!");
-        } else if (!Patterns.PHONE.matcher(phoneNumber).matches()) {
-            this.phoneNumber.setError("Mohon masukan no ponsel yang valid!");
+    public void save() {
+        if (name.getText().toString().isEmpty()) {
+            name.setError("Mohon isi form ini!");
+        } else if (phone.getText().toString().isEmpty()) {
+            phone.setError("Mohon isi form ini!");
+        } else if (name.getText().toString().length() < 5) {
+            name.setError("Nama kontak minimal 5 karakter!");
+        } else if (!Patterns.PHONE.matcher(phone.getText().toString()).matches()) {
+            phone.setError("Mohon isi dengan no telepon yang valid!");
+        } else if (address.getText().toString().isEmpty()) {
+            address.setError("Mohon isi form ini!");
+        } else if (address.getText().toString().length() < 24) {
+            address.setError("Mohon isi dengan alamat yang lengkap!");
         } else {
-            editProfilePresenter.updateProfile(nama, phoneNumber, laki.isChecked());
+            addContactPresenter.addContact(name.getText().toString(), phone.getText().toString(), address.getText().toString());
         }
     }
 
     @Override
-    public void onProfileUpdated() {
+    public void onContactAdded() {
         finish();
     }
 
     @Override
     public void showError(String errorMessage) {
-        Snackbar snackbar = Snackbar.make(phoneNumber, errorMessage, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(address, errorMessage, Snackbar.LENGTH_LONG);
         snackbar.getView().setBackgroundResource(R.color.colorAccent);
         snackbar.show();
     }

@@ -16,6 +16,7 @@
 
 package id.satusatudua.sigap.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -30,6 +31,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.ImportantContact;
+import id.satusatudua.sigap.ui.AddContactActivity;
 import id.satusatudua.sigap.ui.adapter.ContactAdapter;
 import id.satusatudua.sigap.util.PasswordUtils;
 import id.zelory.benih.ui.fragment.BenihFragment;
@@ -105,7 +107,7 @@ public class ImportantContactFragment extends BenihFragment {
 
     @OnClick(R.id.fab)
     public void addNewContact() {
-        Timber.d("addNewContact clicked");
+        startActivity(new Intent(getActivity(), AddContactActivity.class));
     }
 
     private void onItemContactClicked(ImportantContact importantContact) {
