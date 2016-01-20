@@ -40,7 +40,8 @@ public class ImportantContact implements Parcelable {
     private Date createdAt;
     private double avgRate;
     private double totalRate;
-    private double totalUserRate;
+    private long totalUserRate;
+    private int myRate;
     private boolean bookmarked;
     private User user;
 
@@ -57,7 +58,8 @@ public class ImportantContact implements Parcelable {
         createdAt = new Date(in.readLong());
         avgRate = in.readDouble();
         totalRate = in.readDouble();
-        totalUserRate = in.readDouble();
+        totalUserRate = in.readLong();
+        myRate = in.readInt();
         bookmarked = in.readByte() != 0;
         user = in.readParcelable(User.class.getClassLoader());
     }
@@ -138,12 +140,20 @@ public class ImportantContact implements Parcelable {
         this.totalRate = totalRate;
     }
 
-    public double getTotalUserRate() {
+    public long getTotalUserRate() {
         return totalUserRate;
     }
 
-    public void setTotalUserRate(double totalUserRate) {
+    public void setTotalUserRate(long totalUserRate) {
         this.totalUserRate = totalUserRate;
+    }
+
+    public int getMyRate() {
+        return myRate;
+    }
+
+    public void setMyRate(int myRate) {
+        this.myRate = myRate;
     }
 
     @JsonIgnore
@@ -181,6 +191,7 @@ public class ImportantContact implements Parcelable {
                 ", avgRate=" + avgRate +
                 ", totalRate=" + totalRate +
                 ", totalUserRate=" + totalUserRate +
+                ", myRate=" + myRate +
                 ", bookmarked=" + bookmarked +
                 ", user=" + user +
                 '}';
@@ -201,7 +212,8 @@ public class ImportantContact implements Parcelable {
         dest.writeLong(createdAt.getTime());
         dest.writeDouble(avgRate);
         dest.writeDouble(totalRate);
-        dest.writeDouble(totalUserRate);
+        dest.writeLong(totalUserRate);
+        dest.writeInt(myRate);
         dest.writeByte((byte) (bookmarked ? 1 : 0));
         dest.writeParcelable(user, flags);
     }

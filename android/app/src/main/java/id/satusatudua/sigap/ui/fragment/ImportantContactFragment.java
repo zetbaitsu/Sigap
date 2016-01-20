@@ -36,6 +36,7 @@ import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.ImportantContact;
 import id.satusatudua.sigap.presenter.ImportantContactPresenter;
 import id.satusatudua.sigap.ui.AddContactActivity;
+import id.satusatudua.sigap.ui.DetailContactActivity;
 import id.satusatudua.sigap.ui.adapter.ContactAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
@@ -121,8 +122,12 @@ public class ImportantContactFragment extends BenihFragment implements
     }
 
     private void onItemContactClicked(ImportantContact importantContact) {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + importantContact.getPhoneNumber().trim()));
-        startActivity(intent);
+        if (showFab) {
+            startActivity(DetailContactActivity.generateIntent(getActivity(), importantContact));
+        } else {
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + importantContact.getPhoneNumber().trim()));
+            startActivity(intent);
+        }
     }
 
     @OnClick(R.id.icon_search)
