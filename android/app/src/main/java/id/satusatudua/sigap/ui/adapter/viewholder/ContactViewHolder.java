@@ -39,7 +39,7 @@ import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnLongItemClickLis
 public class ContactViewHolder extends BenihItemViewHolder<ImportantContact> {
     @Bind(R.id.name) TextView name;
     @Bind(R.id.rate) TextView rate;
-    @Bind(R.id.author) TextView author;
+    @Bind(R.id.phone) TextView phoneNumber;
     @Bind(R.id.icon_bookmarked) ImageView bookmarkedIcon;
     @Bind(R.id.text_initial) TextView initial;
 
@@ -69,6 +69,6 @@ public class ContactViewHolder extends BenihItemViewHolder<ImportantContact> {
 
         name.setText(importantContact.getName());
         rate.setText(importantContact.getAvgRate() + "");
-        author.setText(importantContact.getUserId());
+        phoneNumber.setText(importantContact.getPhoneNumber());
     }
 }

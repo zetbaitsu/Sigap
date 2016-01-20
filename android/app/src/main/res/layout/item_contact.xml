@@ -88,7 +88,7 @@
         android:tint="@color/secondary_text"/>
 
     <TextView
-        android:id="@+id/author"
+        android:id="@+id/phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/rate"
