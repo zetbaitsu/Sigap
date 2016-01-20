@@ -22,42 +22,17 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/initial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/icon_bookmarked"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:src="@drawable/ic_star"
-            android:visibility="invisible"/>
-
-        <TextView
-            android:id="@+id/text_initial"
-            android:layout_width="28dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:gravity="center"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="24sp"
-            android:visibility="invisible"/>
-    </FrameLayout>
-
     <TextView
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/initial"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_toEndOf="@+id/initial"
-        android:layout_toRightOf="@+id/initial"
+        android:layout_toLeftOf="@+id/icon_bookmarked"
+        android:layout_toStartOf="@+id/icon_bookmarked"
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/primary_text"
@@ -88,7 +63,7 @@
         android:tint="@color/secondary_text"/>
 
     <TextView
-        android:id="@+id/phone"
+        android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/rate"
@@ -100,4 +75,21 @@
         android:singleLine="true"
         android:textColor="@color/divider"
         android:textSize="12sp"/>
+
+    <ImageView
+        android:id="@+id/icon_bookmarked"
+        android:layout_width="22dp"
+        android:layout_height="26dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_star"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/rate"
+        android:background="@color/divider"/>
 </RelativeLayout>

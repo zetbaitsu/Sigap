@@ -16,28 +16,30 @@
 
 package id.satusatudua.sigap.ui.fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.EditText;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.ImportantContact;
+import id.satusatudua.sigap.presenter.ImportantContactPresenter;
+import id.satusatudua.sigap.ui.AddContactActivity;
 import id.satusatudua.sigap.ui.adapter.ContactAdapter;
-import id.satusatudua.sigap.util.PasswordUtils;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
-import id.zelory.benih.util.BenihUtils;
-import id.zelory.benih.util.BenihWorker;
 import id.zelory.benih.util.KeyboardUtil;
-import timber.log.Timber;
 import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
 import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
@@ -49,17 +51,20 @@ import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScrol
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class ImportantContactFragment extends BenihFragment {
+public class ImportantContactFragment extends BenihFragment implements
+        ImportantContactPresenter.View, SwipeRefreshLayout.OnRefreshListener {
     private static final String KEY_SHOW_FAB = "extra_show_fab";
 
     @Bind(R.id.et_search) EditText searchField;
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerViewContact;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.fast_scroller) VerticalRecyclerViewFastScroller fastScroller;
     @Bind(R.id.fast_scroller_section_title_indicator) SectionTitleIndicator indicator;
     @Bind(R.id.fab) FloatingActionButton fab;
 
-    private List<ImportantContact> contacts;
     private boolean showFab;
+    private ContactAdapter adapter;
+    private ImportantContactPresenter importantContactPresenter;
 
     public static ImportantContactFragment newInstance(boolean showFab) {
         ImportantContactFragment fragment = new ImportantContactFragment();
@@ -81,7 +86,10 @@ public class ImportantContactFragment extends BenihFragment {
         }
         fab.setVisibility(showFab ? View.VISIBLE : View.GONE);
 
-        ContactAdapter adapter = new ContactAdapter(getActivity());
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        adapter = new ContactAdapter(getActivity());
         recyclerViewContact.setUpAsList();
         recyclerViewContact.setAdapter(adapter);
         adapter.setOnItemClickListener((view, position) -> onItemContactClicked(adapter.getData().get(position)));
@@ -89,57 +97,76 @@ public class ImportantContactFragment extends BenihFragment {
         recyclerViewContact.addOnScrollListener(fastScroller.getOnScrollListener());
         fastScroller.setSectionIndicator(indicator);
 
-        BenihWorker.pluck()
-                .doInComputation(() -> contacts = generateDummyData())
-                .subscribe(o -> {
-                    adapter.add(contacts);
-                }, throwable -> {
-                    Timber.d(throwable.getMessage());
-                });
-
         searchField.setOnEditorActionListener((v, actionId, event) -> {
             search();
             return true;
         });
+
+        importantContactPresenter = new ImportantContactPresenter(this);
+        if (savedInstanceState == null) {
+            new Handler().postDelayed(() -> importantContactPresenter.loadContacts(), 800);
+        } else {
+            importantContactPresenter.loadState(savedInstanceState);
+        }
+    }
+
+    @OnTextChanged(R.id.et_search)
+    public void instantFilter(CharSequence keyword) {
+        importantContactPresenter.filter(keyword.toString());
     }
 
     @OnClick(R.id.fab)
     public void addNewContact() {
-        Timber.d("addNewContact clicked");
+        startActivity(new Intent(getActivity(), AddContactActivity.class));
     }
 
     private void onItemContactClicked(ImportantContact importantContact) {
-        Timber.d(importantContact.toString());
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + importantContact.getPhoneNumber().trim()));
+        startActivity(intent);
     }
 
     @OnClick(R.id.icon_search)
     public void search() {
+        importantContactPresenter.filter(searchField.getText().toString());
         KeyboardUtil.hideKeyboard(getActivity(), searchField);
     }
 
-    private List<ImportantContact> generateDummyData() {
-        List<ImportantContact> contacts = new ArrayList<>();
-        List<ImportantContact> bookmarkedContacts = new ArrayList<>();
+    @Override
+    public void onNewContactAdded(ImportantContact importantContact) {
+        adapter.addOrUpdate(importantContact);
+    }
 
-        for (int i = 0; i < 200; i++) {
-            ImportantContact importantContact = new ImportantContact();
-            importantContact.setContactId(i + "");
-            importantContact.setBookmarked((BenihUtils.randInt(1, i + 2) % (i + 1)) == 0);
-            importantContact.setName(PasswordUtils.generatePassword().substring(0, 8) + " "
-                                             + PasswordUtils.generatePassword().substring(8, 12));
-            importantContact.setAvgRate((double) BenihUtils.randInt(1, 5) / (double) BenihUtils.randInt(1, 2));
-            importantContact.setUserId(PasswordUtils.generatePassword().substring(0, 8));
+    @Override
+    public void showFilteredContacts(List<ImportantContact> contacts) {
+        adapter.clear();
+        adapter.add(contacts);
+    }
 
-            if (importantContact.isBookmarked()) {
-                bookmarkedContacts.add(importantContact);
-            } else {
-                contacts.add(importantContact);
-            }
-        }
+    @Override
+    public void showError(String errorMessage) {
+        Snackbar snackbar = Snackbar.make(recyclerViewContact, errorMessage, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundResource(R.color.colorAccent);
+        snackbar.show();
+    }
 
-        Collections.sort(contacts, (lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()));
-        Collections.sort(bookmarkedContacts, (lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()));
-        bookmarkedContacts.addAll(contacts);
-        return bookmarkedContacts;
+    @Override
+    public void showLoading() {
+        swipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void dismissLoading() {
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void onRefresh() {
+        importantContactPresenter.loadContacts();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        importantContactPresenter.saveState(outState);
+        super.onSaveInstanceState(outState);
     }
 }

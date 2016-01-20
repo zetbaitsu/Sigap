@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
         android:name=".SigapApp"
@@ -75,6 +76,12 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.ProfileActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.EditProfileActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.AddContactActivity"
             android:screenOrientation="portrait"/>
 
         <service

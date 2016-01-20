@@ -21,7 +21,7 @@ import android.os.Parcelable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.List;
+import java.util.Date;
 
 /**
  * Created on : December 26, 2015
@@ -34,13 +34,15 @@ import java.util.List;
 public class ImportantContact implements Parcelable {
     private String contactId;
     private String name;
-    private List<String> numbers;
+    private String phoneNumber;
     private String userId;
     private String address;
+    private Date createdAt;
     private double avgRate;
     private double totalRate;
     private double totalUserRate;
     private boolean bookmarked;
+    private User user;
 
     public ImportantContact() {
 
@@ -49,13 +51,15 @@ public class ImportantContact implements Parcelable {
     protected ImportantContact(Parcel in) {
         contactId = in.readString();
         name = in.readString();
-        numbers = in.createStringArrayList();
+        phoneNumber = in.readString();
         userId = in.readString();
         address = in.readString();
+        createdAt = new Date(in.readLong());
         avgRate = in.readDouble();
         totalRate = in.readDouble();
         totalUserRate = in.readDouble();
         bookmarked = in.readByte() != 0;
+        user = in.readParcelable(User.class.getClassLoader());
     }
 
     public static final Creator<ImportantContact> CREATOR = new Creator<ImportantContact>() {
@@ -86,12 +90,12 @@ public class ImportantContact implements Parcelable {
         this.name = name;
     }
 
-    public List<String> getNumbers() {
-        return numbers;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setNumbers(List<String> numbers) {
-        this.numbers = numbers;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getUserId() {
@@ -108,6 +112,14 @@ public class ImportantContact implements Parcelable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public double getAvgRate() {
@@ -144,9 +156,34 @@ public class ImportantContact implements Parcelable {
         this.bookmarked = bookmarked;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof ImportantContact && ((ImportantContact) o).contactId.equals(contactId);
+    }
+
+    @Override
+    public String toString() {
+        return "ImportantContact{" +
+                "contactId='" + contactId + '\'' +
+                ", name='" + name + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", userId='" + userId + '\'' +
+                ", address='" + address + '\'' +
+                ", createdAt=" + createdAt +
+                ", avgRate=" + avgRate +
+                ", totalRate=" + totalRate +
+                ", totalUserRate=" + totalUserRate +
+                ", bookmarked=" + bookmarked +
+                ", user=" + user +
+                '}';
     }
 
     @Override
@@ -158,27 +195,14 @@ public class ImportantContact implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(contactId);
         dest.writeString(name);
-        dest.writeStringList(numbers);
+        dest.writeString(phoneNumber);
         dest.writeString(userId);
         dest.writeString(address);
+        dest.writeLong(createdAt.getTime());
         dest.writeDouble(avgRate);
         dest.writeDouble(totalRate);
         dest.writeDouble(totalUserRate);
         dest.writeByte((byte) (bookmarked ? 1 : 0));
-    }
-
-    @Override
-    public String toString() {
-        return "ImportantContact{" +
-                "contactId='" + contactId + '\'' +
-                ", name='" + name + '\'' +
-                ", numbers=" + numbers +
-                ", userId='" + userId + '\'' +
-                ", address='" + address + '\'' +
-                ", avgRate=" + avgRate +
-                ", totalRate=" + totalRate +
-                ", totalUserRate=" + totalUserRate +
-                ", bookmarked=" + bookmarked +
-                '}';
+        dest.writeParcelable(user, flags);
     }
 }

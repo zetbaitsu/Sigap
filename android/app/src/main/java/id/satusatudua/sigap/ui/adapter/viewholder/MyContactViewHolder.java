@@ -16,9 +16,12 @@
 
 package id.satusatudua.sigap.ui.adapter.viewholder;
 
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.Date;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
@@ -29,46 +32,31 @@ import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnItemClickListene
 import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnLongItemClickListener;
 
 /**
- * Created on : January 09, 2016
+ * Created on : January 18, 2016
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class ContactViewHolder extends BenihItemViewHolder<ImportantContact> {
+public class MyContactViewHolder extends BenihItemViewHolder<ImportantContact> {
+
     @Bind(R.id.name) TextView name;
     @Bind(R.id.rate) TextView rate;
-    @Bind(R.id.phone) TextView phoneNumber;
+    @Bind(R.id.date) TextView date;
     @Bind(R.id.icon_bookmarked) ImageView bookmarkedIcon;
-    @Bind(R.id.text_initial) TextView initial;
 
-    private boolean showInitial;
-
-    public ContactViewHolder(View itemView, OnItemClickListener itemClickListener, OnLongItemClickListener longItemClickListener) {
+    public MyContactViewHolder(View itemView, OnItemClickListener itemClickListener, OnLongItemClickListener longItemClickListener) {
         super(itemView, itemClickListener, longItemClickListener);
-    }
-
-    public void setShowInitial(boolean showInitial) {
-        this.showInitial = showInitial;
     }
 
     @Override
     public void bind(ImportantContact importantContact) {
-        if (showInitial && importantContact.isBookmarked()) {
-            bookmarkedIcon.setVisibility(View.VISIBLE);
-            initial.setVisibility(View.INVISIBLE);
-        } else if (showInitial) {
-            initial.setText(importantContact.getName().substring(0, 1).toUpperCase());
-            initial.setVisibility(View.VISIBLE);
-            bookmarkedIcon.setVisibility(View.INVISIBLE);
-        } else {
-            bookmarkedIcon.setVisibility(View.INVISIBLE);
-            initial.setVisibility(View.INVISIBLE);
-        }
-
         name.setText(importantContact.getName());
         rate.setText(importantContact.getAvgRate() + "");
-        phoneNumber.setText(importantContact.getPhoneNumber());
+        date.setText(DateUtils.getRelativeTimeSpanString(new Date().getTime(),
+                                                         System.currentTimeMillis(),
+                                                         DateUtils.DAY_IN_MILLIS));
+        bookmarkedIcon.setImageResource(importantContact.isBookmarked() ? R.drawable.ic_star : R.drawable.ic_star_line);
     }
 }

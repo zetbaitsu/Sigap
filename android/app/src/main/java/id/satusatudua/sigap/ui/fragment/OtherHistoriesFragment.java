@@ -127,6 +127,7 @@ public class OtherHistoriesFragment extends BenihFragment implements HistoriesPr
     public void onSaveInstanceState(Bundle outState) {
         presenter.saveState(outState);
         super.onSaveInstanceState(outState);
+        outState.putParcelable(KEY_USER, user);
     }
 
     @Override

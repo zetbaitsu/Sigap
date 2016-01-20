@@ -36,10 +36,12 @@ import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.ui.adapter.ProfilePagerAdapter;
 import id.satusatudua.sigap.ui.fragment.HistoriesFragment;
-import id.satusatudua.sigap.ui.fragment.ImportantContactFragment;
+import id.satusatudua.sigap.ui.fragment.MyContactFragment;
 import id.satusatudua.sigap.ui.fragment.OtherHistoriesFragment;
 import id.zelory.benih.ui.BenihActivity;
 import id.zelory.benih.ui.fragment.BenihFragment;
+import id.zelory.benih.util.BenihScheduler;
+import timber.log.Timber;
 
 /**
  * Created on : January 18, 2016
@@ -60,7 +62,6 @@ public class ProfileActivity extends BenihActivity {
     @Bind(R.id.email) TextView emailAddress;
     @Bind(R.id.button_edit) ImageView buttonEdit;
 
-    private ProfilePagerAdapter profilePagerAdapter;
     private User user;
 
     public static Intent generateIntent(Context context, User user) {
@@ -78,19 +79,33 @@ public class ProfileActivity extends BenihActivity {
     protected void onViewReady(Bundle savedInstanceState) {
         resolveUser(savedInstanceState);
 
-        profilePagerAdapter = new ProfilePagerAdapter(getSupportFragmentManager(), getFragments());
+        ProfilePagerAdapter profilePagerAdapter = new ProfilePagerAdapter(getSupportFragmentManager(), getFragments());
         viewPager.setAdapter(profilePagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-        if (user.equals(CacheManager.pluck().getCurrentUser())) {
+        if (!user.equals(CacheManager.pluck().getCurrentUser())) {
             buttonEdit.setVisibility(View.GONE);
             emailAddress.setVisibility(View.GONE);
         }
 
-        collapsingToolbarLayout.setTitle(user.getName());
-        gender.setText(user.isMale() ? "Laki - laki" : "Perempuan");
-        phoneNumber.setText("081377668034");
-        emailAddress.setText(user.getEmail());
+        if (user.equals(CacheManager.pluck().getCurrentUser())) {
+            CacheManager.pluck().listenCurrentUser()
+                    .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
+                    .compose(bindToLifecycle())
+                    .subscribe(user -> {
+                        collapsingToolbarLayout.setTitle(user.getName());
+                        collapsingToolbarLayout.invalidate();
+                        gender.setText(user.isMale() ? "Laki - laki" : "Perempuan");
+                        phoneNumber.setText("081377668034");
+                        emailAddress.setText(user.getEmail());
+                    }, throwable -> Timber.e(throwable.getMessage()));
+        } else {
+            collapsingToolbarLayout.setTitle(user.getName());
+            gender.setText(user.isMale() ? "Laki - laki" : "Perempuan");
+            phoneNumber.setText("081377668034");
+            emailAddress.setText(user.getEmail());
+        }
+
     }
 
     private void resolveUser(Bundle savedInstanceState) {
@@ -109,14 +124,14 @@ public class ProfileActivity extends BenihActivity {
 
     @OnClick(R.id.button_edit)
     public void editProfile() {
-
+        startActivity(new Intent(this, EditProfileActivity.class));
     }
 
     private List<BenihFragment> getFragments() {
         if (user.equals(CacheManager.pluck().getCurrentUser())) {
-            return Arrays.asList(new HistoriesFragment(), new ImportantContactFragment());
+            return Arrays.asList(new HistoriesFragment(), MyContactFragment.newInstance(user));
         }
-        return Arrays.asList(OtherHistoriesFragment.newInstance(user), new ImportantContactFragment());
+        return Arrays.asList(OtherHistoriesFragment.newInstance(user), MyContactFragment.newInstance(user));
     }
 
     @Override

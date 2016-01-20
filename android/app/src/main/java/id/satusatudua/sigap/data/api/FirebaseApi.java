@@ -89,7 +89,7 @@ public enum FirebaseApi {
         return firebase.child("caseMessages").child(caseId);
     }
 
-    public Firebase importantContacts(int page) {
+    public Firebase importantContacts() {
         return firebase.child("importantContacts");
     }
 
