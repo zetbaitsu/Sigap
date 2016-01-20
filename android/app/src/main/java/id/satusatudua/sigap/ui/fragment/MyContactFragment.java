@@ -18,24 +18,23 @@ package id.satusatudua.sigap.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.ImportantContact;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.presenter.MyContactPresenter;
+import id.satusatudua.sigap.ui.DetailContactActivity;
 import id.satusatudua.sigap.ui.MainActivity;
 import id.satusatudua.sigap.ui.adapter.MyContactAdapter;
-import id.satusatudua.sigap.util.PasswordUtils;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
-import id.zelory.benih.util.BenihUtils;
-import id.zelory.benih.util.BenihWorker;
 import timber.log.Timber;
 
 /**
@@ -47,7 +46,7 @@ import timber.log.Timber;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class MyContactFragment extends BenihFragment implements
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener, MyContactPresenter.View {
     private static final String KEY_USER = "extra_user";
 
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerView;
@@ -55,7 +54,7 @@ public class MyContactFragment extends BenihFragment implements
 
     private User user;
     private MyContactAdapter myContactAdapter;
-    private List<ImportantContact> contacts;
+    private MyContactPresenter presenter;
 
     public static MyContactFragment newInstance(User user) {
         MyContactFragment fragment = new MyContactFragment();
@@ -82,17 +81,12 @@ public class MyContactFragment extends BenihFragment implements
         recyclerView.setUpAsList();
         myContactAdapter.setOnItemClickListener((view, position) -> onItemContactClicked(myContactAdapter.getData().get(position)));
 
-        BenihWorker.pluck()
-                .doInComputation(() -> contacts = generateDummyData())
-                .subscribe(o -> {
-                    myContactAdapter.add(contacts);
-                }, throwable -> {
-                    Timber.d(throwable.getMessage());
-                });
+        presenter = new MyContactPresenter(this);
+        new Handler().postDelayed(() -> presenter.loadMyContacts(user), 800);
     }
 
     private void onItemContactClicked(ImportantContact importantContact) {
-        Timber.d(importantContact.toString());
+        startActivity(DetailContactActivity.generateIntent(getActivity(), importantContact));
     }
 
     private void resolveUser(Bundle savedInstanceState) {
@@ -111,38 +105,35 @@ public class MyContactFragment extends BenihFragment implements
 
     @Override
     public void onRefresh() {
-
-    }
-
-    private List<ImportantContact> generateDummyData() {
-        List<ImportantContact> contacts = new ArrayList<>();
-        List<ImportantContact> bookmarkedContacts = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++) {
-            ImportantContact importantContact = new ImportantContact();
-            importantContact.setContactId(i + "");
-            importantContact.setBookmarked((BenihUtils.randInt(1, i + 2) % (i + 1)) == 0);
-            importantContact.setName(PasswordUtils.generatePassword().substring(0, 8) + " "
-                                             + PasswordUtils.generatePassword().substring(8, 12));
-            importantContact.setAvgRate((double) BenihUtils.randInt(1, 5) / (double) BenihUtils.randInt(1, 2));
-            importantContact.setUserId(PasswordUtils.generatePassword().substring(0, 8));
-
-            if (importantContact.isBookmarked()) {
-                bookmarkedContacts.add(importantContact);
-            } else {
-                contacts.add(importantContact);
-            }
-        }
-
-        Collections.sort(contacts, (lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()));
-        Collections.sort(bookmarkedContacts, (lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()));
-        bookmarkedContacts.addAll(contacts);
-        return bookmarkedContacts;
+        presenter.loadMyContacts(user);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_USER, user);
+    }
+
+    @Override
+    public void showContacts(List<ImportantContact> contacts) {
+        myContactAdapter.clear();
+        myContactAdapter.add(contacts);
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        Snackbar snackbar = Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundResource(R.color.colorAccent);
+        snackbar.show();
+    }
+
+    @Override
+    public void showLoading() {
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void dismissLoading() {
+        swipeRefreshLayout.setRefreshing(false);
     }
 }

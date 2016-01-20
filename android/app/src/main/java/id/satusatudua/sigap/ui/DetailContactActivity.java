@@ -101,6 +101,10 @@ public class DetailContactActivity extends BenihActivity {
         address.setText(importantContact.getAddress());
         createdAt.setText(new SimpleDateFormat("dd/MM/yyyy").format(importantContact.getCreatedAt()));
 
+        if (importantContact.getUser() != null) {
+            creator.setText(importantContact.getUser().getName());
+        }
+
         yourName.setText(currentUser.getName());
         setMyRate();
 

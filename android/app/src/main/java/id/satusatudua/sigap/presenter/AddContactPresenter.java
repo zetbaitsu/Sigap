@@ -26,6 +26,7 @@ import java.util.Map;
 
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.model.User;
 import id.zelory.benih.presenter.BenihPresenter;
 import timber.log.Timber;
 
@@ -45,20 +46,23 @@ public class AddContactPresenter extends BenihPresenter<AddContactPresenter.View
 
     public void addContact(String name, String phoneNumber, String address) {
         view.showLoading();
-        Firebase api = FirebaseApi.pluck().getApi().child("importantContacts");
-        String id = api.push().getKey();
+        User currentUser = CacheManager.pluck().getCurrentUser();
+        Firebase api = FirebaseApi.pluck().getApi();
+        String id = api.child("importantContacts").push().getKey();
 
         Map<String, Object> contactData = new HashMap<>();
         contactData.put("name", name);
         contactData.put("phoneNumber", phoneNumber);
         contactData.put("address", address);
         contactData.put("createdAt", new Date().getTime());
-        contactData.put("userId", CacheManager.pluck().getCurrentUser().getUserId());
+        contactData.put("userId", currentUser.getUserId());
         contactData.put("totalRate", 0);
         contactData.put("totalUserRate", 0);
 
         Map<String, Object> data = new HashMap<>();
-        data.put(id, contactData);
+        data.put("importantContacts/" + id, contactData);
+        data.put("userContacts/" + currentUser.getUserId() + "/" + id + "/contactId/", id);
+
         api.updateChildren(data, (firebaseError, firebase) -> {
             if (firebaseError == null) {
                 if (view != null) {
