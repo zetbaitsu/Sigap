@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.satusatudua.sigap.data.api.FirebaseApi;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.ImportantContact;
+import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
 import id.zelory.benih.util.BenihScheduler;
@@ -42,10 +44,12 @@ import timber.log.Timber;
 public class ImportantContactPresenter extends BenihPresenter<ImportantContactPresenter.View> {
 
     private List<ImportantContact> contacts;
+    private User currentUser;
 
     public ImportantContactPresenter(View view) {
         super(view);
         contacts = new ArrayList<>();
+        currentUser = CacheManager.pluck().getCurrentUser();
     }
 
     public void loadContacts() {
@@ -95,6 +99,19 @@ public class ImportantContactPresenter extends BenihPresenter<ImportantContactPr
                 })
                 .toList()
                 .flatMap(dataSnapshots1 -> Observable.from(contacts))
+                .flatMap(contact -> RxFirebase.observeOnce(FirebaseApi.pluck().bookmarkContacts(currentUser.getUserId()).child(contact.getContactId())))
+                .doOnNext(dataSnapshot -> {
+                    if (dataSnapshot.getValue() != null) {
+                        int size = contacts.size();
+                        for (int i = 0; i < size; i++) {
+                            if (contacts.get(i).getContactId().equals(dataSnapshot.getKey())) {
+                                contacts.get(i).setBookmarked(true);
+                            }
+                        }
+                    }
+                })
+                .toList()
+                .flatMap(dataSnapshots1 -> Observable.from(contacts))
                 .toSortedList((contact, contact2) -> {
                     return contact.getName().compareTo(contact2.getName());
                 })
@@ -128,7 +145,18 @@ public class ImportantContactPresenter extends BenihPresenter<ImportantContactPr
                 .filter(contact -> contact.getName().toLowerCase().contains(keyword.toLowerCase()) ||
                         contact.getAddress().toLowerCase().contains(keyword.toLowerCase()) ||
                         contact.getPhoneNumber().toLowerCase().contains(keyword.toLowerCase()))
-                .toList()
+                .toSortedList((contact, contact2) -> {
+                    return contact.getName().compareTo(contact2.getName());
+                })
+                .flatMap(Observable::from)
+                .toSortedList((contact, contact2) -> {
+                    if (contact.isBookmarked() && !contact2.isBookmarked()) {
+                        return -1;
+                    } else if (!contact.isBookmarked() && contact2.isBookmarked()) {
+                        return 1;
+                    }
+                    return 0;
+                })
                 .subscribe(contacts -> {
                     if (view != null) {
                         view.showFilteredContacts(contacts);

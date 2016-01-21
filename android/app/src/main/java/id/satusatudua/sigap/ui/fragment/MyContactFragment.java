@@ -35,7 +35,6 @@ import id.satusatudua.sigap.ui.MainActivity;
 import id.satusatudua.sigap.ui.adapter.MyContactAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
-import timber.log.Timber;
 
 /**
  * Created on : January 18, 2016
@@ -118,6 +117,11 @@ public class MyContactFragment extends BenihFragment implements
     public void showContacts(List<ImportantContact> contacts) {
         myContactAdapter.clear();
         myContactAdapter.add(contacts);
+    }
+
+    @Override
+    public void updateContact(ImportantContact contact) {
+        myContactAdapter.addOrUpdate(contact);
     }
 
     @Override

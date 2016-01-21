@@ -38,6 +38,7 @@ import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.ImportantContact;
 import id.satusatudua.sigap.data.model.Review;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.presenter.BookmarkPresenter;
 import id.satusatudua.sigap.presenter.DetailContactPresenter;
 import id.zelory.benih.ui.BenihActivity;
 import id.zelory.benih.util.BenihWorker;
@@ -51,7 +52,8 @@ import timber.log.Timber;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class DetailContactActivity extends BenihActivity implements DetailContactPresenter.View {
+public class DetailContactActivity extends BenihActivity implements DetailContactPresenter.View,
+        BookmarkPresenter.View {
     private static final String KEY_CONTACT = "extra_contact";
 
     @Bind(R.id.button_edit) ImageView buttonEdit;
@@ -82,6 +84,7 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
     private DetailContactPresenter contactPresenter;
     private ProgressDialog progressDialog;
     private SimpleDateFormat dateFormat;
+    private BookmarkPresenter bookmarkPresenter;
 
     public static Intent generateIntent(Context context, ImportantContact contact) {
         Intent intent = new Intent(context, DetailContactActivity.class);
@@ -102,6 +105,7 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
         dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         buttonEdit.setVisibility(importantContact.getUserId().equals(currentUser.getUserId()) ? View.VISIBLE : View.GONE);
+        buttonBookmark.setImageResource(importantContact.isBookmarked() ? R.drawable.ic_bookmark : R.drawable.ic_bookmark_line);
 
         name.setText(importantContact.getName());
         rate.setText(String.format("%.1f", importantContact.getAvgRate()));
@@ -122,6 +126,8 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
         }
         contactPresenter.loadMyReview();
         contactPresenter.loadReviews();
+
+        bookmarkPresenter = new BookmarkPresenter(this);
     }
 
     private void setMyRate() {
@@ -171,8 +177,11 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
 
     @OnClick(R.id.button_bookmark)
     public void bookmark() {
-        importantContact.setBookmarked(!importantContact.isBookmarked());
-        buttonBookmark.setImageResource(importantContact.isBookmarked() ? R.drawable.ic_bookmark : R.drawable.ic_bookmark_line);
+        if (importantContact.isBookmarked()) {
+            bookmarkPresenter.unBookmark(importantContact);
+        } else {
+            bookmarkPresenter.bookmark(importantContact);
+        }
     }
 
     @OnClick(R.id.rate_1)
@@ -359,5 +368,17 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
     @Override
     public void dismissLoading() {
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void onBookmarked(ImportantContact contact) {
+        importantContact.setBookmarked(true);
+        buttonBookmark.setImageResource(R.drawable.ic_bookmark);
+    }
+
+    @Override
+    public void onUnBookmark(ImportantContact contact) {
+        importantContact.setBookmarked(false);
+        buttonBookmark.setImageResource(R.drawable.ic_bookmark_line);
     }
 }

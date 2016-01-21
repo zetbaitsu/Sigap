@@ -24,11 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.satusatudua.sigap.data.api.FirebaseApi;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.ImportantContact;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.event.BookmarkEvent;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
+import id.zelory.benih.util.BenihBus;
 import rx.Observable;
+import timber.log.Timber;
 
 /**
  * Created on : January 20, 2016
@@ -41,10 +45,28 @@ import rx.Observable;
 public class MyContactPresenter extends BenihPresenter<MyContactPresenter.View> {
 
     private List<ImportantContact> contacts;
+    private User currentUser;
 
     public MyContactPresenter(View view) {
         super(view);
         contacts = new ArrayList<>();
+        BenihBus.pluck().receive()
+                .subscribe(o -> {
+                    if (o instanceof BookmarkEvent) {
+                        onBookmarked(((BookmarkEvent) o).getContact());
+                    }
+                }, throwable -> Timber.e(throwable.getMessage()));
+        currentUser = CacheManager.pluck().getCurrentUser();
+    }
+
+    private void onBookmarked(ImportantContact contact) {
+        int x = contacts.indexOf(contact);
+        if (x >= 0) {
+            contacts.get(x).setBookmarked(contact.isBookmarked());
+            if (view != null) {
+                view.updateContact(contacts.get(x));
+            }
+        }
     }
 
     public void loadMyContacts(User user) {
@@ -89,6 +111,19 @@ public class MyContactPresenter extends BenihPresenter<MyContactPresenter.View> 
                 })
                 .toList()
                 .flatMap(dataSnapshots1 -> Observable.from(contacts))
+                .flatMap(contact -> RxFirebase.observeOnce(FirebaseApi.pluck().bookmarkContacts(currentUser.getUserId()).child(contact.getContactId())))
+                .doOnNext(dataSnapshot -> {
+                    if (dataSnapshot.getValue() != null) {
+                        int size = contacts.size();
+                        for (int i = 0; i < size; i++) {
+                            if (contacts.get(i).getContactId().equals(dataSnapshot.getKey())) {
+                                contacts.get(i).setBookmarked(true);
+                            }
+                        }
+                    }
+                })
+                .toList()
+                .flatMap(dataSnapshots1 -> Observable.from(contacts))
                 .toSortedList((contact1, contact2) -> contact2.getCreatedAt().compareTo(contact1.getCreatedAt()))
                 .subscribe(contacts -> {
                     if (view != null) {
@@ -113,5 +148,7 @@ public class MyContactPresenter extends BenihPresenter<MyContactPresenter.View> 
 
     public interface View extends BenihPresenter.View {
         void showContacts(List<ImportantContact> contacts);
+
+        void updateContact(ImportantContact contact);
     }
 }
