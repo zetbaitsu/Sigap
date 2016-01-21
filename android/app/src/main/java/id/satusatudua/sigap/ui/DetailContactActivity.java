@@ -16,9 +16,11 @@
 
 package id.satusatudua.sigap.ui;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -27,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
@@ -35,8 +36,12 @@ import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.ImportantContact;
+import id.satusatudua.sigap.data.model.Review;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.presenter.DetailContactPresenter;
 import id.zelory.benih.ui.BenihActivity;
+import id.zelory.benih.util.BenihWorker;
+import timber.log.Timber;
 
 /**
  * Created on : January 20, 2016
@@ -46,7 +51,7 @@ import id.zelory.benih.ui.BenihActivity;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class DetailContactActivity extends BenihActivity {
+public class DetailContactActivity extends BenihActivity implements DetailContactPresenter.View {
     private static final String KEY_CONTACT = "extra_contact";
 
     @Bind(R.id.button_edit) ImageView buttonEdit;
@@ -69,12 +74,14 @@ public class DetailContactActivity extends BenihActivity {
     @Bind(R.id.title) EditText title;
     @Bind(R.id.description) EditText description;
     @Bind(R.id.root_review) LinearLayout rootReview;
-    @Bind(R.id.root_more) LinearLayout rootMore;
 
     private ImportantContact importantContact;
     private User currentUser;
     private int myRating;
     boolean rateAble = true;
+    private DetailContactPresenter contactPresenter;
+    private ProgressDialog progressDialog;
+    private SimpleDateFormat dateFormat;
 
     public static Intent generateIntent(Context context, ImportantContact contact) {
         Intent intent = new Intent(context, DetailContactActivity.class);
@@ -92,23 +99,29 @@ public class DetailContactActivity extends BenihActivity {
         resolveContact(savedInstanceState);
         currentUser = CacheManager.pluck().getCurrentUser();
 
+        dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
         buttonEdit.setVisibility(importantContact.getUserId().equals(currentUser.getUserId()) ? View.VISIBLE : View.GONE);
 
         name.setText(importantContact.getName());
-        rate.setText(importantContact.getAvgRate() + "");
+        rate.setText(String.format("%.1f", importantContact.getAvgRate()));
         totalUserRate.setText(importantContact.getTotalUserRate() + "");
         phone.setText(importantContact.getPhoneNumber());
         address.setText(importantContact.getAddress());
-        createdAt.setText(new SimpleDateFormat("dd/MM/yyyy").format(importantContact.getCreatedAt()));
-
-        if (importantContact.getUser() != null) {
-            creator.setText(importantContact.getUser().getName());
-        }
+        createdAt.setText(dateFormat.format(importantContact.getCreatedAt()));
 
         yourName.setText(currentUser.getName());
         setMyRate();
 
-        bindReviews(Arrays.asList(1, 2, 3));
+        contactPresenter = new DetailContactPresenter(this, importantContact);
+
+        if (importantContact.getUser() != null) {
+            creator.setText(importantContact.getUser().getName());
+        } else {
+            contactPresenter.loadCreator();
+        }
+        contactPresenter.loadMyReview();
+        contactPresenter.loadReviews();
     }
 
     private void setMyRate() {
@@ -134,6 +147,7 @@ public class DetailContactActivity extends BenihActivity {
                 rateAble = false;
                 break;
         }
+        rootRating.setVisibility(View.GONE);
     }
 
     private void resolveContact(Bundle savedInstanceState) {
@@ -238,7 +252,7 @@ public class DetailContactActivity extends BenihActivity {
             description.setError("Mohon isi form ini!");
         } else {
             rootRating.setVisibility(View.GONE);
-            rateAble = false;
+            contactPresenter.sendReview(myRating, title.getText().toString(), description.getText().toString());
         }
     }
 
@@ -253,33 +267,97 @@ public class DetailContactActivity extends BenihActivity {
         rootRating.setVisibility(View.GONE);
     }
 
-    private void bindReviews(List<Object> reviews) {
+    private void bindReviews(List<Review> reviews) {
         int size = reviews.size();
         rootReview.removeAllViews();
         for (int i = 0; i < size; i++) {
-            View reviewView = LayoutInflater.from(this).inflate(R.layout.item_review, rootReview, false);
-            TextView title = (TextView) reviewView.findViewById(R.id.title);
-            title.setText("Judul ke " + i);
-            TextView rate = (TextView) reviewView.findViewById(R.id.rate);
-            rate.setText("5.0");
-            TextView dateAndAuthor = (TextView) reviewView.findViewById(R.id.date_and_author);
-            dateAndAuthor.setText("pada 15/06/2015 oleh " + currentUser.getName());
-            TextView content = (TextView) reviewView.findViewById(R.id.content);
-            content.setText("Nah ini review untuk yang ke " + i);
-            rootReview.addView(reviewView);
+            bindReview(reviews.get(i));
         }
-
-        rootMore.setVisibility(size >= 3 ? View.VISIBLE : View.GONE);
     }
 
-    @OnClick(R.id.read_more)
-    public void readMoreReview() {
-
+    private void bindReview(Review review) {
+        View reviewView = LayoutInflater.from(this).inflate(R.layout.item_review, rootReview, false);
+        TextView title = (TextView) reviewView.findViewById(R.id.title);
+        title.setText(review.getTitle());
+        TextView rate = (TextView) reviewView.findViewById(R.id.rate);
+        rate.setText(review.getRate() + "");
+        TextView dateAndAuthor = (TextView) reviewView.findViewById(R.id.date_and_author);
+        dateAndAuthor.setText("pada " + dateFormat.format(review.getDate()) + " oleh " + review.getUser().getName());
+        TextView content = (TextView) reviewView.findViewById(R.id.content);
+        content.setText(review.getDescription());
+        rootReview.addView(reviewView);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_CONTACT, importantContact);
+    }
+
+    @Override
+    public void showCreator(User creator) {
+        this.creator.setText(creator.getName());
+        importantContact.setUser(creator);
+    }
+
+    @Override
+    public void showMyReview(Review review) {
+        importantContact.setMyRate(review.getRate());
+        setMyRate();
+    }
+
+    @Override
+    public void onReviewAdded(Review review) {
+        rateAble = false;
+        bindReview(review);
+        importantContact.setTotalRate(importantContact.getTotalRate() + review.getRate());
+        importantContact.setTotalUserRate(importantContact.getTotalUserRate() + 1);
+        importantContact.setAvgRate(importantContact.getTotalRate() / importantContact.getTotalUserRate());
+        rate.setText(String.format("%.1f", importantContact.getAvgRate()));
+        totalUserRate.setText(importantContact.getTotalUserRate() + "");
+    }
+
+    @Override
+    public void showReviews(List<Review> reviews) {
+        bindReviews(reviews);
+
+        BenihWorker.pluck().doInNewThread(() -> updateInfo(reviews))
+                .subscribe(o -> {
+                    rate.setText(String.format("%.1f", importantContact.getAvgRate()));
+                    totalUserRate.setText(importantContact.getTotalUserRate() + "");
+                }, throwable -> Timber.e(throwable.getMessage()));
+    }
+
+    private void updateInfo(List<Review> reviews) {
+        int size = reviews.size();
+
+        importantContact.setTotalUserRate(size);
+        long totalRate = 0;
+        for (int i = 0; i < size; i++) {
+            totalRate += reviews.get(i).getRate();
+        }
+        importantContact.setTotalRate(totalRate);
+        importantContact.setAvgRate(totalRate / size);
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        Snackbar snackbar = Snackbar.make(rootReview, errorMessage, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundResource(R.color.colorAccent);
+        snackbar.show();
+    }
+
+    @Override
+    public void showLoading() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Silahkan tunggu...");
+        }
+        progressDialog.show();
+    }
+
+    @Override
+    public void dismissLoading() {
+        progressDialog.dismiss();
     }
 }
