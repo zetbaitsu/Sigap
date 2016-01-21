@@ -68,7 +68,7 @@ public class ContactViewHolder extends BenihItemViewHolder<ImportantContact> {
         }
 
         name.setText(importantContact.getName());
-        rate.setText(importantContact.getAvgRate() + "");
+        rate.setText(String.format("%.1f", importantContact.getAvgRate()));
         phoneNumber.setText(importantContact.getPhoneNumber());
     }
 }

@@ -137,8 +137,9 @@ public class ImportantContactFragment extends BenihFragment implements
     }
 
     @Override
-    public void onNewContactAdded(ImportantContact importantContact) {
-        adapter.addOrUpdate(importantContact);
+    public void showContacts(List<ImportantContact> contacts) {
+        adapter.clear();
+        adapter.add(contacts);
     }
 
     @Override

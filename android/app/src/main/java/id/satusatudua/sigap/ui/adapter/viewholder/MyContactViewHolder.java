@@ -16,12 +16,11 @@
 
 package id.satusatudua.sigap.ui.adapter.viewholder;
 
-import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
@@ -54,9 +53,7 @@ public class MyContactViewHolder extends BenihItemViewHolder<ImportantContact> {
     public void bind(ImportantContact importantContact) {
         name.setText(importantContact.getName());
         rate.setText(importantContact.getAvgRate() + "");
-        date.setText(DateUtils.getRelativeTimeSpanString(new Date().getTime(),
-                                                         System.currentTimeMillis(),
-                                                         DateUtils.DAY_IN_MILLIS));
+        date.setText(new SimpleDateFormat("dd/MM/yyyy").format(importantContact.getCreatedAt()));
         bookmarkedIcon.setImageResource(importantContact.isBookmarked() ? R.drawable.ic_star : R.drawable.ic_star_line);
     }
 }

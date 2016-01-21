@@ -18,6 +18,8 @@ package id.satusatudua.sigap.presenter;
 
 import android.os.Bundle;
 
+import com.firebase.client.DataSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +46,6 @@ public class ImportantContactPresenter extends BenihPresenter<ImportantContactPr
     public ImportantContactPresenter(View view) {
         super(view);
         contacts = new ArrayList<>();
-        listenNewContact();
     }
 
     public void loadContacts() {
@@ -71,44 +72,51 @@ public class ImportantContactPresenter extends BenihPresenter<ImportantContactPr
 
                     return contact;
                 })
-                .subscribe(contact -> {
-                    if (view != null) {
-                        view.onNewContactAdded(contact);
-                        view.dismissLoading();
+                .flatMap(contact -> RxFirebase.observeOnce(FirebaseApi.pluck().getApi().child("reviews").child(contact.getContactId())))
+                .doOnNext(dataSnapshot -> {
+                    int size = contacts.size();
+                    for (int i = 0; i < size; i++) {
+                        if (contacts.get(i).getContactId().equals(dataSnapshot.getKey())) {
+                            long count = dataSnapshot.getChildrenCount();
+                            contacts.get(i).setTotalUserRate(count);
+                            if (count > 0) {
+                                long totalRate = 0;
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    totalRate += snapshot.child("rate").getValue(Long.class);
+                                }
+                                contacts.get(i).setTotalRate(totalRate);
+                                contacts.get(i).setAvgRate(contacts.get(i).getTotalRate() / totalRate);
+                            } else {
+                                contacts.get(i).setTotalRate(0);
+                                contacts.get(i).setAvgRate(0.0);
+                            }
+                        }
                     }
-                }, throwable -> {
-                    Timber.e(throwable.getMessage());
-                    if (view != null) {
-                        view.showError(throwable.getMessage());
-                        view.dismissLoading();
-                    }
-                });
-    }
-
-    private void listenNewContact() {
-        RxFirebase.observeChildAdded(FirebaseApi.pluck().importantContacts())
-                .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
-                .map(dataSnapshot -> {
-                    ImportantContact contact = dataSnapshot.getValue(ImportantContact.class);
-                    contact.setContactId(dataSnapshot.getKey());
-
-                    int x = contacts.indexOf(contact);
-                    if (x >= 0) {
-                        contacts.set(x, contact);
-                    } else {
-                        contacts.add(contact);
-                    }
-
-                    return contact;
                 })
-                .subscribe(contact -> {
+                .toList()
+                .flatMap(dataSnapshots1 -> Observable.from(contacts))
+                .toSortedList((contact, contact2) -> {
+                    return contact.getName().compareTo(contact2.getName());
+                })
+                .flatMap(Observable::from)
+                .toSortedList((contact, contact2) -> {
+                    if (contact.isBookmarked() && !contact2.isBookmarked()) {
+                        return -1;
+                    } else if (!contact.isBookmarked() && contact2.isBookmarked()) {
+                        return 1;
+                    }
+                    return 0;
+                })
+                .subscribe(contacts -> {
                     if (view != null) {
-                        view.onNewContactAdded(contact);
+                        view.showContacts(contacts);
+                        view.dismissLoading();
                     }
                 }, throwable -> {
                     Timber.e(throwable.getMessage());
                     if (view != null) {
                         view.showError(throwable.getMessage());
+                        view.dismissLoading();
                     }
                 });
     }
@@ -151,7 +159,7 @@ public class ImportantContactPresenter extends BenihPresenter<ImportantContactPr
     }
 
     public interface View extends BenihPresenter.View {
-        void onNewContactAdded(ImportantContact importantContact);
+        void showContacts(List<ImportantContact> contacts);
 
         void showFilteredContacts(List<ImportantContact> contacts);
     }
