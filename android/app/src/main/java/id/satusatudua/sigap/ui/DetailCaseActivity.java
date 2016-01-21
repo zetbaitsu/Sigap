@@ -105,6 +105,6 @@ public class DetailCaseActivity extends BenihActivity {
     }
 
     private List<BenihFragment> getFragments() {
-        return Arrays.asList(new DetailCaseFragment(), ChatFragment.newInstance(theCase, reporter, true));
+        return Arrays.asList(DetailCaseFragment.newInstance(theCase, reporter), ChatFragment.newInstance(theCase, reporter, true));
     }
 }
