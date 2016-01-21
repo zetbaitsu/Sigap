@@ -52,7 +52,7 @@ public class MyContactViewHolder extends BenihItemViewHolder<ImportantContact> {
     @Override
     public void bind(ImportantContact importantContact) {
         name.setText(importantContact.getName());
-        rate.setText(importantContact.getAvgRate() + "");
+        rate.setText(String.format("%.1f", importantContact.getAvgRate()));
         date.setText(new SimpleDateFormat("dd/MM/yyyy").format(importantContact.getCreatedAt()));
         bookmarkedIcon.setImageResource(importantContact.isBookmarked() ? R.drawable.ic_star : R.drawable.ic_star_line);
     }
