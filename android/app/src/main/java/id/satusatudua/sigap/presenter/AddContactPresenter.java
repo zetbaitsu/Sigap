@@ -56,8 +56,6 @@ public class AddContactPresenter extends BenihPresenter<AddContactPresenter.View
         contactData.put("address", address);
         contactData.put("createdAt", new Date().getTime());
         contactData.put("userId", currentUser.getUserId());
-        contactData.put("totalRate", 0);
-        contactData.put("totalUserRate", 0);
 
         Map<String, Object> data = new HashMap<>();
         data.put("importantContacts/" + id, contactData);
