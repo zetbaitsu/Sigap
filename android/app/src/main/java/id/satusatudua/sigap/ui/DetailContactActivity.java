@@ -172,7 +172,7 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
 
     @OnClick(R.id.button_edit)
     public void editContact() {
-
+        startActivityForResult(EditContactActivity.generateIntent(this, importantContact), 25);
     }
 
     @OnClick(R.id.button_bookmark)
@@ -380,5 +380,20 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
     public void onUnBookmark(ImportantContact contact) {
         importantContact.setBookmarked(false);
         buttonBookmark.setImageResource(R.drawable.ic_bookmark_line);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 25 && resultCode == RESULT_OK) {
+            ImportantContact contact = data.getParcelableExtra(EditContactActivity.KEY_CONTACT);
+            importantContact.setName(contact.getName());
+            importantContact.setPhoneNumber(contact.getPhoneNumber());
+            importantContact.setAddress(contact.getAddress());
+
+            name.setText(importantContact.getName());
+            phone.setText(importantContact.getPhoneNumber());
+            address.setText(importantContact.getAddress());
+        }
     }
 }

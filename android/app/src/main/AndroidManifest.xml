@@ -86,6 +86,9 @@
         <activity
             android:name=".ui.DetailContactActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.EditContactActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>
