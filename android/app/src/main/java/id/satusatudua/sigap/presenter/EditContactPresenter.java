@@ -45,14 +45,11 @@ public class EditContactPresenter extends BenihPresenter<EditContactPresenter.Vi
     public void editContact(ImportantContact contact, String name, String phoneNumber, String address) {
         view.showLoading();
         Firebase api = FirebaseApi.pluck().getApi();
-
-        Map<String, Object> contactData = new HashMap<>();
-        contactData.put("name", name);
-        contactData.put("phoneNumber", phoneNumber);
-        contactData.put("address", address);
-
+        
         Map<String, Object> data = new HashMap<>();
-        data.put("importantContacts/" + contact.getContactId(), contactData);
+        data.put("importantContacts/" + contact.getContactId() + "/name/", name);
+        data.put("importantContacts/" + contact.getContactId() + "/phoneNumber/", phoneNumber);
+        data.put("importantContacts/" + contact.getContactId() + "/address/", address);
 
         api.updateChildren(data, (firebaseError, firebase) -> {
             if (firebaseError == null) {
