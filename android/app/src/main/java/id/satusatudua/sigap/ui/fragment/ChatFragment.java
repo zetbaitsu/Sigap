@@ -24,6 +24,7 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.util.List;
 
@@ -55,6 +56,7 @@ import timber.log.Timber;
 public class ChatFragment extends BenihFragment implements ChatPresenter.View {
     private static final String KEY_CASE = "extra_case";
     private static final String KEY_REPORTER = "extra_reporter";
+    private static final String KEY_DISABLE_CHAT = "extra_disable_chat";
 
 
     @Bind(R.id.list_message) BenihRecyclerView listMessage;
@@ -63,6 +65,7 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
     @Bind(R.id.divider) View divider;
     @Bind(R.id.field_message) EditText messageField;
     @Bind(R.id.button_send) ImageView buttonSend;
+    @Bind(R.id.root_input) LinearLayout rootInput;
 
     private ChatAdapter chatAdapter;
     private HelperAdapter helperAdapter;
@@ -80,6 +83,16 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
         return chatFragment;
     }
 
+    public static ChatFragment newInstance(Case theCase, User reporter, boolean disableChat) {
+        ChatFragment chatFragment = new ChatFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(KEY_CASE, theCase);
+        bundle.putParcelable(KEY_REPORTER, reporter);
+        bundle.putBoolean(KEY_DISABLE_CHAT, disableChat);
+        chatFragment.setArguments(bundle);
+        return chatFragment;
+    }
+
     @Override
     protected int getResourceLayout() {
         return R.layout.fragment_chat;
@@ -89,6 +102,10 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
     protected void onViewReady(@Nullable Bundle savedInstanceState) {
         resolveTheCase(savedInstanceState);
         resolveReporter(savedInstanceState);
+
+        boolean disableChat = getArguments().getBoolean(KEY_DISABLE_CHAT, false);
+        rootInput.setVisibility(disableChat ? View.GONE : View.VISIBLE);
+        listHelper.setVisibility(disableChat ? View.GONE : View.VISIBLE);
 
         chatAdapter = new ChatAdapter(getActivity());
         listMessage.setUpAsBottomList();
