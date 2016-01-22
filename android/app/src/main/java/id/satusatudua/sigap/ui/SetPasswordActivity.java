@@ -28,7 +28,6 @@ import android.widget.EditText;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.SetPasswordPresenter;
 import id.zelory.benih.ui.BenihActivity;
@@ -84,7 +83,7 @@ public class SetPasswordActivity extends BenihActivity implements SetPasswordPre
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(R.string.app_name)
                 .setCancelable(false)
-                .setMessage("Sebelum anda dapat menggunakan fitur Sigap, anda harus memasukan minimal 3 pengguna lain yang anda percayai.")
+                .setMessage("Sebelum anda dapat menggunakan fitur Sigap, anda harus memasukan minimal 3 pengguna lain yang anda percayai. Silahkan masukan pengguna yang anda percayai di halaman berikutnya!")
                 .setPositiveButton("OK", (dialog, which) -> {
                     Intent intent = new Intent(this, AddTrustedUserActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

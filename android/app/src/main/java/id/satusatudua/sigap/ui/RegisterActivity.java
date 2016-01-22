@@ -17,7 +17,6 @@
 package id.satusatudua.sigap.ui;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,7 +32,6 @@ import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.RegisterPresenter;
-import id.satusatudua.sigap.util.TimeUtils;
 import id.zelory.benih.ui.BenihActivity;
 
 /**
@@ -48,13 +46,12 @@ public class RegisterActivity extends BenihActivity implements RegisterPresenter
 
     @Bind(R.id.nama) EditText nama;
     @Bind(R.id.email) EditText email;
-    @Bind(R.id.tgl_lahir) EditText tanggalLahir;
+    @Bind(R.id.phone) EditText phone;
     @Bind(R.id.laki) RadioButton laki;
     @Bind(R.id.perempuan) RadioButton perempuan;
 
     private RegisterPresenter registerPresenter;
     private ProgressDialog progressDialog;
-    private DatePickerDialog datePickerDialog;
 
     @Override
     protected int getResourceLayout() {
@@ -69,37 +66,26 @@ public class RegisterActivity extends BenihActivity implements RegisterPresenter
             perempuan.setTextColor(ContextCompat.getColor(this, !isChecked ? R.color.primary_text : R.color.secondary_text));
         });
 
-        datePickerDialog =
-                new DatePickerDialog(this,
-                                     R.style.DatePickerStyle,
-                                     (view, year, monthOfYear, dayOfMonth)
-                                             -> tanggalLahir.setText(dayOfMonth + "-" + monthOfYear + "-" + year),
-                                     1980, 1, 1);
-    }
 
-    @OnClick(R.id.date_picker)
-    public void showDatePicker() {
-        datePickerDialog.show();
     }
 
     @OnClick(R.id.register)
     public void register() {
         String nama = this.nama.getText().toString();
         String email = this.email.getText().toString();
-        String tanggalLahir = this.tanggalLahir.getText().toString();
+        String phoneNumber = phone.getText().toString();
 
         if (nama.isEmpty()) {
             this.nama.setError("Mohon masukan nama anda!");
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             this.email.setError("Mohon masukan alamat email yang valid!");
-        } else if (tanggalLahir.isEmpty()) {
-            this.tanggalLahir.setError("Mohon masukan tanggal lahir anda!");
+        } else if (phoneNumber.isEmpty()) {
+            this.phone.setError("Mohon masukan no ponsel anda!");
         } else {
-
             User user = new User();
             user.setName(nama);
             user.setEmail(email);
-            user.setBirthDate(TimeUtils.getBirthDate(tanggalLahir));
+            user.setPhoneNumber(phoneNumber);
             user.setMale(laki.isChecked());
             user.setFromApps(true);
             user.setStatus(User.Status.SIAP);
@@ -120,7 +106,7 @@ public class RegisterActivity extends BenihActivity implements RegisterPresenter
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(R.string.app_name)
                 .setCancelable(false)
-                .setMessage("Kami telah mengirimkan password akun anda ke email yang anda daftarkan tadi, masukan password tersebut ke form selanjutnya untuk memverikasi alamat email anda.")
+                .setMessage("Kami telah mengirimkan sebuah kode ke email yang anda daftarkan tadi, masukan kode tersebut ke form selanjutnya untuk memverikasi alamat email anda.")
                 .setPositiveButton("OK", (dialog, which) -> {
                     sendBroadcast(new Intent("id.satusatudua.sigap.ACTION_START"));
                     Intent intent = new Intent(this, VerificationActivity.class);

@@ -3,8 +3,6 @@ package id.satusatudua.sigap.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
-
 /**
  * Created on : November 22, 2015
  * Author     : zetbaitsu
@@ -18,7 +16,7 @@ public class User implements Parcelable {
     private String email;
     private String name;
     private boolean male;
-    private Date birthDate;
+    private String phoneNumber;
     private boolean fromApps;
     private Status status;
 
@@ -31,7 +29,7 @@ public class User implements Parcelable {
         email = in.readString();
         name = in.readString();
         male = in.readByte() != 0;
-        birthDate = new Date(in.readLong());
+        phoneNumber = in.readString();
         fromApps = in.readByte() != 0;
         status = Status.valueOf(in.readString());
     }
@@ -80,12 +78,12 @@ public class User implements Parcelable {
         this.male = male;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public boolean isFromApps() {
@@ -120,7 +118,7 @@ public class User implements Parcelable {
         dest.writeString(email);
         dest.writeString(name);
         dest.writeByte((byte) (male ? 1 : 0));
-        dest.writeLong(birthDate.getTime());
+        dest.writeString(phoneNumber);
         dest.writeByte((byte) (fromApps ? 1 : 0));
         dest.writeString(status.name());
     }
@@ -132,13 +130,13 @@ public class User implements Parcelable {
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", male=" + male +
-                ", birthDate=" + birthDate +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", fromApps=" + fromApps +
                 ", status=" + status +
                 '}';
     }
 
     public enum Status {
-        SIAP, DIKAWAL, MENGAWAL, BAHAYA, MENOLONG
+        SIAP, BAHAYA, MENOLONG
     }
 }

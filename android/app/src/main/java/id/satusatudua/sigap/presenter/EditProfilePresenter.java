@@ -56,6 +56,7 @@ public class EditProfilePresenter extends BenihPresenter<EditProfilePresenter.Vi
                     if (firebaseError == null) {
                         currentUser.setName(name);
                         currentUser.setMale(isMale);
+                        currentUser.setPhoneNumber(phoneNumber);
                         CacheManager.pluck().cacheCurrentUser(currentUser);
 
                         if (view != null) {

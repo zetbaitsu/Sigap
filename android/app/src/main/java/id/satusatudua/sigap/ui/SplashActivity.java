@@ -45,7 +45,7 @@ public class SplashActivity extends BenihActivity {
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
 
-        //StateManager.pluck().setState(StateManager.State.LOGGED);
+        StateManager.pluck().setState(StateManager.State.LOGGED);
 
         sendBroadcast(new Intent("id.satusatudua.sigap.ACTION_START"));
 
