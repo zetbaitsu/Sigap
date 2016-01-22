@@ -63,7 +63,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
 
     public void init() {
         if (theCase.getStatus() == Case.Status.BARU) {
-            view.showLoading();
+            view.showEmergencyLoading();
             addTrustedUser();
             findHelper();
         } else {
@@ -163,14 +163,14 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                     .subscribe(candidateHelper -> {
                         if (view != null) {
                             view.onNewHelperAdded(candidateHelper);
-                            view.dismissLoading();
+                            view.dismissEmergencyLoading();
                         }
                     }, throwable -> {
                         findHelperDone = true;
                         Timber.e("Error add trusted: " + throwable.getMessage());
                         if (view != null) {
                             view.showError(throwable.getMessage());
-                            view.dismissLoading();
+                            view.dismissEmergencyLoading();
                         }
                     });
         }
@@ -181,7 +181,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
             List<UserLocation> nearbyUsers = CacheManager.pluck().getNearbyUsers();
             if (nearbyUsers == null) {
                 view.showError("Tidak dapat menemukan pengguna lain disekitar anda.");
-                view.dismissLoading();
+                view.dismissEmergencyLoading();
                 findHelperDone = true;
                 if (trustedUserDone) {
                     sendData();
@@ -217,14 +217,14 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                         .subscribe(candidateHelper -> {
                             if (view != null) {
                                 view.onNewHelperAdded(candidateHelper);
-                                view.dismissLoading();
+                                view.dismissEmergencyLoading();
                             }
                         }, throwable -> {
                             findHelperDone = true;
                             Timber.e("Error find helper: " + throwable.getMessage());
                             if (view != null) {
                                 view.showError(throwable.getMessage());
-                                view.dismissLoading();
+                                view.dismissEmergencyLoading();
                             }
                         });
             }
@@ -232,7 +232,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
     }
 
     public void loadHelper() {
-        view.showLoading();
+        view.showEmergencyLoading();
         RxFirebase.observeOnce(FirebaseApi.pluck().helperCases(theCase.getCaseId()))
                 .flatMap(dataSnapshot -> Observable.from(dataSnapshot.getChildren()))
                 .flatMap(dataSnapshot -> RxFirebase.observeOnce(FirebaseApi.pluck().users(dataSnapshot.getKey()))
@@ -258,14 +258,14 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                 .subscribe(candidateHelper -> {
                     if (view != null) {
                         view.onNewHelperAdded(candidateHelper);
-                        view.dismissLoading();
+                        view.dismissEmergencyLoading();
                     }
                 }, throwable -> {
                     throwable.printStackTrace();
                     Timber.e("Error load helper: " + throwable.getMessage());
                     if (view != null) {
                         view.showError(throwable.getMessage());
-                        view.dismissLoading();
+                        view.dismissEmergencyLoading();
                     }
                 });
     }
@@ -321,13 +321,13 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                     .subscribe(candidateHelper -> {
                         if (view != null) {
                             view.onNewHelperAdded(candidateHelper);
-                            view.dismissLoading();
+                            view.dismissEmergencyLoading();
                         }
                     }, throwable -> {
                         Timber.e("Error load state: " + throwable.getMessage());
                         if (view != null) {
                             view.showError(throwable.getMessage());
-                            view.dismissLoading();
+                            view.dismissEmergencyLoading();
                         }
                     });
         }
@@ -337,5 +337,9 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
         void onNewHelperAdded(CandidateHelper candidateHelper);
 
         void onHelperStatusChanged(CandidateHelper candidateHelper);
+        
+        void showEmergencyLoading();
+        
+        void dismissEmergencyLoading();
     }
 }

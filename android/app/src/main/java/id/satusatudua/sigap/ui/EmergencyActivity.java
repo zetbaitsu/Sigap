@@ -19,31 +19,31 @@ package id.satusatudua.sigap.ui;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.EditText;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.satusatudua.sigap.data.model.ImportantContact;
 import id.satusatudua.sigap.presenter.EmergencyPresenter;
+import id.satusatudua.sigap.presenter.ImportantContactPresenter;
 import id.satusatudua.sigap.ui.adapter.ContactAdapter;
 import id.satusatudua.sigap.ui.adapter.HelperAdapter;
-import id.satusatudua.sigap.util.PasswordUtils;
 import id.zelory.benih.ui.BenihActivity;
 import id.zelory.benih.ui.view.BenihRecyclerView;
-import id.zelory.benih.util.BenihUtils;
-import id.zelory.benih.util.BenihWorker;
 import id.zelory.benih.util.KeyboardUtil;
-import timber.log.Timber;
 import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
 import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
@@ -55,18 +55,21 @@ import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScrol
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class EmergencyActivity extends BenihActivity implements EmergencyPresenter.View {
+public class EmergencyActivity extends BenihActivity implements EmergencyPresenter.View,
+        ImportantContactPresenter.View, SwipeRefreshLayout.OnRefreshListener {
 
     @Bind(R.id.et_search) EditText searchField;
     @Bind(R.id.list_helper) BenihRecyclerView listHelper;
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerViewContact;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.fast_scroller) VerticalRecyclerViewFastScroller fastScroller;
     @Bind(R.id.fast_scroller_section_title_indicator) SectionTitleIndicator indicator;
 
-    private List<ImportantContact> contacts;
     private EmergencyPresenter presenter;
     private ProgressDialog progressDialog;
+    private ContactAdapter adapter;
     private HelperAdapter helperAdapter;
+    private ImportantContactPresenter importantContactPresenter;
 
     @Override
     protected int getResourceLayout() {
@@ -76,21 +79,16 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
 
-        ContactAdapter adapter = new ContactAdapter(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        adapter = new ContactAdapter(this);
         recyclerViewContact.setUpAsList();
         recyclerViewContact.setAdapter(adapter);
         adapter.setOnItemClickListener((view, position) -> onItemContactClicked(adapter.getData().get(position)));
         fastScroller.setRecyclerView(recyclerViewContact);
         recyclerViewContact.addOnScrollListener(fastScroller.getOnScrollListener());
         fastScroller.setSectionIndicator(indicator);
-
-        BenihWorker.pluck()
-                .doInComputation(() -> contacts = generateDummyData())
-                .subscribe(o -> {
-                    adapter.add(contacts);
-                }, throwable -> {
-                    Timber.d(throwable.getMessage());
-                });
 
         helperAdapter = new HelperAdapter(this);
         helperAdapter.add(transformReporter());
@@ -109,6 +107,13 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
         } else {
             presenter.loadState(savedInstanceState);
         }
+
+        importantContactPresenter = new ImportantContactPresenter(this);
+        if (savedInstanceState == null) {
+            new Handler().postDelayed(() -> importantContactPresenter.loadContacts(), 800);
+        } else {
+            importantContactPresenter.loadState(savedInstanceState);
+        }
     }
 
     private CandidateHelper transformReporter() {
@@ -116,16 +121,16 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
         reporter.setCandidate(CacheManager.pluck().getCurrentUser());
         reporter.setCandidateId(CacheManager.pluck().getCurrentUser().getUserId());
         reporter.setStatus(CandidateHelper.Status.MENOLONG);
-        Timber.d("Reporter: " + reporter);
         return reporter;
     }
 
     private void onItemHelperClicked(CandidateHelper candidateHelper) {
-        Timber.d(candidateHelper.toString());
+        startActivity(ProfileActivity.generateIntent(this, candidateHelper.getCandidate()));
     }
 
     private void onItemContactClicked(ImportantContact importantContact) {
-        Timber.d(importantContact.toString());
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + importantContact.getPhoneNumber().trim()));
+        startActivity(intent);
     }
 
     @OnClick(R.id.i_am_save)
@@ -136,9 +141,7 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
                 .setMessage("Apakah kamu yakin kamu telah selamat?")
                 .setPositiveButton("YA, Saya Selamat", (dialog, which) -> {
                     startActivity(CloseCaseActivity.generateIntent(this, presenter.getTheCase(), presenter.getHelpers()));
-                    //StateManager.pluck().setState(StateManager.State.LOGGED);
                     dialog.dismiss();
-                    //onBackPressed();
                 })
                 .setNegativeButton("TIDAK", (dialog, which1) -> {
                     dialog.dismiss();
@@ -152,35 +155,15 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
         alertDialog.show();
     }
 
-    @OnClick(R.id.icon_search)
-    public void search() {
-        KeyboardUtil.hideKeyboard(this, searchField);
+    @OnTextChanged(R.id.et_search)
+    public void instantFilter(CharSequence keyword) {
+        importantContactPresenter.filter(keyword.toString());
     }
 
-    private List<ImportantContact> generateDummyData() {
-        List<ImportantContact> contacts = new ArrayList<>();
-        List<ImportantContact> bookmarkedContacts = new ArrayList<>();
-
-        for (int i = 0; i < 200; i++) {
-            ImportantContact importantContact = new ImportantContact();
-            importantContact.setContactId(i + "");
-            importantContact.setBookmarked((BenihUtils.randInt(1, i + 2) % (i + 1)) == 0);
-            importantContact.setName(PasswordUtils.generatePassword().substring(0, 8) + " "
-                                             + PasswordUtils.generatePassword().substring(8, 12));
-            importantContact.setAvgRate((double) BenihUtils.randInt(1, 5) / (double) BenihUtils.randInt(1, 2));
-            importantContact.setUserId(PasswordUtils.generatePassword().substring(0, 8));
-
-            if (importantContact.isBookmarked()) {
-                bookmarkedContacts.add(importantContact);
-            } else {
-                contacts.add(importantContact);
-            }
-        }
-
-        Collections.sort(contacts, (lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()));
-        Collections.sort(bookmarkedContacts, (lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()));
-        bookmarkedContacts.addAll(contacts);
-        return bookmarkedContacts;
+    @OnClick(R.id.icon_search)
+    public void search() {
+        importantContactPresenter.filter(searchField.getText().toString());
+        KeyboardUtil.hideKeyboard(this, searchField);
     }
 
     @Override
@@ -202,6 +185,18 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
     }
 
     @Override
+    public void showEmergencyLoading() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Silahkan tunggu...");
+        progressDialog.show();
+    }
+
+    @Override
+    public void dismissEmergencyLoading() {
+        progressDialog.dismiss();
+    }
+
+    @Override
     public void showError(String errorMessage) {
         Snackbar snackbar = Snackbar.make(recyclerViewContact, errorMessage, Snackbar.LENGTH_LONG);
         snackbar.getView().setBackgroundResource(R.color.colorAccent);
@@ -210,19 +205,37 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
 
     @Override
     public void showLoading() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Silahkan tunggu...");
-        progressDialog.show();
+        swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
     public void dismissLoading() {
-        progressDialog.dismiss();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         presenter.saveState(outState);
+        importantContactPresenter.saveState(outState);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void showContacts(List<ImportantContact> contacts) {
+        adapter.clear();
+        adapter.add(contacts);
+        recyclerViewContact.scrollToPosition(0);
+    }
+
+    @Override
+    public void showFilteredContacts(List<ImportantContact> contacts) {
+        adapter.clear();
+        adapter.add(contacts);
+        recyclerViewContact.scrollToPosition(0);
+    }
+
+    @Override
+    public void onRefresh() {
+        importantContactPresenter.loadContacts();
     }
 }
