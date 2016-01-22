@@ -62,11 +62,19 @@ public enum StateManager {
         sharedPreferences.edit().putString("user_token", token).apply();
     }
 
+    public void setLastEmail(String email) {
+        sharedPreferences.edit().putString("last_email_try", email).apply();
+    }
+
+    public String getLastEmail() {
+        return sharedPreferences.getString("last_email_try", "");
+    }
+
     public static StateManager pluck() {
         return HARVEST;
     }
 
     public enum State {
-        NEW, VERIFY_EMAIL, SET_PASSWORD, LOGGED, LOGOUT, DITOLONG, ADDING_TRUSTED_USER, MENOLONG
+        NEW, VERIFY_EMAIL, SET_PASSWORD, LOGGED, LOGOUT, DITOLONG, ADDING_TRUSTED_USER, MENOLONG, ENTER_CODE, UPDATE_PASSWORD
     }
 }

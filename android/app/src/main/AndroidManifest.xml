@@ -95,6 +95,12 @@
         <activity
             android:name=".ui.AboutActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.EnterCodeActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.UpdatePasswordActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>
