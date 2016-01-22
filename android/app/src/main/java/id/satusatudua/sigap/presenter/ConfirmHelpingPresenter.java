@@ -125,6 +125,7 @@ public class ConfirmHelpingPresenter extends BenihPresenter<ConfirmHelpingPresen
                 User currentUser = CacheManager.pluck().getCurrentUser();
                 currentUser.setStatus(User.Status.MENOLONG);
                 CacheManager.pluck().cacheCurrentUser(currentUser);
+                StateManager.pluck().backupState();
                 StateManager.pluck().setState(StateManager.State.MENOLONG);
                 CacheManager.pluck().cacheHelpingCase(theCase, reporter);
 

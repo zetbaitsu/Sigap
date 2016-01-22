@@ -46,6 +46,14 @@ public enum StateManager {
         sharedPreferences.edit().putString("user_state", state.name()).apply();
     }
 
+    public State recoveryState() {
+        return State.valueOf(sharedPreferences.getString("backup_state", "NEW"));
+    }
+
+    public void backupState() {
+        sharedPreferences.edit().putString("backup_state", getState().name()).apply();
+    }
+
     public String getToken() {
         return sharedPreferences.getString("user_token", "");
     }
