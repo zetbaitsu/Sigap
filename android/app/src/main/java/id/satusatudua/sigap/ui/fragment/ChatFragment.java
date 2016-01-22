@@ -39,11 +39,11 @@ import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.ChatPresenter;
 import id.satusatudua.sigap.ui.HelpingActivity;
 import id.satusatudua.sigap.ui.MainActivity;
+import id.satusatudua.sigap.ui.ProfileActivity;
 import id.satusatudua.sigap.ui.adapter.ChatAdapter;
 import id.satusatudua.sigap.ui.adapter.HelperAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
-import timber.log.Timber;
 
 /**
  * Created on : January 13, 2016
@@ -169,7 +169,7 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
     }
 
     private void onItemHelperClicked(CandidateHelper candidateHelper) {
-        Timber.d(candidateHelper.toString());
+        startActivity(ProfileActivity.generateIntent(getActivity(), candidateHelper.getCandidate()));
     }
 
     @OnClick(R.id.button_send)
