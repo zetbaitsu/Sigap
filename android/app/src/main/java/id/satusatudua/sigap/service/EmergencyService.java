@@ -16,28 +16,18 @@
 
 package id.satusatudua.sigap.service;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.NotificationCompat;
 
-import com.firebase.client.DataSnapshot;
+import com.squareup.seismic.ShakeDetector;
 
-import java.util.List;
-
-import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.SigapApp;
-import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
-import id.satusatudua.sigap.ui.ConfirmHelpingActivity;
-import id.satusatudua.sigap.util.RxFirebase;
-import id.zelory.benih.util.BenihUtils;
+import id.satusatudua.sigap.data.local.StateManager;
+import id.satusatudua.sigap.presenter.TombolPresenter;
+import id.satusatudua.sigap.ui.EmergencyActivity;
 import timber.log.Timber;
 
 /**
@@ -48,7 +38,10 @@ import timber.log.Timber;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class EmergencyService extends Service {
+public class EmergencyService extends Service implements ShakeDetector.Listener,
+        TombolPresenter.View {
+
+    private TombolPresenter tombolPresenter;
 
     @Nullable
     @Override
@@ -62,45 +55,40 @@ public class EmergencyService extends Service {
         Timber.tag(getClass().getSimpleName());
         Timber.d(getClass().getSimpleName() + " is creating");
 
-        listenEmergency();
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        ShakeDetector shakeDetector = new ShakeDetector(this);
+        shakeDetector.start(sensorManager);
+
+        tombolPresenter = new TombolPresenter(this);
     }
 
-    private void listenEmergency() {
-        if (CacheManager.pluck().getUserLocation() != null) {
-            RxFirebase.observeChildAdded(FirebaseApi.pluck().userHelps(CacheManager.pluck().getCurrentUser().getUserId()))
-                    .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
-                    .map(DataSnapshot::getKey)
-                    .subscribe(caseId -> {
-                        List<String> lastCaseIds = CacheManager.pluck().getLastCases();
-                        if (lastCaseIds == null || !lastCaseIds.contains(caseId)) {
-                            CacheManager.pluck().cacheCase(caseId);
-                            showNotification(caseId);
-                        }
-                    }, throwable -> Timber.e(throwable.getMessage()));
+    @Override
+    public void hearShake() {
+        Timber.d("Shaking.....");
+        if (StateManager.pluck().getState() == StateManager.State.LOGGED && CacheManager.pluck().isShakeToNotify()) {
+            tombolPresenter.createCase();
         }
     }
 
-    private void showNotification(String caseId) {
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                                                                ConfirmHelpingActivity.generateIntent(this, caseId),
-                                                                PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                .setContentTitle("Sigap")
-                .setContentText("Seseorang membutuhkan bantuan mu!!!")
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                .setVibrate(CacheManager.pluck().isVibrate() ? new long[]{100, 300, 500, 1000} : new long[]{})
-                .setSound(Uri.parse(CacheManager.pluck().getRingtone()))
-                .setAutoCancel(true)
-                .setStyle(new android.support
-                        .v4.app.NotificationCompat
-                        .BigTextStyle()
-                                  .bigText("Seseorang membutuhkan bantuan mu!!!, Ayo segera bantu dia!"))
-                .setContentIntent(pendingIntent)
-                .build();
+    @Override
+    public void onCaseCreated(String caseId) {
+        Intent intent = new Intent(this, EmergencyActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
 
-        NotificationManagerCompat
-                .from(SigapApp.pluck().getApplicationContext())
-                .notify(BenihUtils.randInt(1, Integer.MAX_VALUE), notification);
+    @Override
+    public void showError(String errorMessage) {
+
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void dismissLoading() {
+
     }
 }
