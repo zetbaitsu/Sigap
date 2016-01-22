@@ -92,6 +92,9 @@
         <activity
             android:name=".ui.DetailCaseActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.AboutActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>

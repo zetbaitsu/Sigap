@@ -38,6 +38,7 @@ import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.CurrentUserPresenter;
+import id.satusatudua.sigap.ui.AboutActivity;
 import id.satusatudua.sigap.ui.CalibrateActivity;
 import id.satusatudua.sigap.ui.LoginActivity;
 import id.zelory.benih.ui.fragment.BenihFragment;
@@ -148,7 +149,7 @@ public class SettingFragment extends BenihFragment implements CurrentUserPresent
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:zetra@mail.ugm.ac.id"));
         intent.putExtra(Intent.EXTRA_SUBJECT, "Sigap Feedback");
-        intent.putExtra(Intent.EXTRA_TEXT, feedback + "\n\nDikirim memalului aplikasi Sigap.");
+        intent.putExtra(Intent.EXTRA_TEXT, feedback + "\n\nDikirim melalui aplikasi Sigap.");
         startActivity(intent);
 
     }
@@ -161,7 +162,7 @@ public class SettingFragment extends BenihFragment implements CurrentUserPresent
 
     @OnClick(R.id.about)
     public void onAboutDeveloperClick() {
-
+        startActivity(new Intent(getActivity(), AboutActivity.class));
     }
 
     @OnClick(R.id.logout)
