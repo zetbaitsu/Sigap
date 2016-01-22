@@ -69,7 +69,10 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
     private void listenLocationUpdate() {
         locationProvider.getUpdatedLocation(request)
                 .subscribe(location -> {
-                    if (StateManager.pluck().getState().equals(StateManager.State.LOGGED)) {
+                    if (StateManager.pluck().getState().equals(StateManager.State.LOGGED) ||
+                            StateManager.pluck().getState().equals(StateManager.State.ADDING_TRUSTED_USER) ||
+                            StateManager.pluck().getState().equals(StateManager.State.MENOLONG) ||
+                            StateManager.pluck().getState().equals(StateManager.State.DITOLONG)) {
                         UserLocation userLocation = new UserLocation();
                         userLocation.setUserId(currentUser.getUserId());
                         userLocation.setLatitude(location.getLatitude());
