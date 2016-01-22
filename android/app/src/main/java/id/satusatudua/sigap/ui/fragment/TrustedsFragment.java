@@ -44,6 +44,7 @@ import id.satusatudua.sigap.event.DeclineTrustMeClick;
 import id.satusatudua.sigap.event.RemoveTrustedUserClick;
 import id.satusatudua.sigap.presenter.TrustMePresenter;
 import id.satusatudua.sigap.presenter.TrustedUserPresenter;
+import id.satusatudua.sigap.ui.ProfileActivity;
 import id.satusatudua.sigap.ui.adapter.TrustMeAdapter;
 import id.satusatudua.sigap.ui.adapter.TrustedUserAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
@@ -99,9 +100,12 @@ public class TrustedsFragment extends BenihFragment implements TrustedUserPresen
 
         recyclerView.setUpAsList();
         trustedUserAdapter = new TrustedUserAdapter(getActivity());
+        trustedUserAdapter.setOnItemClickListener((view, position) -> openUserProfile(trustedUserAdapter.getData().get(position)));
+
         recyclerView.setAdapter(trustedUserAdapter);
 
         trustMeAdapter = new TrustMeAdapter(getActivity());
+        trustMeAdapter.setOnItemClickListener((view, position) -> openUserProfile(trustMeAdapter.getData().get(position)));
 
         trustedUserPresenter = new TrustedUserPresenter(this);
         if (savedInstanceState == null) {
@@ -116,6 +120,10 @@ public class TrustedsFragment extends BenihFragment implements TrustedUserPresen
         } else {
             trustMePresenter.loadState(savedInstanceState);
         }
+    }
+
+    private void openUserProfile(UserTrusted userTrusted) {
+        startActivity(ProfileActivity.generateIntent(getActivity(), userTrusted.getUser()));
     }
 
     private void declineTrustMe(UserTrusted userTrusted) {
