@@ -30,8 +30,10 @@ import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.data.model.UserLocation;
 import id.satusatudua.sigap.data.model.UserTrusted;
+import id.satusatudua.sigap.util.MapUtils;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
+import id.zelory.benih.util.BenihScheduler;
 import rx.Observable;
 import timber.log.Timber;
 
@@ -87,6 +89,21 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
 
         theCase.setStatus(Case.Status.BERJALAN);
         CacheManager.pluck().cacheLastCase(theCase);
+        saveAddress();
+    }
+
+    private void saveAddress() {
+        MapUtils.getAddress(theCase.getLatitude(), theCase.getLongitude())
+                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.NEW_THREAD))
+                .subscribe(address -> {
+                    Timber.d("Try get address from: " + theCase.getLatitude() + ", " + theCase.getLongitude());
+                    Timber.d("Address: " + address);
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("cases/" + theCase.getCaseId() + "/address", address);
+                    FirebaseApi.pluck().getApi().updateChildren(data);
+                    theCase.setAddress(address);
+                    CacheManager.pluck().cacheLastCase(theCase);
+                }, throwable -> Timber.e("Error address: " + throwable.getMessage()));
     }
 
     public void addTrustedUser() {
@@ -150,7 +167,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                         }
                     }, throwable -> {
                         findHelperDone = true;
-                        Timber.e("Error: " + throwable.getMessage());
+                        Timber.e("Error add trusted: " + throwable.getMessage());
                         if (view != null) {
                             view.showError(throwable.getMessage());
                             view.dismissLoading();
@@ -204,7 +221,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                             }
                         }, throwable -> {
                             findHelperDone = true;
-                            Timber.e("Error: " + throwable.getMessage());
+                            Timber.e("Error find helper: " + throwable.getMessage());
                             if (view != null) {
                                 view.showError(throwable.getMessage());
                                 view.dismissLoading();
@@ -245,7 +262,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                     }
                 }, throwable -> {
                     throwable.printStackTrace();
-                    Timber.e("LoadHelper Error: " + throwable.getMessage());
+                    Timber.e("Error load helper: " + throwable.getMessage());
                     if (view != null) {
                         view.showError(throwable.getMessage());
                         view.dismissLoading();
@@ -274,7 +291,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                         view.onHelperStatusChanged(candidateHelper);
                     }
                 }, throwable -> {
-                    Timber.e(throwable.getMessage());
+                    Timber.e("Error listen helper: " + throwable.getMessage());
                     if (view != null) {
                         view.showError("Gagal memuat status penolong!");
                     }
@@ -307,7 +324,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
                             view.dismissLoading();
                         }
                     }, throwable -> {
-                        Timber.e("Error: " + throwable.getMessage());
+                        Timber.e("Error load state: " + throwable.getMessage());
                         if (view != null) {
                             view.showError(throwable.getMessage());
                             view.dismissLoading();

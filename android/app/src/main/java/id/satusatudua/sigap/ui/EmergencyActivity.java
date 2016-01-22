@@ -32,7 +32,6 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.local.CacheManager;
-import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.satusatudua.sigap.data.model.ImportantContact;
 import id.satusatudua.sigap.presenter.EmergencyPresenter;
