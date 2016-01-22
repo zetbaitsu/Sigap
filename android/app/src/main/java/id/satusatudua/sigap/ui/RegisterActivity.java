@@ -79,8 +79,8 @@ public class RegisterActivity extends BenihActivity implements RegisterPresenter
             this.nama.setError("Mohon masukan nama anda!");
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             this.email.setError("Mohon masukan alamat email yang valid!");
-        } else if (phoneNumber.isEmpty()) {
-            this.phone.setError("Mohon masukan no ponsel anda!");
+        } else if (!Patterns.PHONE.matcher(phoneNumber).matches()) {
+            this.phone.setError("Mohon masukan no ponsel yang valid!");
         } else {
             User user = new User();
             user.setName(nama);
