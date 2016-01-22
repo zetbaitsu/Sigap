@@ -73,50 +73,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email"
-                    android:imeOptions="actionDone"
                     android:inputType="textEmailAddress"/>
 
             </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:orientation="horizontal">
+                android:layout_marginBottom="12dp">
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
+                <EditText
+                    android:id="@+id/phone"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:hint="@string/no_ponsel"
+                    android:imeOptions="actionDone"
+                    android:inputType="phone"/>
 
-                    <EditText
-                        android:id="@+id/tgl_lahir"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:hint="Tanggal lahir"
-                        android:inputType="date"/>
-
-                </android.support.design.widget.TextInputLayout>
-
-                <View
-                    android:layout_width="2dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginRight="2dp"
-                    android:background="@color/colorPrimaryDark"/>
-
-                <ImageView
-                    android:id="@+id/date_picker"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="6dp"
-                    android:src="@drawable/ic_create"/>
-            </LinearLayout>
+            </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"

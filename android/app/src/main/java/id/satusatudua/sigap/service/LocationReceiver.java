@@ -49,7 +49,6 @@ public class LocationReceiver extends BroadcastReceiver {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         boolean anyLocationProv = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         anyLocationProv |= locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        SigapApp.pluck().setCanListenLocation(anyLocationProv);
 
         if (!anyLocationProv) {
             Notification notification = new NotificationCompat.Builder(context)

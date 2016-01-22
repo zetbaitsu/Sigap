@@ -27,101 +27,101 @@ import java.util.List;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.model.ImportantContact;
+import id.satusatudua.sigap.data.model.Case;
+import id.satusatudua.sigap.data.model.CaseReview;
 import id.satusatudua.sigap.data.model.User;
-import id.satusatudua.sigap.presenter.MyContactPresenter;
-import id.satusatudua.sigap.ui.DetailContactActivity;
+import id.satusatudua.sigap.presenter.DetailCasePresenter;
 import id.satusatudua.sigap.ui.MainActivity;
-import id.satusatudua.sigap.ui.adapter.MyContactAdapter;
+import id.satusatudua.sigap.ui.adapter.CaseReviewAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
 
 /**
- * Created on : January 18, 2016
+ * Created on : January 21, 2016
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class MyContactFragment extends BenihFragment implements
-        SwipeRefreshLayout.OnRefreshListener, MyContactPresenter.View {
-    private static final String KEY_USER = "extra_user";
+public class DetailCaseFragment extends BenihFragment implements
+        SwipeRefreshLayout.OnRefreshListener, DetailCasePresenter.View {
+    private static final String KEY_CASE = "extra_case";
+    private static final String KEY_REPORTER = "extra_reporter";
 
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
 
-    private User user;
-    private MyContactAdapter myContactAdapter;
-    private MyContactPresenter presenter;
+    private Case theCase;
+    private User reporter;
+    private CaseReviewAdapter adapter;
+    private DetailCasePresenter presenter;
 
-    public static MyContactFragment newInstance(User user) {
-        MyContactFragment fragment = new MyContactFragment();
+    public static DetailCaseFragment newInstance(Case theCase, User reporter) {
+        DetailCaseFragment fragment = new DetailCaseFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(KEY_USER, user);
+        bundle.putParcelable(KEY_CASE, theCase);
+        bundle.putParcelable(KEY_REPORTER, reporter);
         fragment.setArguments(bundle);
         return fragment;
     }
 
     @Override
     protected int getResourceLayout() {
-        return R.layout.fragment_my_contact;
+        return R.layout.fragment_detail_case;
     }
 
     @Override
     protected void onViewReady(@Nullable Bundle savedInstanceState) {
-        resolveUser(savedInstanceState);
+        resolveTheCase(savedInstanceState);
+        resolveReporter(savedInstanceState);
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        myContactAdapter = new MyContactAdapter(getActivity());
-        recyclerView.setAdapter(myContactAdapter);
+        adapter = new CaseReviewAdapter(getActivity());
+        recyclerView.setAdapter(adapter);
         recyclerView.setUpAsList();
-        myContactAdapter.setOnItemClickListener((view, position) -> onItemContactClicked(myContactAdapter.getData().get(position)));
 
-        presenter = new MyContactPresenter(this);
-        new Handler().postDelayed(() -> presenter.loadMyContacts(user), 800);
+        presenter = new DetailCasePresenter(this, theCase, reporter);
+        new Handler().postDelayed(() -> presenter.loadReviews(), 800);
     }
 
-    private void onItemContactClicked(ImportantContact importantContact) {
-        startActivity(DetailContactActivity.generateIntent(getActivity(), importantContact));
-    }
+    private void resolveTheCase(Bundle savedInstanceState) {
+        theCase = getArguments().getParcelable(KEY_CASE);
 
-    private void resolveUser(Bundle savedInstanceState) {
-        user = getArguments().getParcelable(KEY_USER);
-
-        if (user == null && savedInstanceState != null) {
-            user = savedInstanceState.getParcelable(KEY_USER);
+        if (theCase == null && savedInstanceState != null) {
+            theCase = savedInstanceState.getParcelable(KEY_CASE);
         }
 
-        if (user == null) {
+        if (theCase == null) {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
-            getActivity().finish();
+        }
+    }
+
+    private void resolveReporter(Bundle savedInstanceState) {
+        reporter = getArguments().getParcelable(KEY_REPORTER);
+
+        if (reporter == null && savedInstanceState != null) {
+            reporter = savedInstanceState.getParcelable(KEY_REPORTER);
+        }
+
+        if (reporter == null) {
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            startActivity(intent);
         }
     }
 
     @Override
     public void onRefresh() {
-        presenter.loadMyContacts(user);
+        presenter.loadReviews();
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_USER, user);
-    }
-
-    @Override
-    public void showContacts(List<ImportantContact> contacts) {
-        myContactAdapter.clear();
-        myContactAdapter.add(contacts);
-    }
-
-    @Override
-    public void updateContact(ImportantContact contact) {
-        myContactAdapter.addOrUpdate(contact);
+    public void showReviews(List<CaseReview> reviews) {
+        adapter.clear();
+        adapter.add(reviews);
     }
 
     @Override
@@ -133,7 +133,7 @@ public class MyContactFragment extends BenihFragment implements
 
     @Override
     public void showLoading() {
-        swipeRefreshLayout.setRefreshing(false);
+        swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override

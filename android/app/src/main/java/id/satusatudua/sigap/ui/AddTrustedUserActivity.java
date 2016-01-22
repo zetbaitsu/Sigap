@@ -132,11 +132,20 @@ public class AddTrustedUserActivity extends BenihActivity implements TrustedUser
         } else if (!allAccepted()) {
             showError("Akun yang mengkonfirmasi belum sampai 3!");
         } else {
-            Timber.d("Start home");
-            StateManager.pluck().setState(StateManager.State.LOGGED);
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            new AlertDialog.Builder(this)
+                    .setIcon(R.mipmap.ic_launcher)
+                    .setTitle(R.string.app_name)
+                    .setCancelable(false)
+                    .setMessage("Selamat akun Sigap anda telah siap untuk digunakan!")
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        StateManager.pluck().setState(StateManager.State.LOGGED);
+                        Intent intent = new Intent(this, TombolActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    })
+                    .show()
+                    .getButton(DialogInterface.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
         }
     }
 

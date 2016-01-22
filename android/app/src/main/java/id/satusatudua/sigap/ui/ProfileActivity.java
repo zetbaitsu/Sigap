@@ -96,13 +96,13 @@ public class ProfileActivity extends BenihActivity {
                         collapsingToolbarLayout.setTitle(user.getName());
                         collapsingToolbarLayout.invalidate();
                         gender.setText(user.isMale() ? "Laki - laki" : "Perempuan");
-                        phoneNumber.setText("081377668034");
+                        phoneNumber.setText(user.getPhoneNumber());
                         emailAddress.setText(user.getEmail());
                     }, throwable -> Timber.e(throwable.getMessage()));
         } else {
             collapsingToolbarLayout.setTitle(user.getName());
             gender.setText(user.isMale() ? "Laki - laki" : "Perempuan");
-            phoneNumber.setText("081377668034");
+            phoneNumber.setText(user.getPhoneNumber());
             emailAddress.setText(user.getEmail());
         }
 

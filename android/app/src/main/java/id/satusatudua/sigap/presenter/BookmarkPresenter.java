@@ -23,51 +23,66 @@ import java.util.Map;
 
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.model.ImportantContact;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.event.BookmarkEvent;
 import id.zelory.benih.presenter.BenihPresenter;
-import timber.log.Timber;
+import id.zelory.benih.util.BenihBus;
 
 /**
- * Created on : January 19, 2016
+ * Created on : January 21, 2016
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class EditProfilePresenter extends BenihPresenter<EditProfilePresenter.View> {
+public class BookmarkPresenter extends BenihPresenter<BookmarkPresenter.View> {
 
     private User currentUser;
 
-    public EditProfilePresenter(View view) {
+    public BookmarkPresenter(View view) {
         super(view);
         currentUser = CacheManager.pluck().getCurrentUser();
     }
 
-    public void updateProfile(String name, String phoneNumber, boolean isMale) {
-        view.showLoading();
+    public void bookmark(ImportantContact contact) {
         Map<String, Object> data = new HashMap<>();
-        data.put("name", name);
-        data.put("phoneNumber", phoneNumber);
-        data.put("male", isMale);
+        data.put(contact.getContactId() + "/contactId", contact.getContactId());
 
-        FirebaseApi.pluck().users(currentUser.getUserId())
+        FirebaseApi.pluck()
+                .bookmarkContacts(currentUser.getUserId())
                 .updateChildren(data, (firebaseError, firebase) -> {
                     if (firebaseError == null) {
-                        currentUser.setName(name);
-                        currentUser.setMale(isMale);
-                        currentUser.setPhoneNumber(phoneNumber);
-                        CacheManager.pluck().cacheCurrentUser(currentUser);
-
+                        contact.setBookmarked(true);
                         if (view != null) {
-                            view.onProfileUpdated();
-                            view.dismissLoading();
+                            view.onBookmarked(contact);
+                            BenihBus.pluck().send(new BookmarkEvent(contact));
                         }
                     } else {
-                        Timber.e(firebaseError.getMessage());
+                        contact.setBookmarked(false);
                         if (view != null) {
-                            view.showError("Gagal memperbaharui data profil anda!");
-                            view.dismissLoading();
+                            view.onUnBookmark(contact);
+                        }
+                    }
+                });
+    }
+
+    public void unBookmark(ImportantContact contact) {
+        FirebaseApi.pluck()
+                .bookmarkContacts(currentUser.getUserId())
+                .child(contact.getContactId())
+                .removeValue((firebaseError, firebase) -> {
+                    if (firebaseError == null) {
+                        contact.setBookmarked(false);
+                        if (view != null) {
+                            view.onUnBookmark(contact);
+                            BenihBus.pluck().send(new BookmarkEvent(contact));
+                        }
+                    } else {
+                        contact.setBookmarked(true);
+                        if (view != null) {
+                            view.onBookmarked(contact);
                         }
                     }
                 });
@@ -84,6 +99,8 @@ public class EditProfilePresenter extends BenihPresenter<EditProfilePresenter.Vi
     }
 
     public interface View extends BenihPresenter.View {
-        void onProfileUpdated();
+        void onBookmarked(ImportantContact contact);
+
+        void onUnBookmark(ImportantContact contact);
     }
 }

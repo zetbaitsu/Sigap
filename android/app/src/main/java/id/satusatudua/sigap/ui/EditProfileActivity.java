@@ -59,7 +59,7 @@ public class EditProfileActivity extends BenihActivity implements EditProfilePre
         User currentUser = CacheManager.pluck().getCurrentUser();
 
         name.setText(currentUser.getName());
-        phoneNumber.setText("");
+        phoneNumber.setText(currentUser.getPhoneNumber());
         if (currentUser.isMale()) {
             laki.setChecked(true);
             perempuan.setChecked(false);

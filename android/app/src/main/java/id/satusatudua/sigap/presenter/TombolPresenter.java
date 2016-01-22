@@ -85,6 +85,8 @@ public class TombolPresenter extends BenihPresenter<TombolPresenter.View> {
         caseTemp.setUserId(currentUser.getUserId());
         caseTemp.setDate(new Date());
         caseTemp.setStatus(Case.Status.BARU);
+        caseTemp.setLatitude(currentLocation.getLatitude());
+        caseTemp.setLongitude(currentLocation.getLongitude());
 
         //buat pesan awal di grup chat nantinya
         Map<String, Object> message = new HashMap<>();

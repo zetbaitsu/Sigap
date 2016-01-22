@@ -20,51 +20,41 @@ import android.os.Bundle;
 
 import com.firebase.client.Firebase;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import id.satusatudua.sigap.data.api.FirebaseApi;
-import id.satusatudua.sigap.data.local.CacheManager;
-import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.data.model.ImportantContact;
 import id.zelory.benih.presenter.BenihPresenter;
 import timber.log.Timber;
 
 /**
- * Created on : January 19, 2016
+ * Created on : January 21, 2016
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class AddContactPresenter extends BenihPresenter<AddContactPresenter.View> {
+public class EditContactPresenter extends BenihPresenter<EditContactPresenter.View> {
 
-    public AddContactPresenter(View view) {
+    public EditContactPresenter(View view) {
         super(view);
     }
 
-    public void addContact(String name, String phoneNumber, String address) {
+    public void editContact(ImportantContact contact, String name, String phoneNumber, String address) {
         view.showLoading();
-        User currentUser = CacheManager.pluck().getCurrentUser();
         Firebase api = FirebaseApi.pluck().getApi();
-        String id = api.child("importantContacts").push().getKey();
-
-        Map<String, Object> contactData = new HashMap<>();
-        contactData.put("name", name);
-        contactData.put("phoneNumber", phoneNumber);
-        contactData.put("address", address);
-        contactData.put("createdAt", new Date().getTime());
-        contactData.put("userId", currentUser.getUserId());
 
         Map<String, Object> data = new HashMap<>();
-        data.put("importantContacts/" + id, contactData);
-        data.put("userContacts/" + currentUser.getUserId() + "/" + id + "/contactId/", id);
+        data.put("importantContacts/" + contact.getContactId() + "/name/", name);
+        data.put("importantContacts/" + contact.getContactId() + "/phoneNumber/", phoneNumber);
+        data.put("importantContacts/" + contact.getContactId() + "/address/", address);
 
         api.updateChildren(data, (firebaseError, firebase) -> {
             if (firebaseError == null) {
                 if (view != null) {
-                    view.onContactAdded();
+                    view.onContactEdited();
                     view.dismissLoading();
                 }
             } else {
@@ -88,6 +78,6 @@ public class AddContactPresenter extends BenihPresenter<AddContactPresenter.View
     }
 
     public interface View extends BenihPresenter.View {
-        void onContactAdded();
+        void onContactEdited();
     }
 }

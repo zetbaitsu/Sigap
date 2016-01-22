@@ -68,7 +68,7 @@ public class FeedbackCasePresenter extends BenihPresenter<FeedbackCasePresenter.
                         User currentUser = CacheManager.pluck().getCurrentUser();
                         currentUser.setStatus(User.Status.SIAP);
                         CacheManager.pluck().cacheCurrentUser(currentUser);
-                        StateManager.pluck().setState(StateManager.State.LOGGED);
+                        StateManager.pluck().setState(StateManager.pluck().recoveryState());
                         if (view != null) {
                             view.onCaseClosed();
                             view.dismissLoading();

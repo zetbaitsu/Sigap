@@ -27,9 +27,10 @@ import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.ImportantContact;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.event.BookmarkEvent;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.presenter.BenihPresenter;
-import id.zelory.benih.util.BenihScheduler;
+import id.zelory.benih.util.BenihBus;
 import rx.Observable;
 import timber.log.Timber;
 
@@ -41,31 +42,42 @@ import timber.log.Timber;
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class ImportantContactPresenter extends BenihPresenter<ImportantContactPresenter.View> {
+public class MyContactPresenter extends BenihPresenter<MyContactPresenter.View> {
 
     private List<ImportantContact> contacts;
     private User currentUser;
 
-    public ImportantContactPresenter(View view) {
+    public MyContactPresenter(View view) {
         super(view);
         contacts = new ArrayList<>();
+        BenihBus.pluck().receive()
+                .subscribe(o -> {
+                    if (o instanceof BookmarkEvent) {
+                        onBookmarked(((BookmarkEvent) o).getContact());
+                    }
+                }, throwable -> Timber.e(throwable.getMessage()));
         currentUser = CacheManager.pluck().getCurrentUser();
     }
 
-    public void loadContacts() {
+    private void onBookmarked(ImportantContact contact) {
+        int x = contacts.indexOf(contact);
+        if (x >= 0) {
+            contacts.get(x).setBookmarked(contact.isBookmarked());
+            if (view != null) {
+                view.updateContact(contacts.get(x));
+            }
+        }
+    }
+
+    public void loadMyContacts(User user) {
         view.showLoading();
-        RxFirebase.observeOnce(FirebaseApi.pluck().importantContacts())
-                .doOnNext(dataSnapshots -> {
-                    if (dataSnapshots.getValue() == null) {
-                        if (view != null) {
-                            view.dismissLoading();
-                        }
-                    }
-                })
-                .flatMap(dataSnapshots -> Observable.from(dataSnapshots.getChildren()))
+        RxFirebase.observeOnce(FirebaseApi.pluck().userContacts(user.getUserId()))
+                .flatMap(dataSnapshot -> Observable.from(dataSnapshot.getChildren()))
+                .flatMap(dataSnapshot -> RxFirebase.observeOnce(FirebaseApi.pluck().importantContact(dataSnapshot.getKey())))
                 .map(dataSnapshot -> {
                     ImportantContact contact = dataSnapshot.getValue(ImportantContact.class);
                     contact.setContactId(dataSnapshot.getKey());
+                    contact.setUser(user);
 
                     int x = contacts.indexOf(contact);
                     if (x >= 0) {
@@ -112,60 +124,13 @@ public class ImportantContactPresenter extends BenihPresenter<ImportantContactPr
                 })
                 .toList()
                 .flatMap(dataSnapshots1 -> Observable.from(contacts))
-                .toSortedList((contact, contact2) -> {
-                    return contact.getName().compareTo(contact2.getName());
-                })
-                .flatMap(Observable::from)
-                .toSortedList((contact, contact2) -> {
-                    if (contact.isBookmarked() && !contact2.isBookmarked()) {
-                        return -1;
-                    } else if (!contact.isBookmarked() && contact2.isBookmarked()) {
-                        return 1;
-                    }
-                    return 0;
-                })
+                .toSortedList((contact1, contact2) -> contact2.getCreatedAt().compareTo(contact1.getCreatedAt()))
                 .subscribe(contacts -> {
                     if (view != null) {
                         view.showContacts(contacts);
                         view.dismissLoading();
-                    }
-                }, throwable -> {
-                    Timber.e(throwable.getMessage());
-                    if (view != null) {
-                        view.showError(throwable.getMessage());
-                        view.dismissLoading();
-                    }
-                });
-    }
-
-    public void filter(String keyword) {
-        view.showLoading();
-        Observable.from(contacts)
-                .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.NEW_THREAD))
-                .filter(contact -> contact.getName().toLowerCase().contains(keyword.toLowerCase()) ||
-                        contact.getAddress().toLowerCase().contains(keyword.toLowerCase()) ||
-                        contact.getPhoneNumber().toLowerCase().contains(keyword.toLowerCase()))
-                .toSortedList((contact, contact2) -> {
-                    return contact.getName().compareTo(contact2.getName());
-                })
-                .flatMap(Observable::from)
-                .toSortedList((contact, contact2) -> {
-                    if (contact.isBookmarked() && !contact2.isBookmarked()) {
-                        return -1;
-                    } else if (!contact.isBookmarked() && contact2.isBookmarked()) {
-                        return 1;
-                    }
-                    return 0;
-                })
-                .subscribe(contacts -> {
-                    if (view != null) {
-                        view.showFilteredContacts(contacts);
-                        view.dismissLoading();
-                    }
-                }, throwable -> {
-                    Timber.e(throwable.getMessage());
-                    if (view != null) {
-                        view.showError("Gagal memfilter data kontak");
+                    } else {
+                        view.showError("Gagal memuat data kontak!");
                         view.dismissLoading();
                     }
                 });
@@ -173,22 +138,17 @@ public class ImportantContactPresenter extends BenihPresenter<ImportantContactPr
 
     @Override
     public void saveState(Bundle bundle) {
-        bundle.putParcelableArrayList("contacts", (ArrayList<ImportantContact>) contacts);
+
     }
 
     @Override
     public void loadState(Bundle bundle) {
-        contacts = bundle.getParcelableArrayList("contacts");
-        if (contacts == null) {
-            loadContacts();
-        } else {
-            view.showFilteredContacts(contacts);
-        }
+
     }
 
     public interface View extends BenihPresenter.View {
         void showContacts(List<ImportantContact> contacts);
 
-        void showFilteredContacts(List<ImportantContact> contacts);
+        void updateContact(ImportantContact contact);
     }
 }

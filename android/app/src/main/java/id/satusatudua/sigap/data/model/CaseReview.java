@@ -19,38 +19,40 @@ package id.satusatudua.sigap.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
-
 /**
- * Created on : December 26, 2015
+ * Created on : January 21, 2016
  * Author     : zetbaitsu
  * Name       : Zetra
  * Email      : zetra@mail.ugm.ac.id
  * GitHub     : https://github.com/zetbaitsu
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
-public class UserCase implements Parcelable {
+public class CaseReview implements Parcelable {
     private String userId;
-    private List<String> caseIds;
+    private User user;
+    private String status;
+    private String review;
 
-    public UserCase() {
+    public CaseReview() {
 
     }
 
-    protected UserCase(Parcel in) {
+    protected CaseReview(Parcel in) {
         userId = in.readString();
-        caseIds = in.createStringArrayList();
+        user = in.readParcelable(User.class.getClassLoader());
+        status = in.readString();
+        review = in.readString();
     }
 
-    public static final Creator<UserCase> CREATOR = new Creator<UserCase>() {
+    public static final Creator<CaseReview> CREATOR = new Creator<CaseReview>() {
         @Override
-        public UserCase createFromParcel(Parcel in) {
-            return new UserCase(in);
+        public CaseReview createFromParcel(Parcel in) {
+            return new CaseReview(in);
         }
 
         @Override
-        public UserCase[] newArray(int size) {
-            return new UserCase[size];
+        public CaseReview[] newArray(int size) {
+            return new CaseReview[size];
         }
     };
 
@@ -62,17 +64,28 @@ public class UserCase implements Parcelable {
         this.userId = userId;
     }
 
-    public List<String> getCaseIds() {
-        return caseIds;
+    public User getUser() {
+        return user;
     }
 
-    public void setCaseIds(List<String> caseIds) {
-        this.caseIds = caseIds;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof UserCase && ((UserCase) o).userId.equals(userId);
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getReview() {
+        return review;
+    }
+
+    public void setReview(String review) {
+        this.review = review;
     }
 
     @Override
@@ -83,14 +96,23 @@ public class UserCase implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(userId);
-        dest.writeStringList(caseIds);
+        dest.writeParcelable(user, flags);
+        dest.writeString(status);
+        dest.writeString(review);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof CaseReview && ((CaseReview) o).userId.equals(userId);
     }
 
     @Override
     public String toString() {
-        return "UserCase{" +
+        return "CaseReview{" +
                 "userId='" + userId + '\'' +
-                ", caseIds=" + caseIds +
+                ", user=" + user +
+                ", status='" + status + '\'' +
+                ", review='" + review + '\'' +
                 '}';
     }
 }

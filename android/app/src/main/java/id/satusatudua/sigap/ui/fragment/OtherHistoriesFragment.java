@@ -28,8 +28,10 @@ import java.util.List;
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.ActivityHistory;
+import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.HistoriesPresenter;
+import id.satusatudua.sigap.ui.DetailCaseActivity;
 import id.satusatudua.sigap.ui.MainActivity;
 import id.satusatudua.sigap.ui.adapter.HistoryAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
@@ -77,6 +79,11 @@ public class OtherHistoriesFragment extends BenihFragment implements HistoriesPr
         adapter = new HistoryAdapter(getActivity(), user);
         recyclerView.setAdapter(adapter);
         recyclerView.setUpAsList();
+        adapter.setOnItemClickListener((view, position) -> {
+            Case theCase = adapter.getData().get(position).getTheCase();
+            User reporter = adapter.getData().get(position).getUser();
+            startActivity(DetailCaseActivity.generateIntent(getActivity(), theCase, reporter));
+        });
 
         presenter = new HistoriesPresenter(this, user);
         if (savedInstanceState == null) {

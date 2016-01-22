@@ -78,6 +78,8 @@ public class HistoryViewHolder extends BenihItemViewHolder<ActivityHistory> {
         }
 
         date.setText(new SimpleDateFormat("dd MMMM yyyy").format(history.getTheCase().getDate()));
-        address.setText(history.getTheCase().getAddress() == null ? "Alamat Tidak Diketahui" : history.getTheCase().getAddress());
+        address.setText(history.getTheCase().getAddress() == null
+                                || history.getTheCase().getAddress().trim().isEmpty()
+                                ? "Alamat Tidak Diketahui" : history.getTheCase().getAddress());
     }
 }

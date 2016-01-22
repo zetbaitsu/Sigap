@@ -62,7 +62,7 @@ public class VerificationActivity extends BenihActivity implements VerificationP
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(R.string.app_name)
-                .setMessage("Kirim ulang kode atau password ke email anda?")
+                .setMessage("Kirim ulang kode ke email anda?")
                 .setPositiveButton("YA", (dialog, which) -> {
                     verificationPresenter.resendCode();
                     dialog.dismiss();
@@ -113,7 +113,7 @@ public class VerificationActivity extends BenihActivity implements VerificationP
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(R.string.app_name)
                 .setCancelable(false)
-                .setMessage("Satu langkah lagi, silahkan atur kata sandi anda pada halaman berikutnya.")
+                .setMessage("Kode berhasil diverifikasi, Selanjutnya silahkan atur kata sandi anda pada halaman berikutnya.")
                 .setPositiveButton("OK", (dialog, which) -> {
                     Intent intent = new Intent(this, SetPasswordActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -126,7 +126,7 @@ public class VerificationActivity extends BenihActivity implements VerificationP
 
     @Override
     public void onSuccessResendCode() {
-        Snackbar snackbar = Snackbar.make(token, "Kode atau password sudah kami kirim", Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(token, "Kode sudah kami kirim ke email anda!", Snackbar.LENGTH_LONG);
         snackbar.getView().setBackgroundResource(R.color.colorAccent);
         snackbar.show();
     }

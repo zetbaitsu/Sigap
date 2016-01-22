@@ -18,7 +18,6 @@ import timber.log.Timber;
 public class SigapApp extends Application {
 
     private static SigapApp sigapApp;
-    private boolean canListenLocation;
 
     @Override
     public void onCreate() {
@@ -35,13 +34,5 @@ public class SigapApp extends Application {
 
     public static SigapApp pluck() {
         return sigapApp;
-    }
-
-    public boolean isCanListenLocation() {
-        return canListenLocation;
-    }
-
-    public void setCanListenLocation(boolean canListenLocation) {
-        this.canListenLocation = canListenLocation;
     }
 }
