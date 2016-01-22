@@ -17,15 +17,16 @@
 package id.satusatudua.sigap.ui.fragment;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.InputType;
 import android.util.Patterns;
 import android.view.View;
@@ -60,19 +61,19 @@ import timber.log.Timber;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class TrustedsFragment extends BenihFragment implements TrustedUserPresenter.View,
-        TrustMePresenter.View {
+        TrustMePresenter.View, SwipeRefreshLayout.OnRefreshListener {
 
     @Bind(R.id.trusted) TextView trusted;
     @Bind(R.id.trust_me) TextView trustMe;
     @Bind(R.id.title) TextView title;
     @Bind(R.id.trusted_count) TextView trustedCounter;
     @Bind(R.id.trust_me_count) TextView trustMeCount;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.recycler_view) BenihRecyclerView recyclerView;
     @Bind(R.id.fab) FloatingActionButton fab;
 
     private TrustedUserPresenter trustedUserPresenter;
     private TrustMePresenter trustMePresenter;
-    private ProgressDialog progressDialog;
     private TrustedUserAdapter trustedUserAdapter;
     private TrustMeAdapter trustMeAdapter;
 
@@ -93,6 +94,9 @@ public class TrustedsFragment extends BenihFragment implements TrustedUserPresen
             }
         }, throwable -> Timber.e(throwable.getMessage()));
 
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
         recyclerView.setUpAsList();
         trustedUserAdapter = new TrustedUserAdapter(getActivity());
         recyclerView.setAdapter(trustedUserAdapter);
@@ -108,7 +112,7 @@ public class TrustedsFragment extends BenihFragment implements TrustedUserPresen
 
         trustMePresenter = new TrustMePresenter(this);
         if (savedInstanceState == null) {
-            trustMePresenter.loadTrustMeUser();
+            new Handler().postDelayed(() -> trustMePresenter.loadTrustMeUser(), 800);
         } else {
             trustMePresenter.loadState(savedInstanceState);
         }
@@ -265,16 +269,12 @@ public class TrustedsFragment extends BenihFragment implements TrustedUserPresen
 
     @Override
     public void showLoading() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setMessage("Silahkan tunggu...");
-        }
-        progressDialog.show();
+        swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
     public void dismissLoading() {
-        progressDialog.dismiss();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -306,5 +306,14 @@ public class TrustedsFragment extends BenihFragment implements TrustedUserPresen
         trustedUserPresenter.saveState(outState);
         trustMePresenter.saveState(outState);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onRefresh() {
+        if (fab.getVisibility() == View.GONE) {
+            trustMePresenter.loadTrustMeUser();
+        } else {
+            trustedUserPresenter.loadTrustedUser();
+        }
     }
 }
