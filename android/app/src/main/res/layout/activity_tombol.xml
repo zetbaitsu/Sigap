@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:gravity="center_horizontal"
-        android:text="Tekan Tombol Merah Saat Keadaan Darurat"
+        android:text="Tekan Tombol Merah Sebanyak Dua Kali Saat Keadaan Darurat"
         android:textColor="@color/white"
         android:textSize="16sp"/>
 

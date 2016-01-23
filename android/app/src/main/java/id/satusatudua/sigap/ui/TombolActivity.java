@@ -19,6 +19,7 @@ package id.satusatudua.sigap.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 
 import com.skyfishjy.library.RippleBackground;
@@ -43,6 +44,7 @@ public class TombolActivity extends BenihActivity implements TombolPresenter.Vie
 
     private ProgressDialog progressDialog;
     private TombolPresenter tombolPresenter;
+    private boolean doublePressedOnce = false;
 
     @Override
     protected int getResourceLayout() {
@@ -57,7 +59,13 @@ public class TombolActivity extends BenihActivity implements TombolPresenter.Vie
 
     @OnClick(R.id.button_emergency)
     public void onEmergency() {
-        tombolPresenter.createCase();
+        if (doublePressedOnce) {
+            tombolPresenter.createCase();
+            return;
+        }
+        doublePressedOnce = true;
+        showError("Tekan sekali lagi untuk meminta bantuan!");
+        new Handler().postDelayed(() -> doublePressedOnce = false, 2000);
     }
 
     @OnClick(R.id.button_main)

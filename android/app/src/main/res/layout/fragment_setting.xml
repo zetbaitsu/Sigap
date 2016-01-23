@@ -314,7 +314,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Memberikan tanggapan aplikasi ke pengembang."
+                android:text="Punya kritik dan saran untuk pengembang?"
                 android:textColor="@color/secondary_text"
                 android:textSize="12sp"/>
         </LinearLayout>

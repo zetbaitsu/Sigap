@@ -64,8 +64,12 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
     public void init() {
         if (theCase.getStatus() == Case.Status.BARU) {
             view.showEmergencyLoading();
+            if (CacheManager.pluck().isNotifyNearby()) {
+                findHelper();
+            } else {
+                findHelperDone = true;
+            }
             addTrustedUser();
-            findHelper();
         } else {
             loadHelper();
         }
@@ -337,9 +341,9 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
         void onNewHelperAdded(CandidateHelper candidateHelper);
 
         void onHelperStatusChanged(CandidateHelper candidateHelper);
-        
+
         void showEmergencyLoading();
-        
+
         void dismissEmergencyLoading();
     }
 }

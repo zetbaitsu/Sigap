@@ -79,7 +79,6 @@ public class NearbyService extends Service implements GeoQueryEventListener {
 
     @Override
     public void onKeyEntered(String key, GeoLocation location) {
-        Timber.d("onKeyEntered(" + key + ")");
         UserLocation userLocation = new UserLocation();
         userLocation.setUserId(key);
         userLocation.setLatitude(location.latitude);
@@ -89,22 +88,18 @@ public class NearbyService extends Service implements GeoQueryEventListener {
 
     @Override
     public void onKeyExited(String key) {
-        Timber.d("onKeyExited(" + key + ")");
     }
 
     @Override
     public void onKeyMoved(String key, GeoLocation location) {
-        Timber.d("onKeyMoved(" + key + ")");
     }
 
     @Override
     public void onGeoQueryReady() {
-        Timber.d("onGeoQueryReady()");
     }
 
     @Override
     public void onGeoQueryError(FirebaseError error) {
-        Timber.d("onGeoQueryError()");
         Timber.e(error.getMessage());
     }
 }

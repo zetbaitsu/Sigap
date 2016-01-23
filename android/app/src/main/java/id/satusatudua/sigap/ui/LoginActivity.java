@@ -16,10 +16,13 @@
 
 package id.satusatudua.sigap.ui;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.util.Patterns;
 import android.widget.EditText;
 
@@ -29,6 +32,7 @@ import com.firebase.client.FirebaseError;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.presenter.LoginPresenter;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.model.User;
@@ -86,9 +90,21 @@ public class LoginActivity extends BenihActivity implements LoginPresenter.View 
                 @Override
                 public void onSuccess() {
                     dismissLoading();
-                    Snackbar snackbar = Snackbar.make(password, "Sebuah email telah dikirimkan untuk mengatur ulang kata sandi.", Snackbar.LENGTH_LONG);
-                    snackbar.getView().setBackgroundResource(R.color.colorPrimary);
-                    snackbar.show();
+                    new AlertDialog.Builder(LoginActivity.this)
+                            .setIcon(R.mipmap.ic_launcher)
+                            .setTitle(R.string.app_name)
+                            .setCancelable(false)
+                            .setMessage("Kami telah mengirimkan sebuah kode ke email yang anda masukan tadi, masukan kode tersebut ke form selanjutnya untuk mengubah kata sandi anda.")
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                StateManager.pluck().setState(StateManager.State.ENTER_CODE);
+                                StateManager.pluck().setLastEmail(email);
+                                Intent intent = new Intent(LoginActivity.this, EnterCodeActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            })
+                            .show()
+                            .getButton(DialogInterface.BUTTON_POSITIVE)
+                            .setTextColor(ContextCompat.getColor(LoginActivity.this, R.color.colorPrimary));
                 }
 
                 @Override
