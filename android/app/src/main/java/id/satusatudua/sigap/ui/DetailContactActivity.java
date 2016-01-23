@@ -19,6 +19,7 @@ package id.satusatudua.sigap.ui;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.BookmarkPresenter;
 import id.satusatudua.sigap.presenter.DetailContactPresenter;
 import id.zelory.benih.ui.BenihActivity;
+import id.zelory.benih.ui.view.BenihImageView;
 import id.zelory.benih.util.BenihWorker;
 import timber.log.Timber;
 
@@ -65,7 +67,7 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
     @Bind(R.id.address) EditText address;
     @Bind(R.id.creator) EditText creator;
     @Bind(R.id.created_at) EditText createdAt;
-    @Bind(R.id.image_profile) ImageView imageProfile;
+    @Bind(R.id.image_profile) BenihImageView imageProfile;
     @Bind(R.id.your_name) TextView yourName;
     @Bind(R.id.rate_1) ImageView rate1;
     @Bind(R.id.rate_2) ImageView rate2;
@@ -114,6 +116,9 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
         address.setText(importantContact.getAddress());
         createdAt.setText(dateFormat.format(importantContact.getCreatedAt()));
 
+        if (currentUser.getImageUrl() != null) {
+            imageProfile.setRoundedImageUrl(currentUser.getImageUrl());
+        }
         yourName.setText(currentUser.getName());
         setMyRate();
 
@@ -347,6 +352,12 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
         }
         importantContact.setTotalRate(totalRate);
         importantContact.setAvgRate(totalRate / size);
+    }
+
+    @OnClick(R.id.root_phone)
+    public void callPhone() {
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + importantContact.getPhoneNumber().trim()));
+        startActivity(intent);
     }
 
     @Override

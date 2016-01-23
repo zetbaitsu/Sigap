@@ -133,6 +133,7 @@
                         android:layout_height="14dp"
                         android:layout_marginEnd="4dp"
                         android:layout_marginRight="4dp"
+                        android:adjustViewBounds="true"
                         android:src="@drawable/ic_grey_orang"/>
 
                     <TextView
@@ -149,6 +150,7 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/root_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
@@ -290,7 +292,7 @@
                 android:layout_margin="8dp"
                 android:background="@color/divider"/>
 
-            <ImageView
+            <id.zelory.benih.ui.view.BenihImageView
                 android:id="@+id/image_profile"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
