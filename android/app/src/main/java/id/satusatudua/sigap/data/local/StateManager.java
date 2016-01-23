@@ -19,7 +19,10 @@ package id.satusatudua.sigap.data.local;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.f2prateek.rx.preferences.RxSharedPreferences;
+
 import id.satusatudua.sigap.SigapApp;
+import rx.Observable;
 
 /**
  * Created on : December 22, 2015
@@ -33,13 +36,19 @@ public enum StateManager {
     HARVEST;
 
     private final SharedPreferences sharedPreferences;
+    private final RxSharedPreferences rxPreferences;
 
     StateManager() {
         sharedPreferences = SigapApp.pluck().getSharedPreferences("sigap.state", Context.MODE_PRIVATE);
+        rxPreferences = RxSharedPreferences.create(sharedPreferences);
     }
 
     public State getState() {
         return State.valueOf(sharedPreferences.getString("user_state", "NEW"));
+    }
+
+    public Observable<State> listenState() {
+        return rxPreferences.getString("user_state", "NEW").asObservable().map(State::valueOf);
     }
 
     public void setState(State state) {

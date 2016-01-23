@@ -208,7 +208,11 @@ public enum CacheManager {
     }
 
     public boolean isShowOnStatusBar() {
-        return sharedPreferences.getBoolean("show_status_bar", true);
+        return sharedPreferences.getBoolean("show_status_bar", false);
+    }
+
+    public Observable<Boolean> listenShowOnStatusBar() {
+        return rxPreferences.getBoolean("show_status_bar", false).asObservable();
     }
 
     public void setShakeToNotify(boolean isShakeToNotify) {

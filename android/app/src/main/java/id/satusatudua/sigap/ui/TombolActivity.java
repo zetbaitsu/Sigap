@@ -17,6 +17,7 @@
 package id.satusatudua.sigap.ui;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,12 +40,22 @@ import id.zelory.benih.ui.BenihActivity;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class TombolActivity extends BenihActivity implements TombolPresenter.View {
+    private static final String KEY_STATUS_BAR = "extra_status_bar";
 
     @Bind(R.id.ripple) RippleBackground rippleBackground;
 
     private ProgressDialog progressDialog;
     private TombolPresenter tombolPresenter;
     private boolean doublePressedOnce = false;
+
+    public static Intent generateIntent(Context context, boolean fromStatusBar) {
+        Intent intent = new Intent(context, TombolActivity.class);
+        intent.putExtra(KEY_STATUS_BAR, fromStatusBar);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        return intent;
+    }
 
     @Override
     protected int getResourceLayout() {
@@ -53,8 +64,13 @@ public class TombolActivity extends BenihActivity implements TombolPresenter.Vie
 
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
+        boolean fromStatusBar = getIntent().getBooleanExtra(KEY_STATUS_BAR, false);
         rippleBackground.startRippleAnimation();
         tombolPresenter = new TombolPresenter(this);
+
+        if (fromStatusBar) {
+            tombolPresenter.createCase();
+        }
     }
 
     @OnClick(R.id.button_emergency)
