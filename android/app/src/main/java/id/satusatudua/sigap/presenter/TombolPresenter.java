@@ -92,7 +92,8 @@ public class TombolPresenter extends BenihPresenter<TombolPresenter.View> {
         Map<String, Object> message = new HashMap<>();
         message.put("date", new Date().getTime());
         message.put("userId", "Sigap");
-        message.put("content", currentUser.getName() + " sedang dalam bahaya, segara bantu dia kawan!");
+        message.put("content", "[INITIAL]" + currentUser.getName().split(" ")[0]
+                + " sedang dalam bahaya, segera bantu dia kawan!, Klik pesan ini untuk menuju lokasi kejadian![/INITIAL]");
 
         //generate data yang nantinya akan kita kirim secara bersamaan ke API
         Map<String, Object> data = new HashMap<>();

@@ -96,7 +96,8 @@ public class CloseCasePresenter extends BenihPresenter<CloseCasePresenter.View> 
         Map<String, Object> msgData = new HashMap<>();
         msgData.put("date", new Date().getTime());
         msgData.put("userId", "Sigap");
-        msgData.put("content", currentUser.getName() + " telah menyatakan dirinya selamat kawan \uD83D\uDE00");
+        msgData.put("content", "[CLOSED]" + currentUser.getName().split(" ")[0]
+                + " telah menyatakan dirinya selamat kawan \uD83D\uDE00. Klik pesan ini untuk memberikan ulasan anda akan kejadian![/CLOSED]");
 
         return msgData;
     }

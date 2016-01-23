@@ -130,6 +130,10 @@ public class NotificationService extends Service {
             if (content.startsWith("[DANGER]") && content.endsWith("[/DANGER]")) {
                 danger = true;
                 content = content.replace("[DANGER]", "").replace("[/DANGER]", "");
+            } else if (content.startsWith("[CLOSED]") && content.endsWith("[/CLOSED]")) {
+                content = content.replace("[CLOSED]", "").replace("[/CLOSED]", "");
+            } else if (content.startsWith("[INITIAL]") && content.endsWith("[/INITIAL]")) {
+                content = content.replace("[INITIAL]", "").replace("[/INITIAL]", "");
             }
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
                                                                     HelpingActivity

@@ -73,6 +73,10 @@ public class MessageViewHolder extends BenihItemViewHolder<Message> {
 
         if (message.getContent().startsWith("[DANGER]") && message.getContent().endsWith("[/DANGER]")) {
             content.setText(message.getContent().replace("[DANGER]", "").replace("[/DANGER]", ""));
+        } else if (message.getContent().startsWith("[INITIAL]") && message.getContent().endsWith("[/INITIAL]")) {
+            content.setText(message.getContent().replace("[INITIAL]", "").replace("[/INITIAL]", ""));
+        } else if (message.getContent().startsWith("[CLOSED]") && message.getContent().endsWith("[/CLOSED]")) {
+            content.setText(message.getContent().replace("[CLOSED]", "").replace("[/CLOSED]", ""));
         } else {
             content.setText(message.getContent());
         }

@@ -18,6 +18,7 @@ package id.satusatudua.sigap.ui.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -37,6 +38,7 @@ import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.Message;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.ChatPresenter;
+import id.satusatudua.sigap.ui.FeedbackCaseActivity;
 import id.satusatudua.sigap.ui.HelpingActivity;
 import id.satusatudua.sigap.ui.MainActivity;
 import id.satusatudua.sigap.ui.ProfileActivity;
@@ -110,6 +112,7 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
         chatAdapter = new ChatAdapter(getActivity());
         listMessage.setUpAsBottomList();
         listMessage.setAdapter(chatAdapter);
+        chatAdapter.setOnItemClickListener((view, position) -> onItemChatClicked(chatAdapter.getData().get(position)));
 
         helperAdapter = new HelperAdapter(getActivity());
         listHelper.setUpAsHorizontalList();
@@ -122,6 +125,20 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
             chatPresenter.loadHelper();
         } else {
             chatPresenter.loadState(savedInstanceState);
+        }
+    }
+
+    private void onItemChatClicked(Message message) {
+        if (theCase.getStatus() != Case.Status.DITUTUP) {
+            if (message.getContent().startsWith("[INITIAL]") && message.getContent().endsWith("[/INITIAL]")) {
+                Intent intent = new Intent(Intent.ACTION_VIEW,
+                                           Uri.parse("http://maps.google.com/maps?daddr="
+                                                             + theCase.getLatitude() + ","
+                                                             + theCase.getLongitude()));
+                startActivity(intent);
+            } else if (message.getContent().startsWith("[CLOSED]") && message.getContent().endsWith("[/CLOSED]")) {
+                startActivity(FeedbackCaseActivity.generateIntent(getActivity(), theCase));
+            }
         }
     }
 
