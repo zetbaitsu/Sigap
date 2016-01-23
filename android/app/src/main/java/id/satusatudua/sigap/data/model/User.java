@@ -19,6 +19,7 @@ public class User implements Parcelable {
     private String phoneNumber;
     private boolean fromApps;
     private Status status;
+    private String imageUrl;
 
     public User() {
 
@@ -32,6 +33,7 @@ public class User implements Parcelable {
         phoneNumber = in.readString();
         fromApps = in.readByte() != 0;
         status = Status.valueOf(in.readString());
+        imageUrl = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -102,6 +104,14 @@ public class User implements Parcelable {
         this.status = status;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof User && ((User) o).userId.equals(userId);
@@ -121,6 +131,7 @@ public class User implements Parcelable {
         dest.writeString(phoneNumber);
         dest.writeByte((byte) (fromApps ? 1 : 0));
         dest.writeString(status.name());
+        dest.writeString(imageUrl);
     }
 
     @Override
@@ -133,6 +144,7 @@ public class User implements Parcelable {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", fromApps=" + fromApps +
                 ", status=" + status +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 

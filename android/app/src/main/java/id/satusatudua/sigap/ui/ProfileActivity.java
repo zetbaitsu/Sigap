@@ -40,6 +40,7 @@ import id.satusatudua.sigap.ui.fragment.MyContactFragment;
 import id.satusatudua.sigap.ui.fragment.OtherHistoriesFragment;
 import id.zelory.benih.ui.BenihActivity;
 import id.zelory.benih.ui.fragment.BenihFragment;
+import id.zelory.benih.ui.view.BenihImageView;
 import id.zelory.benih.util.BenihScheduler;
 import timber.log.Timber;
 
@@ -61,6 +62,7 @@ public class ProfileActivity extends BenihActivity {
     @Bind(R.id.phone) TextView phoneNumber;
     @Bind(R.id.email) TextView emailAddress;
     @Bind(R.id.button_edit) ImageView buttonEdit;
+    @Bind(R.id.profile_picture) BenihImageView profilePicture;
 
     private User user;
 
@@ -93,6 +95,9 @@ public class ProfileActivity extends BenihActivity {
                     .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.IO))
                     .compose(bindToLifecycle())
                     .subscribe(user -> {
+                        if (user.getImageUrl() != null) {
+                            profilePicture.setRoundedImageUrl(user.getImageUrl());
+                        }
                         collapsingToolbarLayout.setTitle(user.getName());
                         collapsingToolbarLayout.invalidate();
                         gender.setText(user.isMale() ? "Laki - laki" : "Perempuan");
@@ -100,6 +105,9 @@ public class ProfileActivity extends BenihActivity {
                         emailAddress.setText(user.getEmail());
                     }, throwable -> Timber.e(throwable.getMessage()));
         } else {
+            if (user.getImageUrl() != null) {
+                profilePicture.setRoundedImageUrl(user.getImageUrl());
+            }
             collapsingToolbarLayout.setTitle(user.getName());
             gender.setText(user.isMale() ? "Laki - laki" : "Perempuan");
             phoneNumber.setText(user.getPhoneNumber());

@@ -37,15 +37,13 @@ import timber.log.Timber;
  */
 public class EditProfilePresenter extends BenihPresenter<EditProfilePresenter.View> {
 
-    private User currentUser;
-
     public EditProfilePresenter(View view) {
         super(view);
-        currentUser = CacheManager.pluck().getCurrentUser();
     }
 
     public void updateProfile(String name, String phoneNumber, boolean isMale) {
         view.showLoading();
+        User currentUser = CacheManager.pluck().getCurrentUser();
         Map<String, Object> data = new HashMap<>();
         data.put("name", name);
         data.put("phoneNumber", phoneNumber);

@@ -20,6 +20,7 @@ import id.satusatudua.sigap.ui.fragment.SettingFragment;
 import id.satusatudua.sigap.ui.fragment.TrustedsFragment;
 import id.zelory.benih.ui.BenihActivity;
 import id.zelory.benih.ui.fragment.BenihFragment;
+import id.zelory.benih.ui.view.BenihImageView;
 
 /**
  * Created on : November 22, 2015
@@ -36,6 +37,7 @@ public class MainActivity extends BenihActivity implements TabLayout.OnTabSelect
     @Bind(R.id.title) TextView title;
     @Bind(R.id.tab_layout) TabLayout tabLayout;
     @Bind(R.id.view_pager) ViewPager viewPager;
+    @Bind(R.id.button_profile) BenihImageView profile;
 
     @Override
     protected int getResourceLayout() {
@@ -45,6 +47,11 @@ public class MainActivity extends BenihActivity implements TabLayout.OnTabSelect
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
         setSupportActionBar(toolbar);
+        String imageUrl = CacheManager.pluck().getCurrentUser().getImageUrl();
+        if (imageUrl != null) {
+            profile.setRoundedImageUrl(imageUrl);
+        }
+
         setUpViewPager();
         setUpTabLayout();
     }

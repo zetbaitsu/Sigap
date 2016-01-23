@@ -32,7 +32,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:textColor="@color/white"/>
 
-                <ImageView
+                <id.zelory.benih.ui.view.BenihImageView
                     android:id="@+id/button_profile"
                     android:layout_width="48dp"
                     android:layout_height="48dp"

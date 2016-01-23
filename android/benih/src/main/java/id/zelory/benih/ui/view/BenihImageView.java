@@ -17,7 +17,10 @@
 package id.zelory.benih.ui.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -25,6 +28,7 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 
 /**
@@ -55,6 +59,20 @@ public class BenihImageView extends ImageView {
         Glide.with(getContext())
                 .load(url)
                 .into(this);
+    }
+
+    public void setRoundedImageUrl(String url) {
+        imageUrl = url;
+
+        Glide.with(getContext()).load(url).asBitmap().centerCrop().into(new BitmapImageViewTarget(this) {
+            @Override
+            protected void setResource(Bitmap resource) {
+                RoundedBitmapDrawable circularBitmapDrawable =
+                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                circularBitmapDrawable.setCircular(true);
+                setImageDrawable(circularBitmapDrawable);
+            }
+        });
     }
 
     public void setImageUrl(String url, int errorResourceId) {

@@ -16,20 +16,33 @@
 
 package id.satusatudua.sigap.ui;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.api.CloudImage;
+import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.EditProfilePresenter;
 import id.zelory.benih.ui.BenihActivity;
+import id.zelory.benih.ui.view.BenihImageView;
+import timber.log.Timber;
 
 /**
  * Created on : January 18, 2016
@@ -45,6 +58,8 @@ public class EditProfileActivity extends BenihActivity implements EditProfilePre
     @Bind(R.id.phone) EditText phoneNumber;
     @Bind(R.id.laki) RadioButton laki;
     @Bind(R.id.perempuan) RadioButton perempuan;
+    @Bind(R.id.image_profile) BenihImageView profilePicture;
+    @Bind(R.id.progress) ProgressBar progressBar;
 
     private EditProfilePresenter editProfilePresenter;
     private ProgressDialog progressDialog;
@@ -58,6 +73,9 @@ public class EditProfileActivity extends BenihActivity implements EditProfilePre
     protected void onViewReady(Bundle savedInstanceState) {
         User currentUser = CacheManager.pluck().getCurrentUser();
 
+        if (currentUser.getImageUrl() != null) {
+            profilePicture.setRoundedImageUrl(currentUser.getImageUrl());
+        }
         name.setText(currentUser.getName());
         phoneNumber.setText(currentUser.getPhoneNumber());
         if (currentUser.isMale()) {
@@ -82,6 +100,49 @@ public class EditProfileActivity extends BenihActivity implements EditProfilePre
             this.phoneNumber.setError("Mohon masukan no ponsel yang valid!");
         } else {
             editProfilePresenter.updateProfile(nama, phoneNumber, laki.isChecked());
+        }
+    }
+
+    @OnClick(R.id.image_profile)
+    public void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, 39);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 39 && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                showError("Gagal mengambil data foto!");
+                return;
+            }
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(data.getData());
+                Timber.d("Try upload: " + inputStream);
+                progressBar.setVisibility(View.VISIBLE);
+                CloudImage.pluck().upload(inputStream)
+                        .subscribe(url -> {
+                            User currentUser = CacheManager.pluck().getCurrentUser();
+                            currentUser.setImageUrl(url);
+                            CacheManager.pluck().cacheCurrentUser(currentUser);
+
+                            Map<String, Object> newUrl = new HashMap<>();
+                            newUrl.put("imageUrl", url);
+                            FirebaseApi.pluck().users(currentUser.getUserId()).updateChildren(newUrl);
+
+                            progressBar.setVisibility(View.GONE);
+                            profilePicture.setRoundedImageUrl(url);
+                        }, throwable -> {
+                            Timber.e(throwable.getMessage());
+                            showError("Gagal mengupload foto anda!");
+                        });
+            } catch (FileNotFoundException e) {
+                progressBar.setVisibility(View.GONE);
+                showError("Gagal mengambil data foto!");
+                e.printStackTrace();
+            }
         }
     }
 
