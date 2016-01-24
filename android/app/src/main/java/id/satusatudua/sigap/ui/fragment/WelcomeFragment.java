@@ -65,24 +65,19 @@ public class WelcomeFragment extends BenihFragment {
             case 1:
                 imageView.setImageResource(R.drawable.pembukaan1);
                 title.setText("Selamat Datang");
-                description.setText("Sigap adalah sebuah aplikasi yang akan membantu anda pada kondisi darurat.");
+                description.setText("Sigap adalah sebuah aplikasi yang akan membantu anda pada saat kondisi darurat.");
                 break;
             case 2:
                 imageView.setImageResource(R.drawable.pembukaan2);
                 title.setText("Tombol Darurat");
-                description.setText("Sigap menghubungkan masyarakat dan polisi ketika kondisi darurat.");
+                description.setText("Beritahu orang terpercayamu dan orang disekitarmu untuk meminta bantuan mereka.");
                 break;
             case 3:
-                imageView.setImageResource(R.drawable.pembukaan3);
-                title.setText("Kawal Teman");
-                description.setText("Gunakan fitur kawal teman untuk memastikan teman terhindar dari bahaya.");
+                imageView.setImageResource(R.drawable.pembukaan6);
+                title.setText("Saling Berkoordinasi");
+                description.setText("Gunakan fitur percakapan untuk saling berkoordinasi dalam membantu pelapor.");
                 break;
             case 4:
-                imageView.setImageResource(R.drawable.pembukaan4);
-                title.setText("Navigasi");
-                description.setText("Data lokasi rawan dari pengguna akan membantu anda menghindarinya.");
-                break;
-            case 5:
                 imageView.setImageResource(R.drawable.pembukaan5);
                 title.setText("Kontak Darurat Bersama");
                 description.setText("Masukan kontak darurat wilayah anda untuk digunakan bersama.");

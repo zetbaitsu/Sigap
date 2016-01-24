@@ -46,7 +46,6 @@ public class WelcomeActivity extends BenihActivity implements ViewPager.OnPageCh
     @Bind(R.id.icon_page_2) View iconPage2;
     @Bind(R.id.icon_page_3) View iconPage3;
     @Bind(R.id.icon_page_4) View iconPage4;
-    @Bind(R.id.icon_page_5) View iconPage5;
 
     private int pos = 0;
 
@@ -59,8 +58,7 @@ public class WelcomeActivity extends BenihActivity implements ViewPager.OnPageCh
     protected void onViewReady(Bundle savedInstanceState) {
 
         List<WelcomeFragment> fragments = Arrays.asList(WelcomeFragment.newInstance(1), WelcomeFragment.newInstance(2),
-                                                        WelcomeFragment.newInstance(3), WelcomeFragment.newInstance(4),
-                                                        WelcomeFragment.newInstance(5));
+                                                        WelcomeFragment.newInstance(3), WelcomeFragment.newInstance(4));
         WelcomePagerAdapter pagerAdapter = new WelcomePagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
@@ -89,7 +87,6 @@ public class WelcomeActivity extends BenihActivity implements ViewPager.OnPageCh
         iconPage2.setBackgroundResource(pos == 1 ? R.drawable.circle_primary : R.drawable.circle_red_white);
         iconPage3.setBackgroundResource(pos == 2 ? R.drawable.circle_primary : R.drawable.circle_red_white);
         iconPage4.setBackgroundResource(pos == 3 ? R.drawable.circle_primary : R.drawable.circle_red_white);
-        iconPage5.setBackgroundResource(pos == 4 ? R.drawable.circle_primary : R.drawable.circle_red_white);
     }
 
     @Override
