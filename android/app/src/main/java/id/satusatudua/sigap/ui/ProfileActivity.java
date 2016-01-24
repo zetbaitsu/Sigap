@@ -18,6 +18,7 @@ package id.satusatudua.sigap.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
@@ -133,6 +134,18 @@ public class ProfileActivity extends BenihActivity {
     @OnClick(R.id.button_edit)
     public void editProfile() {
         startActivity(new Intent(this, EditProfileActivity.class));
+    }
+
+    @OnClick(R.id.phone)
+    public void callPhone() {
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + user.getPhoneNumber().trim()));
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.email)
+    public void sendEmail() {
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + user.getEmail().trim()));
+        startActivity(intent);
     }
 
     private List<BenihFragment> getFragments() {
