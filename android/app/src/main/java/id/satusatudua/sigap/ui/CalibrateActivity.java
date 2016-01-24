@@ -25,7 +25,9 @@ import android.widget.TextView;
 import com.squareup.seismic.ShakeDetector;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.zelory.benih.ui.BenihActivity;
 
 /**
@@ -48,14 +50,31 @@ public class CalibrateActivity extends BenihActivity implements ShakeDetector.Li
 
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
+        CacheManager.pluck().setShakeToNotify(false);
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         ShakeDetector shakeDetector = new ShakeDetector(this);
         shakeDetector.start(sensorManager);
+    }
+
+    @OnClick(R.id.button_save)
+    public void save() {
+        if (shakingImage.getVisibility() == View.VISIBLE) {
+            CacheManager.pluck().setShakeToNotify(true);
+        }
+        finish();
     }
 
     @Override
     public void hearShake() {
         shakingImage.setVisibility(View.VISIBLE);
         status.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (shakingImage.getVisibility() == View.VISIBLE) {
+            CacheManager.pluck().setShakeToNotify(true);
+        }
     }
 }
