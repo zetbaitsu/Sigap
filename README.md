@@ -36,80 +36,81 @@ The communication flow between those layers are strictly sequential, in the sens
 ```
 └─ sigap
    ├─ users
-   |  └─ userId
-   |     └─ birthDate
-   |     └─ email
-   |     └─ phoneNumber
-   |     └─ fromApps
-   |     └─ male
-   |     └─ name
-   |     └─ status
-   |     └─ userId
+   |  └─ userId (String)
+   |     ├─ imageUrl (String)
+   |     ├─ email (String)
+   |     ├─ phoneNumber (String)
+   |     ├─ fromApps (Boolean)
+   |     ├─ male (Boolean)
+   |     ├─ name (String)
+   |     └─ status (Enum : SIAP, MENOLONG, BAHAYA)
    ├─ userLocations
-   |  └─ userId
-   |     └─ g
+   |  └─ userId (String)
+   |     ├─ g (String)
    |     └─ l
-   |        └─ 0
-   |        └─ 1
+   |        ├─ 0 (Double)
+   |        └─ 1 (Double)
    ├─ userTrusted
-   |  └─ userId
-   |     └─ userTrustedId
-   |        └─ status
+   |  └─ userId (String)
+   |     └─ userTrustedId (String)
+   |        └─ status (Enum : MENUNGGU, DITERIMA, DITOLAK)
    ├─ trustedOf
-   |  └─ userId
-   |     └─ userTrustMeId
-   |        └─ status
+   |  └─ userId (String)
+   |     └─ userTrustMeId (String)
+   |        └─ status (Enum : MENUNGGU, DITERIMA, DITOLAK)
    ├─ cases
-   |  └─ caseId
-   |     └─ caseId
-   |     └─ date
-   |     └─ userId
-   |     └─ status
-   |     └─ latitude
-   |     └─ longitude
+   |  └─ caseId (String)
+   |     ├─ address (String)
+   |     ├─ detail (String)
+   |     ├─ date (Long)
+   |     ├─ userId (String)
+   |     ├─ status (Enum : BARU, BERJALAN, DITUTUP)
+   |     ├─ latitude (Double)
+   |     └─ longitude (Double)
    ├─ caseLocations
-   |  └─ caseId
-   |     └─ g
+   |  └─ caseId (String)
+   |     ├─ g (String)
    |     └─ l
-   |        └─ 0
-   |        └─ 1
+   |        ├─ 0 (Double)
+   |        └─ 1 (Double)
    ├─ userCases
-   |  └─ userId
-   |     └─ caseId
+   |  └─ userId (String)
+   |     └─ caseId (String)
    ├─ helperCases
-   |  └─ caseId
-   |     └─ userId
-   |        └─ status
+   |  └─ caseId (String)
+   |     └─ userId (String)
+   |        ├─ feedback (String)
+   |        └─ status (Enum : MENUNGGU, MENOLONG, MENOLAK)
    ├─ userHelps
-   |  └─ userId
-   |     └─ caseId
-   |        └─ status
+   |  └─ userId (String)
+   |     └─ caseId (String)
+   |        └─ status (Enum : MENUNGGU, MENOLONG, MENOLAK)
    ├─ caseMessages
-   |  └─ caseId
-   |     └─ userId
-   |     └─ date
-   |     └─ content
+   |  └─ caseId (String)
+   |     └─ messageId (String)
+   |        ├─ userId (String)
+   |        ├─ date (Long)
+   |        └─ content (String)
    ├─ importantContacts
-   |  └─ contactId
-   |     └─ name
-   |     └─ numbers
-   |     └─ userId
-   |     └─ address
-   |     └─ avgRate
-   |     └─ totalRate
-   |     └─ totalUserRate
-   |     └─ contactId
+   |  └─ contactId (String)
+   |     ├─ name (String)
+   |     ├─ createdAt (Long)
+   |     ├─ phoneNumber (String)
+   |     ├─ userId (String)
+   |     └─ address (String)
    ├─ userContacts
-   |  └─ userId
-   |     └─ contactIds
-   ├─ comments
-   |  └─ contactId
-   |     └─ userId
-   |     └─ date
-   |     └─ content
-   └─ bookmarkContacts
-      └─ userId
-         └─ contactIds
+   |  └─ userId (String)
+   |     └─ contactId (String)
+   ├─ bookmarkContacts
+   |  └─ userId (String)
+   |     └─ contactId (String)
+   └─ reviews
+      └─ contactId (String)
+         └─ userId (String)
+            ├─ date (Long)
+            ├─ description (String)
+            ├─ rate (Integer)
+            └─ title (String)
 ```
 
 ## Project File Structure
