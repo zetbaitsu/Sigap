@@ -150,19 +150,27 @@ public class ImportantContactFragment extends BenihFragment implements
 
     @Override
     public void showError(String errorMessage) {
-        Snackbar snackbar = Snackbar.make(recyclerViewContact, errorMessage, Snackbar.LENGTH_LONG);
-        snackbar.getView().setBackgroundResource(R.color.colorAccent);
-        snackbar.show();
+        try {
+            Snackbar snackbar = Snackbar.make(recyclerViewContact, errorMessage, Snackbar.LENGTH_LONG);
+            snackbar.getView().setBackgroundResource(R.color.colorAccent);
+            snackbar.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void showLoading() {
-        swipeRefreshLayout.setRefreshing(true);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(true);
+        }
     }
 
     @Override
     public void dismissLoading() {
-        swipeRefreshLayout.setRefreshing(false);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     @Override

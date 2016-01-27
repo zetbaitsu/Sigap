@@ -124,9 +124,13 @@ public class CloseCaseActivity extends BenihActivity implements CloseCasePresent
 
     @Override
     public void showError(String errorMessage) {
-        Snackbar snackbar = Snackbar.make(chronologyField, errorMessage, Snackbar.LENGTH_LONG);
-        snackbar.getView().setBackgroundResource(R.color.colorAccent);
-        snackbar.show();
+        try {
+            Snackbar snackbar = Snackbar.make(chronologyField, errorMessage, Snackbar.LENGTH_LONG);
+            snackbar.getView().setBackgroundResource(R.color.colorAccent);
+            snackbar.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

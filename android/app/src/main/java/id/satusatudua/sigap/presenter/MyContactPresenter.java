@@ -101,7 +101,7 @@ public class MyContactPresenter extends BenihPresenter<MyContactPresenter.View> 
                                     totalRate += snapshot.child("rate").getValue(Long.class);
                                 }
                                 contacts.get(i).setTotalRate(totalRate);
-                                contacts.get(i).setAvgRate(contacts.get(i).getTotalRate() / totalRate);
+                                contacts.get(i).setAvgRate(totalRate / count);
                             } else {
                                 contacts.get(i).setTotalRate(0);
                                 contacts.get(i).setAvgRate(0.0);

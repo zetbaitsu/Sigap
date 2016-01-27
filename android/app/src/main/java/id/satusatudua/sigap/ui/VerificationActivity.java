@@ -90,15 +90,21 @@ public class VerificationActivity extends BenihActivity implements VerificationP
 
     @Override
     public void showError(String errorMessage) {
-        Snackbar snackbar = Snackbar.make(token, errorMessage, Snackbar.LENGTH_LONG);
-        snackbar.getView().setBackgroundResource(R.color.colorAccent);
-        snackbar.show();
+        try {
+            Snackbar snackbar = Snackbar.make(token, errorMessage, Snackbar.LENGTH_LONG);
+            snackbar.getView().setBackgroundResource(R.color.colorAccent);
+            snackbar.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void showLoading() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Silahkan tunggu...");
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Silahkan tunggu...");
+        }
         progressDialog.show();
     }
 
@@ -126,8 +132,12 @@ public class VerificationActivity extends BenihActivity implements VerificationP
 
     @Override
     public void onSuccessResendCode() {
-        Snackbar snackbar = Snackbar.make(token, "Kode sudah kami kirim ke email anda!", Snackbar.LENGTH_LONG);
-        snackbar.getView().setBackgroundResource(R.color.colorAccent);
-        snackbar.show();
+        try {
+            Snackbar snackbar = Snackbar.make(token, "Kode sudah kami kirim ke email anda!", Snackbar.LENGTH_LONG);
+            snackbar.getView().setBackgroundResource(R.color.colorAccent);
+            snackbar.show();
+        } catch (Exception e) {
+
+        }
     }
 }

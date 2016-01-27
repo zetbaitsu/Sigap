@@ -362,9 +362,13 @@ public class DetailContactActivity extends BenihActivity implements DetailContac
 
     @Override
     public void showError(String errorMessage) {
-        Snackbar snackbar = Snackbar.make(rootReview, errorMessage, Snackbar.LENGTH_LONG);
-        snackbar.getView().setBackgroundResource(R.color.colorAccent);
-        snackbar.show();
+        try {
+            Snackbar snackbar = Snackbar.make(rootReview, errorMessage, Snackbar.LENGTH_LONG);
+            snackbar.getView().setBackgroundResource(R.color.colorAccent);
+            snackbar.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

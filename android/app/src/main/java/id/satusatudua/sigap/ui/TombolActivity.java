@@ -91,15 +91,21 @@ public class TombolActivity extends BenihActivity implements TombolPresenter.Vie
 
     @Override
     public void showError(String errorMessage) {
-        Snackbar snackbar = Snackbar.make(rippleBackground, errorMessage, Snackbar.LENGTH_LONG);
-        snackbar.getView().setBackgroundResource(R.color.colorAccent);
-        snackbar.show();
+        try {
+            Snackbar snackbar = Snackbar.make(rippleBackground, errorMessage, Snackbar.LENGTH_LONG);
+            snackbar.getView().setBackgroundResource(R.color.colorAccent);
+            snackbar.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void showLoading() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Silahkan tunggu...");
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Silahkan tunggu...");
+        }
         progressDialog.show();
     }
 

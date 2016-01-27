@@ -153,9 +153,13 @@ public class EditProfileActivity extends BenihActivity implements EditProfilePre
 
     @Override
     public void showError(String errorMessage) {
-        Snackbar snackbar = Snackbar.make(phoneNumber, errorMessage, Snackbar.LENGTH_LONG);
-        snackbar.getView().setBackgroundResource(R.color.colorAccent);
-        snackbar.show();
+        try {
+            Snackbar snackbar = Snackbar.make(phoneNumber, errorMessage, Snackbar.LENGTH_LONG);
+            snackbar.getView().setBackgroundResource(R.color.colorAccent);
+            snackbar.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -83,9 +83,13 @@ public class AddContactActivity extends BenihActivity implements AddContactPrese
 
     @Override
     public void showError(String errorMessage) {
-        Snackbar snackbar = Snackbar.make(address, errorMessage, Snackbar.LENGTH_LONG);
-        snackbar.getView().setBackgroundResource(R.color.colorAccent);
-        snackbar.show();
+        try {
+            Snackbar snackbar = Snackbar.make(address, errorMessage, Snackbar.LENGTH_LONG);
+            snackbar.getView().setBackgroundResource(R.color.colorAccent);
+            snackbar.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
