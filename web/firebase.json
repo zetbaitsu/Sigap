@@ -1,9 +1,0 @@
-{
-  "firebase": "sigap",
-  "public": "public",
-  "ignore": [
-    "firebase.json",
-    "**/.*",
-    "**/node_modules/**"
-  ]
-}
