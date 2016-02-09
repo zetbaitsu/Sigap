@@ -3,6 +3,8 @@ package id.satusatudua.sigap.data.api;
 import com.firebase.client.Firebase;
 import com.firebase.geofire.GeoFire;
 
+import id.satusatudua.sigap.BuildConfig;
+
 /**
  * Created on : November 22, 2015
  * Author     : zetbaitsu
@@ -20,7 +22,7 @@ public enum FirebaseApi {
     private GeoFire caseLocations;
 
     FirebaseApi() {
-        firebase = new Firebase("https://sigap.firebaseio.com/");
+        firebase = new Firebase(BuildConfig.ENDPOINT);
         userLocations = new GeoFire(firebase.child("userLocations"));
         caseLocations = new GeoFire(firebase.child("caseLocations"));
     }

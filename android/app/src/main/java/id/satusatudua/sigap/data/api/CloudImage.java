@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import id.satusatudua.sigap.BuildConfig;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.util.BenihScheduler;
 import rx.Observable;
@@ -40,7 +41,6 @@ import timber.log.Timber;
  */
 public enum CloudImage {
     HARVEST;
-    private String PATH = "http://res.cloudinary.com/zelory/image/upload/";
     private String TRANSFORM = "h_160,w_160,c_limit";
 
     private Cloudinary cloudinary;
@@ -83,7 +83,7 @@ public enum CloudImage {
                     Map data = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
                     String url = data.get("url").toString();
                     url = url.substring(url.lastIndexOf('/'));
-                    url = PATH + TRANSFORM + url;
+                    url = BuildConfig.CLOUDINARY_PATH + TRANSFORM + url;
                     subscriber.onNext(url);
                     subscriber.onCompleted();
                 } catch (IOException e) {
