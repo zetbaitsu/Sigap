@@ -51,18 +51,6 @@ public enum FirebaseApi {
         return firebase.child("trustedOf").child(userId);
     }
 
-    public Firebase covers(String userId) {
-        return firebase.child("covers").child(userId);
-    }
-
-    public Firebase userCovers(String userId) {
-        return firebase.child("userCovers").child(userId);
-    }
-
-    public Firebase coverMessages(String userId) {
-        return firebase.child("coverMessages").child(userId);
-    }
-
     public Firebase cases() {
         return firebase.child("cases");
     }
@@ -89,6 +77,18 @@ public enum FirebaseApi {
 
     public Firebase caseMessages(String caseId) {
         return firebase.child("caseMessages").child(caseId);
+    }
+
+    public Firebase escort(String escortId) {
+        return firebase.child("escort").child(escortId);
+    }
+
+    public Firebase guards(String escortId) {
+        return firebase.child("guards").child(escortId);
+    }
+
+    public Firebase escortMessages(String escortId) {
+        return firebase.child("escortMessages").child(escortId);
     }
 
     public Firebase importantContacts() {

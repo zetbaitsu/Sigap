@@ -101,6 +101,12 @@
         <activity
             android:name=".ui.UpdatePasswordActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.RequestEscortActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.EscortActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>
@@ -110,6 +116,10 @@
             android:name=".service.EmergencyService"/>
         <service
             android:name=".service.NotificationService"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyALnkbElH9_2aCs87znBcsaCHPE8V6pDe0"/>
 
         <receiver
             android:name=".service.LocationReceiver">

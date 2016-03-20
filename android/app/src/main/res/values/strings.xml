@@ -25,6 +25,7 @@
     <string name="tambah_kontak">TAMBAHKAN KONTAK</string>
     <string name="daftar_kontak">Daftar Kontak Terpercaya</string>
     <string name="no_ponsel">No Ponsel</string>
+    <string name="kawal_aku">Kawal Aku</string>
 
     <string-array name="shake_count">
         <item>2</item>

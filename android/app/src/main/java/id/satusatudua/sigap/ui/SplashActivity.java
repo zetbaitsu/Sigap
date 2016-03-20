@@ -65,6 +65,9 @@ public class SplashActivity extends BenihActivity {
             case DITOLONG:
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, EmergencyActivity.class)), 1800);
                 break;
+            case DIKAWAL:
+                new Handler().postDelayed(() -> startActivity(EscortActivity.generateIntent(this)), 1800);
+                break;
             case ADDING_TRUSTED_USER:
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, AddTrustedUserActivity.class)), 1800);
                 break;

@@ -29,6 +29,7 @@ import java.util.List;
 
 import id.satusatudua.sigap.SigapApp;
 import id.satusatudua.sigap.data.model.Case;
+import id.satusatudua.sigap.data.model.Escort;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.data.model.UserLocation;
 import id.satusatudua.sigap.util.Sorter;
@@ -148,6 +149,15 @@ public enum CacheManager {
     public Case getLastCase() {
         String json = sharedPreferences.getString("last_case", "");
         return Bson.pluck().getParser().fromJson(json, Case.class);
+    }
+
+    public void cacheLastEscort(Escort escort) {
+        sharedPreferences.edit().putString("last_escort", Bson.pluck().getParser().toJson(escort)).apply();
+    }
+
+    public Escort getLastEscort() {
+        String json = sharedPreferences.getString("last_escort", "");
+        return Bson.pluck().getParser().fromJson(json, Escort.class);
     }
 
     public void cacheHelpingCase(Case theCase, User reporter) {

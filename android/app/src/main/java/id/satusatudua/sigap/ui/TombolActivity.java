@@ -84,6 +84,11 @@ public class TombolActivity extends BenihActivity implements TombolPresenter.Vie
         new Handler().postDelayed(() -> doublePressedOnce = false, 2000);
     }
 
+    @OnClick(R.id.button_escort)
+    public void requestEscort() {
+        startActivity(new Intent(this, RequestEscortActivity.class));
+    }
+
     @OnClick(R.id.button_main)
     public void startMain() {
         startActivity(new Intent(this, MainActivity.class));
