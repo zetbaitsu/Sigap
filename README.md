@@ -67,6 +67,30 @@ You need to add minimal 3 another users before you can use all the feature. Apps
    |        ├─ userId (String)
    |        ├─ date (Long)
    |        └─ content (String)
+   ├─ escorts
+   |  └─ escortId (String)
+   |     ├─ destination (String)
+   |     ├─ date (Long)
+   |     ├─ userId (String)
+   |     ├─ latitude (Double)
+   |     └─ longitude (Double)
+   ├─ userEscorts
+   |  └─ userId (String)
+   |     └─ escortId (String)
+   ├─ guards
+   |  └─ escortId (String)
+   |     └─ userId (String)
+   |        └─ status (Enum : MENUNGGU, MENGAWAL, MENOLAK)
+   ├─ userGuards
+   |  └─ userId (String)
+   |     └─ escortId (String)
+   |        └─ status (Enum : MENUNGGU, MENGAWAL, MENOLAK)
+   ├─ escortMessages
+   |  └─ escortId (String)
+   |     └─ messageId (String)
+   |        ├─ userId (String)
+   |        ├─ date (Long)
+   |        └─ content (String)
    ├─ importantContacts
    |  └─ contactId (String)
    |     ├─ name (String)
