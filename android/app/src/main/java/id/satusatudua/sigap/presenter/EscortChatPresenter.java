@@ -58,7 +58,7 @@ public class EscortChatPresenter extends BenihPresenter<EscortChatPresenter.View
         this.escort = escort;
         guardCandidates = new ArrayList<>();
         GuardCandidate guardCandidate = new GuardCandidate();
-        guardCandidate.setGuardingStatus(GuardCandidate.GuardingStatus.MENOLONG);
+        guardCandidate.setGuardingStatus(GuardCandidate.GuardingStatus.MENGAWAL);
         guardCandidate.setUserTrustedId(currentUser.getUserId());
         guardCandidate.setUser(currentUser);
         guardCandidates.add(guardCandidate);

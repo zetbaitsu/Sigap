@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.satusatudua.sigap.data.model.GuardCandidate;
 import id.zelory.benih.ui.adapter.viewholder.BenihItemViewHolder;
 
@@ -56,7 +55,7 @@ public class GuardViewHolder extends BenihItemViewHolder<GuardCandidate> {
             name.setBackgroundResource(R.color.colorPrimary);
         } else if (guardCandidate.getGuardingStatus().equals(GuardCandidate.GuardingStatus.MENUNGGU)) {
             name.setBackgroundResource(R.color.secondary_text);
-        } else if (guardCandidate.getGuardingStatus().equals(GuardCandidate.GuardingStatus.MENOLONG)) {
+        } else if (guardCandidate.getGuardingStatus().equals(GuardCandidate.GuardingStatus.MENGAWAL)) {
             name.setBackgroundResource(R.color.colorAccent);
         }
     }

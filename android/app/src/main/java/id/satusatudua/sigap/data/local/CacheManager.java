@@ -151,6 +151,22 @@ public enum CacheManager {
         return Bson.pluck().getParser().fromJson(json, Case.class);
     }
 
+    public List<String> getLastGuarding() {
+        String json = sharedPreferences.getString("last_escorts", "");
+        return Bson.pluck().getParser().fromJson(json, new TypeToken<List<String>>() {}.getType());
+    }
+
+    public void cacheGuarding(String escortId) {
+        List<String> lastEscorts = getLastGuarding();
+        if (lastEscorts == null) {
+            lastEscorts = new ArrayList<>();
+        }
+        if (!lastEscorts.contains(escortId)) {
+            lastEscorts.add(escortId);
+            sharedPreferences.edit().putString("last_escorts", Bson.pluck().getParser().toJson(lastEscorts)).apply();
+        }
+    }
+
     public void cacheLastEscort(Escort escort) {
         sharedPreferences.edit().putString("last_escort", Bson.pluck().getParser().toJson(escort)).apply();
     }
@@ -176,8 +192,29 @@ public enum CacheManager {
                 .map(s -> Bson.pluck().getParser().fromJson(s, Case.class));
     }
 
+    public void cacheGuardingEscort(Escort escort, User reporter) {
+        sharedPreferences.edit().putString("guarding_escort", Bson.pluck().getParser().toJson(escort)).apply();
+        sharedPreferences.edit().putString("last_escort_reporter", Bson.pluck().getParser().toJson(reporter)).apply();
+    }
+
+    public Escort getLastGuardingEscort() {
+        String json = sharedPreferences.getString("guarding_escort", "");
+        return Bson.pluck().getParser().fromJson(json, Escort.class);
+    }
+
+    public Observable<Escort> listenLastGuardingEscort() {
+        return rxPreferences.getString("guarding_escort", "")
+                .asObservable()
+                .map(s -> Bson.pluck().getParser().fromJson(s, Escort.class));
+    }
+
     public User getLastCaseReporter() {
         String json = sharedPreferences.getString("last_case_reporter", "");
+        return Bson.pluck().getParser().fromJson(json, User.class);
+    }
+
+    public User getLastEscortReporter() {
+        String json = sharedPreferences.getString("last_escort_reporter", "");
         return Bson.pluck().getParser().fromJson(json, User.class);
     }
 

@@ -90,6 +90,6 @@ public class GuardCandidate extends UserTrusted implements Parcelable {
     }
 
     public enum GuardingStatus {
-        MENUNGGU, MENOLONG, MENOLAK
+        MENUNGGU, MENGAWAL, MENOLAK
     }
 }

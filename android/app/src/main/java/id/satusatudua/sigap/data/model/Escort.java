@@ -32,6 +32,7 @@ import java.util.List;
  */
 public class Escort implements Parcelable {
     private String escortId;
+    private String userId;
     private String destination;
     private Date date;
     private double latitude;
@@ -45,6 +46,7 @@ public class Escort implements Parcelable {
 
     protected Escort(Parcel in) {
         escortId = in.readString();
+        userId = in.readString();
         destination = in.readString();
         date = new Date(in.readLong());
         latitude = in.readDouble();
@@ -71,6 +73,14 @@ public class Escort implements Parcelable {
 
     public void setEscortId(String escortId) {
         this.escortId = escortId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getDestination() {
@@ -125,10 +135,12 @@ public class Escort implements Parcelable {
     public String toString() {
         return "Escort{" +
                 "escortId='" + escortId + '\'' +
+                ", userId='" + userId + '\'' +
                 ", destination='" + destination + '\'' +
                 ", date=" + date +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
+                ", closed=" + closed +
                 ", guardCandidates=" + guardCandidates +
                 '}';
     }
@@ -141,6 +153,7 @@ public class Escort implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(escortId);
+        dest.writeString(userId);
         dest.writeString(destination);
         dest.writeLong(date.getTime());
         dest.writeDouble(latitude);

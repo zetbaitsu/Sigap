@@ -37,6 +37,7 @@ import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.User;
+import id.satusatudua.sigap.ui.ConfirmGuardingActivity;
 import id.satusatudua.sigap.ui.ConfirmHelpingActivity;
 import id.satusatudua.sigap.ui.ConfirmTrustedOfActivity;
 import id.satusatudua.sigap.ui.HelpingActivity;
@@ -67,8 +68,22 @@ public class NotificationService extends Service {
         Timber.d(getClass().getSimpleName() + " is creating");
 
         listenEmergency();
+        listenEscortRequest();
         listenTrustedOf();
         listenNewMessage();
+    }
+
+    private void listenEscortRequest() {
+        RxFirebase.observeChildAdded(FirebaseApi.pluck().userGuards(CacheManager.pluck().getCurrentUser().getUserId()))
+                .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
+                .map(DataSnapshot::getKey)
+                .subscribe(escortId -> {
+                    List<String> lastEscortIds = CacheManager.pluck().getLastGuarding();
+                    if (lastEscortIds == null || !lastEscortIds.contains(escortId)) {
+                        CacheManager.pluck().cacheGuarding(escortId);
+                        showEscortRequestNotification(escortId);
+                    }
+                });
     }
 
     private void listenEmergency() {
@@ -84,6 +99,30 @@ public class NotificationService extends Service {
                         }
                     }, throwable -> Timber.e(throwable.getMessage()));
         }
+    }
+
+    private void showEscortRequestNotification(String escortId) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                                                                ConfirmGuardingActivity.generateIntent(this, escortId),
+                                                                PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new NotificationCompat.Builder(getApplicationContext())
+                .setContentTitle("Sigap")
+                .setContentText("Seseorang meminta mu untuk mengawalnya!")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setVibrate(CacheManager.pluck().isVibrate() ? new long[]{100, 300, 500, 1000} : new long[]{})
+                .setSound(Uri.parse(CacheManager.pluck().getRingtone()))
+                .setAutoCancel(true)
+                .setStyle(new android.support
+                        .v4.app.NotificationCompat
+                        .BigTextStyle()
+                                  .bigText("Seseorang meminta mu untuk mengawalnya!"))
+                .setContentIntent(pendingIntent)
+                .build();
+
+        NotificationManagerCompat
+                .from(SigapApp.pluck().getApplicationContext())
+                .notify(BenihUtils.randInt(1, Integer.MAX_VALUE), notification);
     }
 
     private void showEmergencyNotification(String caseId) {

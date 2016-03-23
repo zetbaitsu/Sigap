@@ -107,6 +107,9 @@
         <activity
             android:name=".ui.EscortActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.ConfirmGuardingActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>

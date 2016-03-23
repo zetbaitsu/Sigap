@@ -80,11 +80,15 @@ public enum FirebaseApi {
     }
 
     public Firebase escort(String escortId) {
-        return firebase.child("escort").child(escortId);
+        return firebase.child("escorts").child(escortId);
     }
 
     public Firebase guards(String escortId) {
         return firebase.child("guards").child(escortId);
+    }
+
+    public Firebase userGuards(String userId) {
+        return firebase.child("userGuards").child(userId);
     }
 
     public Firebase escortMessages(String escortId) {

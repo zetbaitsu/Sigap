@@ -29,7 +29,7 @@ import android.os.Parcelable;
  */
 public class UserTrusted implements Parcelable {
     private String userTrustedId;
-    private Status status;
+    private Status status = Status.MENUNGGU;
     private User user;
 
     public UserTrusted() {
