@@ -92,7 +92,7 @@ public class GuardingActivity extends BenihActivity implements GuardingPresenter
     }
 
     private List<BenihFragment> getFragments() {
-        return Arrays.asList(GuardingLocationFragment.newInstance(),
+        return Arrays.asList(GuardingLocationFragment.newInstance(reporter, escort),
                              EscortChatFragment.newInstance(reporter, escort),
                              new ImportantContactFragment());
     }
