@@ -73,7 +73,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_margin="8dp"
-            android:src="@drawable/ic_calender"
+            android:src="@drawable/ic_map"
             android:tint="@color/secondary_text"/>
 
         <TextView
@@ -108,7 +108,7 @@
             android:layout_alignParentRight="true"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
-            android:src="@drawable/ic_calender"/>
+            android:src="@drawable/ic_pick"/>
     </RelativeLayout>
 
     <View
