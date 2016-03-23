@@ -17,7 +17,6 @@
 package id.satusatudua.sigap.ui.fragment;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -31,16 +30,18 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.Escort;
 import id.satusatudua.sigap.data.model.GuardCandidate;
 import id.satusatudua.sigap.data.model.Message;
+import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.EscortChatPresenter;
-import id.satusatudua.sigap.ui.MainActivity;
 import id.satusatudua.sigap.ui.ProfileActivity;
 import id.satusatudua.sigap.ui.adapter.ChatAdapter;
 import id.satusatudua.sigap.ui.adapter.GuardAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
+import timber.log.Timber;
 
 /**
  * Created on : January 13, 2016
@@ -52,6 +53,7 @@ import id.zelory.benih.ui.view.BenihRecyclerView;
  */
 public class EscortChatFragment extends BenihFragment implements EscortChatPresenter.View {
     private static final String KEY_ESCORT = "extra_escort";
+    private static final String KEY_REPORTER = "extra_reporter";
 
     @Bind(R.id.list_message) BenihRecyclerView listMessage;
     @Bind(R.id.list_helper) BenihRecyclerView listHelper;
@@ -63,13 +65,15 @@ public class EscortChatFragment extends BenihFragment implements EscortChatPrese
     private ChatAdapter chatAdapter;
     private GuardAdapter guardAdapter;
     private Escort escort;
+    private User reporter;
     private EscortChatPresenter chatPresenter;
     private ProgressDialog progressDialog;
 
-    public static EscortChatFragment newInstance(Escort escort) {
+    public static EscortChatFragment newInstance(User reporter, Escort escort) {
         EscortChatFragment chatFragment = new EscortChatFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(KEY_ESCORT, escort);
+        bundle.putParcelable(KEY_REPORTER, reporter);
         chatFragment.setArguments(bundle);
         return chatFragment;
     }
@@ -90,14 +94,23 @@ public class EscortChatFragment extends BenihFragment implements EscortChatPrese
         guardAdapter = new GuardAdapter(getActivity());
         listHelper.setUpAsHorizontalList();
         listHelper.setAdapter(guardAdapter);
+        guardAdapter.addOrUpdate(transformReporter());
         guardAdapter.setOnItemClickListener((view, position) -> onItemGuardClicked(guardAdapter.getData().get(position)));
 
-        chatPresenter = new EscortChatPresenter(this, escort);
+        chatPresenter = new EscortChatPresenter(this, escort, reporter);
         if (savedInstanceState == null) {
             chatPresenter.loadGuards();
         } else {
             chatPresenter.loadState(savedInstanceState);
         }
+    }
+
+    private GuardCandidate transformReporter() {
+        GuardCandidate guardCandidate = new GuardCandidate();
+        guardCandidate.setGuardingStatus(GuardCandidate.GuardingStatus.MENGAWAL);
+        guardCandidate.setUser(reporter);
+        guardCandidate.setUserTrustedId(reporter.getUserId());
+        return guardCandidate;
     }
 
     private void onItemGuardClicked(GuardCandidate guardCandidate) {
@@ -112,8 +125,18 @@ public class EscortChatFragment extends BenihFragment implements EscortChatPrese
         }
 
         if (escort == null) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            startActivity(intent);
+            getActivity().finish();
+            return;
+        }
+
+        reporter = getArguments().getParcelable(KEY_REPORTER);
+
+        if (reporter == null && savedInstanceState != null) {
+            reporter = savedInstanceState.getParcelable(KEY_REPORTER);
+        }
+
+        if (reporter == null) {
+            getActivity().finish();
         }
     }
 
@@ -157,6 +180,7 @@ public class EscortChatFragment extends BenihFragment implements EscortChatPrese
         chatPresenter.saveState(outState);
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_ESCORT, escort);
+        outState.putParcelable(KEY_REPORTER, reporter);
     }
 
     @Override

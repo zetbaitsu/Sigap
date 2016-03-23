@@ -110,6 +110,9 @@
         <activity
             android:name=".ui.ConfirmGuardingActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.GuardingActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>

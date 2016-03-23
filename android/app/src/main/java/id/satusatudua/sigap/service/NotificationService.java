@@ -83,7 +83,7 @@ public class NotificationService extends Service {
                         CacheManager.pluck().cacheGuarding(escortId);
                         showEscortRequestNotification(escortId);
                     }
-                });
+                }, throwable -> Timber.e(throwable.getMessage()));
     }
 
     private void listenEmergency() {

@@ -76,6 +76,9 @@ public class SplashActivity extends BenihActivity {
                 User reporter = CacheManager.pluck().getLastCaseReporter();
                 new Handler().postDelayed(() -> startActivity(HelpingActivity.generateIntent(this, theCase, reporter)), 1800);
                 break;
+            case MENGAWAL:
+                startActivity(GuardingActivity.generateIntent(this));
+                break;
             case ENTER_CODE:
                 new Handler().postDelayed(() -> startActivity(new Intent(SplashActivity.this, EnterCodeActivity.class)), 1800);
                 break;

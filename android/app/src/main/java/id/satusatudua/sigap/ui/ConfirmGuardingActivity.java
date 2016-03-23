@@ -113,7 +113,7 @@ public class ConfirmGuardingActivity extends BenihActivity implements ConfirmGua
 
     @Override
     public void onConfirmed(Escort escort, User reporter) {
-        //startActivity(HelpingActivity.generateIntent(this, theCase, reporter));
+        startActivity(GuardingActivity.generateIntent(this));
     }
 
     @Override

@@ -52,15 +52,15 @@ public class EscortChatPresenter extends BenihPresenter<EscortChatPresenter.View
     private List<GuardCandidate> guardCandidates;
 
 
-    public EscortChatPresenter(View view, Escort escort) {
+    public EscortChatPresenter(View view, Escort escort, User reporter) {
         super(view);
         currentUser = CacheManager.pluck().getCurrentUser();
         this.escort = escort;
         guardCandidates = new ArrayList<>();
         GuardCandidate guardCandidate = new GuardCandidate();
         guardCandidate.setGuardingStatus(GuardCandidate.GuardingStatus.MENGAWAL);
-        guardCandidate.setUserTrustedId(currentUser.getUserId());
-        guardCandidate.setUser(currentUser);
+        guardCandidate.setUserTrustedId(reporter.getUserId());
+        guardCandidate.setUser(reporter);
         guardCandidates.add(guardCandidate);
         listenGuardStatus();
     }

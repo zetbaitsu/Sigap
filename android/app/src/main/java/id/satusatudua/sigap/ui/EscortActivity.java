@@ -77,7 +77,7 @@ public class EscortActivity extends BenihActivity implements EscortPresenter.Vie
     }
 
     private List<BenihFragment> getFragments() {
-        return Arrays.asList(EscortChatFragment.newInstance(escort), new ImportantContactFragment());
+        return Arrays.asList(EscortChatFragment.newInstance(CacheManager.pluck().getCurrentUser(), escort), new ImportantContactFragment());
     }
 
     @OnClick(R.id.button_danger)
