@@ -113,10 +113,9 @@ public class EscortChatPresenter extends BenihPresenter<EscortChatPresenter.View
                     guardCandidate.setUserTrustedId(dataSnapshot.getKey());
                     guardCandidate.setGuardingStatus(GuardCandidate.
                             GuardingStatus.valueOf(dataSnapshot.child("status").getValue().toString()));
-
                     int x = guardCandidates.indexOf(guardCandidate);
                     if (x >= 0) {
-                        guardCandidates.get(x).setStatus(guardCandidate.getStatus());
+                        guardCandidates.get(x).setGuardingStatus(guardCandidate.getGuardingStatus());
                         return guardCandidates.get(x);
                     }
                     return null;
