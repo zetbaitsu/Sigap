@@ -95,6 +95,7 @@ public class RequestEscortPresenter extends BenihPresenter<RequestEscortPresente
 
                     return guardCandidates.get(x);
                 })
+                .filter(guardCandidate -> guardCandidate.getUser().getStatus().equals(User.Status.SIAP))
                 .subscribe(guardCandidate -> {
                     if (view != null) {
                         view.onGuardCandidateAdded(guardCandidate);
