@@ -20,10 +20,8 @@ import android.content.Context;
 import android.view.ViewGroup;
 
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.satusatudua.sigap.data.model.GuardCandidate;
 import id.satusatudua.sigap.ui.adapter.viewholder.GuardViewHolder;
-import id.satusatudua.sigap.ui.adapter.viewholder.HelperViewHolder;
 import id.zelory.benih.ui.adapter.BenihRecyclerAdapter;
 
 /**

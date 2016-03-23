@@ -30,7 +30,6 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import id.satusatudua.sigap.R;
-import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.Escort;
 import id.satusatudua.sigap.data.model.GuardCandidate;
 import id.satusatudua.sigap.data.model.Message;
@@ -41,7 +40,6 @@ import id.satusatudua.sigap.ui.adapter.ChatAdapter;
 import id.satusatudua.sigap.ui.adapter.GuardAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
-import timber.log.Timber;
 
 /**
  * Created on : January 13, 2016
