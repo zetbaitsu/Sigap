@@ -56,7 +56,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:padding="16dp"
-        android:src="@drawable/ic_centang"/>
+        android:src="@drawable/ic_selected"/>
 
     <View
         android:layout_width="match_parent"
