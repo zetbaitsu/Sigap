@@ -51,7 +51,7 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
         listenCurrentUser();
         request = LocationRequest.create()
                 .setPriority(priority)
-                .setInterval(100);
+                .setInterval(3 * 1000);
         locationProvider = new ReactiveLocationProvider(SigapApp.pluck().getApplicationContext());
         listenLocationUpdate();
     }
@@ -72,7 +72,9 @@ public class LocationPresenter extends BenihPresenter<LocationPresenter.View> {
                     if (StateManager.pluck().getState().equals(StateManager.State.LOGGED) ||
                             StateManager.pluck().getState().equals(StateManager.State.ADDING_TRUSTED_USER) ||
                             StateManager.pluck().getState().equals(StateManager.State.MENOLONG) ||
-                            StateManager.pluck().getState().equals(StateManager.State.DITOLONG)) {
+                            StateManager.pluck().getState().equals(StateManager.State.DITOLONG) ||
+                            StateManager.pluck().getState().equals(StateManager.State.DIKAWAL) ||
+                            StateManager.pluck().getState().equals(StateManager.State.MENGAWAL)) {
                         UserLocation userLocation = new UserLocation();
                         userLocation.setUserId(currentUser.getUserId());
                         userLocation.setLatitude(location.getLatitude());
