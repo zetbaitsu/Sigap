@@ -16,10 +16,15 @@
 
 package id.satusatudua.sigap.ui.fragment;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -27,12 +32,26 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import id.satusatudua.sigap.R;
+import id.satusatudua.sigap.data.api.CloudImage;
+import id.satusatudua.sigap.data.local.CacheManager;
 import id.satusatudua.sigap.data.model.CandidateHelper;
 import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.Message;
@@ -41,11 +60,16 @@ import id.satusatudua.sigap.presenter.ChatPresenter;
 import id.satusatudua.sigap.ui.FeedbackCaseActivity;
 import id.satusatudua.sigap.ui.HelpingActivity;
 import id.satusatudua.sigap.ui.MainActivity;
+import id.satusatudua.sigap.ui.PictureActivity;
 import id.satusatudua.sigap.ui.ProfileActivity;
 import id.satusatudua.sigap.ui.adapter.ChatAdapter;
 import id.satusatudua.sigap.ui.adapter.HelperAdapter;
+import id.satusatudua.sigap.util.MapUtils;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
+import id.zelory.benih.util.BenihScheduler;
+import id.zelory.benih.util.BenihWorker;
+import timber.log.Timber;
 
 /**
  * Created on : January 13, 2016
@@ -59,7 +83,10 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
     private static final String KEY_CASE = "extra_case";
     private static final String KEY_REPORTER = "extra_reporter";
     private static final String KEY_DISABLE_CHAT = "extra_disable_chat";
-
+    private static final int REQUEST_PICTURE = 25;
+    private static final int REQUEST_TAKE_PICTURE = 24;
+    private static final int REQUEST_ATTACH_FILE = 93;
+    private static final int REQUEST_PICK_LOCATION = 95;
 
     @Bind(R.id.list_message) BenihRecyclerView listMessage;
     @Bind(R.id.list_helper) BenihRecyclerView listHelper;
@@ -138,6 +165,42 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
                 startActivity(FeedbackCaseActivity.generateIntent(getActivity(), theCase));
             }
         }
+
+        if (message.isPicture()) {
+            openPicture(message);
+        } else if (message.isAttachment()) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(message.getUrl())));
+        } else if (message.isLocation()) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                                     Uri.parse("http://maps.google.com/maps?daddr="
+                                                       + message.getLatLng().latitude + ","
+                                                       + message.getLatLng().longitude)));
+        }
+    }
+
+    private void openPicture(Message message) {
+        showLoading();
+        List<Message> messages = new ArrayList<>();
+        final int[] position = {0};
+        int size = chatAdapter.getData().size();
+
+        BenihWorker.pluck().doInNewThread(() -> {
+            for (int i = 0; i < size; i++) {
+                if (chatAdapter.getData().get(i).isPicture()) {
+                    messages.add(chatAdapter.getData().get(i));
+                    if (message.equals(chatAdapter.getData().get(i))) {
+                        position[0] = messages.size() - 1;
+                    }
+                }
+            }
+        }).compose(bindToLifecycle()).subscribe(o -> {
+            startActivity(PictureActivity.generateIntent(getActivity(), messages, position[0]));
+            dismissLoading();
+        }, throwable -> {
+            Timber.e(throwable.getMessage());
+            showError("Failed to open picture!");
+            dismissLoading();
+        });
     }
 
     private CandidateHelper transformReporter() {
@@ -194,6 +257,8 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
             if (!content.isEmpty()) {
                 messageField.setText("");
                 chatPresenter.sendMessage(content);
+            } else {
+                chatPresenter.sendMessage("\uD83D\uDC4D");
             }
         } else {
             HelpingActivity activity = (HelpingActivity) getActivity();
@@ -203,6 +268,183 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
 
     public void sendDangerMessage() {
         chatPresenter.sendMessage("[DANGER]BAHAYA!!!! BAHAYA!!! BAHAYA!!! SEGERA HUBUNGI PIHAK BERWAJIB!!!!![/DANGER]");
+    }
+
+    @OnClick(R.id.button_add_image)
+    public void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_PICTURE);
+    }
+
+    @OnClick(R.id.button_take_picture)
+    public void takePicture() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                showError("Failed to write temporary picture!");
+            }
+
+            if (photoFile != null) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(intent, REQUEST_TAKE_PICTURE);
+            }
+        }
+    }
+
+    @OnClick(R.id.button_add_file)
+    public void attachFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        startActivityForResult(intent, REQUEST_ATTACH_FILE);
+    }
+
+    @OnClick(R.id.button_add_location)
+    public void pickLocation() {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        try {
+            startActivityForResult(builder.build(getActivity()), REQUEST_PICK_LOCATION);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+            showError("Failed to access location!");
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PICTURE && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                showError("Failed to open picture!");
+                return;
+            }
+            try {
+                showLoading();
+                InputStream inputStream = getActivity().getContentResolver().openInputStream(data.getData());
+                CloudImage.pluck().upload(inputStream, null, false)
+                        .compose(bindToLifecycle())
+                        .subscribe(url -> {
+                            chatPresenter.sendMessage(Message.generatePictureMessage(url));
+                            dismissLoading();
+                        }, throwable -> {
+                            throwable.printStackTrace();
+                            Timber.e(throwable.getMessage());
+                            showError("Failed to upload picture!");
+                            dismissLoading();
+                        });
+            } catch (FileNotFoundException e) {
+                showError("Failed to read picture data!");
+                e.printStackTrace();
+            }
+        } else if (requestCode == REQUEST_TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
+            try {
+                showLoading();
+                InputStream inputStream = getActivity().getContentResolver()
+                        .openInputStream(Uri.parse(CacheManager.pluck().getLastPicturePath()));
+                CloudImage.pluck().upload(inputStream, null, false)
+                        .compose(bindToLifecycle())
+                        .subscribe(url -> {
+                            chatPresenter.sendMessage(Message.generatePictureMessage(url));
+                            dismissLoading();
+                        }, throwable -> {
+                            throwable.printStackTrace();
+                            Timber.e(throwable.getMessage());
+                            showError("Failed to upload picture!");
+                            dismissLoading();
+                        });
+            } catch (Exception e) {
+                showError("Failed to read picture data!");
+                e.printStackTrace();
+                dismissLoading();
+            }
+        } else if (requestCode == REQUEST_ATTACH_FILE && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                showError("Failed to open file!");
+                return;
+            }
+            try {
+                showLoading();
+                InputStream inputStream = getActivity().getContentResolver().openInputStream(data.getData());
+                String fileName = getFileName(data.getData());
+                CloudImage.pluck().upload(inputStream, fileName, false)
+                        .compose(bindToLifecycle())
+                        .subscribe(url -> {
+                            chatPresenter.sendMessage(Message.generateAttachmentMessage(fileName, url));
+                            dismissLoading();
+                        }, throwable -> {
+                            throwable.printStackTrace();
+                            Timber.e(throwable.getMessage());
+                            showError("Failed to upload file!");
+                            dismissLoading();
+                        });
+            } catch (FileNotFoundException e) {
+                showError("Failed to read file data!");
+                e.printStackTrace();
+            }
+        } else if (requestCode == REQUEST_PICK_LOCATION && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                showError("Failed to pick location!");
+                return;
+            }
+            Place place = PlacePicker.getPlace(data, getActivity());
+            String address = place.getAddress().toString();
+            if (address.trim().isEmpty()) {
+                showLoading();
+                MapUtils.getAddress(place.getLatLng().latitude, place.getLatLng().longitude)
+                        .compose(BenihScheduler.pluck().applySchedulers(BenihScheduler.Type.NEW_THREAD))
+                        .compose(bindToLifecycle())
+                        .subscribe(s -> {
+                            chatPresenter
+                                    .sendMessage(Message.generateLocationMessage(place.getName() + " - " + s, place.getLatLng()));
+                            dismissLoading();
+                        }, throwable -> {
+                            throwable.printStackTrace();
+                            showError("Failed to get address!");
+                            dismissLoading();
+                        });
+            } else {
+                chatPresenter
+                        .sendMessage(Message.generateLocationMessage(place.getName() + " - " + address, place.getLatLng()));
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        CacheManager.pluck().cacheLastPicturePath("file:" + image.getAbsolutePath());
+        return image;
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     @Override
