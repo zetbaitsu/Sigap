@@ -37,6 +37,12 @@ public class ChatAdapter extends BenihRecyclerAdapter<Message, MessageViewHolder
     private static final int TYPE_MESSAGE_ME = 1;
     private static final int TYPE_MESSAGE_OTHER = 2;
     private static final int TYPE_MESSAGE_DANGER = 3;
+    private static final int TYPE_PICTURE_ME = 4;
+    private static final int TYPE_PICTURE_OTHER = 5;
+    private static final int TYPE_FILE_ME = 6;
+    private static final int TYPE_FILE_OTHER = 7;
+    private static final int TYPE_LOCATION_ME = 8;
+    private static final int TYPE_LOCATION_OTHER = 9;
 
     public ChatAdapter(Context context) {
         super(context);
@@ -48,15 +54,51 @@ public class ChatAdapter extends BenihRecyclerAdapter<Message, MessageViewHolder
         if (message.getContent().startsWith("[DANGER]") && message.getContent().endsWith("[/DANGER]")) {
             return TYPE_MESSAGE_DANGER;
         }
-        return data.get(position).isFromMe() ? TYPE_MESSAGE_ME : TYPE_MESSAGE_OTHER;
+        if (message.isFromMe()) {
+            if (message.isPicture()) {
+                return TYPE_PICTURE_ME;
+            } else if (message.isAttachment()) {
+                return TYPE_FILE_ME;
+            } else if (message.isLocation()) {
+                return TYPE_LOCATION_ME;
+            }
+            return TYPE_MESSAGE_ME;
+        } else {
+            if (message.isPicture()) {
+                return TYPE_PICTURE_OTHER;
+            } else if (message.isAttachment()) {
+                return TYPE_FILE_OTHER;
+            } else if (message.isLocation()) {
+                return TYPE_LOCATION_OTHER;
+            }
+            return TYPE_MESSAGE_OTHER;
+        }
     }
 
     @Override
     protected int getItemResourceLayout(int viewType) {
-        if (viewType == TYPE_MESSAGE_DANGER) {
-            return R.layout.item_message_danger;
+        switch (viewType) {
+            case TYPE_MESSAGE_DANGER:
+                return R.layout.item_message_danger;
+            case TYPE_MESSAGE_ME:
+                return R.layout.item_message_me;
+            case TYPE_PICTURE_ME:
+                return R.layout.item_chat_picture_me;
+            case TYPE_FILE_ME:
+                return R.layout.item_chat_file_me;
+            case TYPE_LOCATION_ME:
+                return R.layout.item_chat_location_me;
+            case TYPE_MESSAGE_OTHER:
+                return R.layout.item_message;
+            case TYPE_PICTURE_OTHER:
+                return R.layout.item_chat_picture;
+            case TYPE_FILE_OTHER:
+                return R.layout.item_chat_file;
+            case TYPE_LOCATION_OTHER:
+                return R.layout.item_chat_location;
+            default:
+                return R.layout.item_message;
         }
-        return viewType == TYPE_MESSAGE_ME ? R.layout.item_message_me : R.layout.item_message;
     }
 
     @Override

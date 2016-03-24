@@ -41,7 +41,8 @@ import timber.log.Timber;
  */
 public enum CloudImage {
     HARVEST;
-    private String TRANSFORM = "h_160,w_160,c_limit";
+    public final static String TRANSFORM = "h_160,w_160,c_limit";
+    public final static String MESSAGE_TRANSFROM = "/h_320,w_240,c_limit";
 
     private Cloudinary cloudinary;
 
@@ -67,25 +68,37 @@ public enum CloudImage {
                 });
     }
 
-    public Observable<String> upload(Object file) {
+    public Observable<String> upload(Object file, String fileName, boolean isCompressed) {
         if (cloudinary == null) {
-            return getCloudinary().flatMap(cloudinary -> uploadToCloud(file));
+            return getCloudinary().flatMap(cloudinary -> uploadToCloud(file, fileName, isCompressed));
         } else {
-            return uploadToCloud(file);
+            return uploadToCloud(file, fileName, isCompressed);
         }
     }
 
-    private Observable<String> uploadToCloud(Object file) {
+    private Observable<String> uploadToCloud(Object file, String fileName, boolean isCompressed) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    Map data = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-                    String url = data.get("url").toString();
-                    url = url.substring(url.lastIndexOf('/'));
-                    url = BuildConfig.CLOUDINARY_PATH + TRANSFORM + url;
-                    subscriber.onNext(url);
-                    subscriber.onCompleted();
+                    if (fileName != null) {
+                        Map data = cloudinary.uploader().upload(file, ObjectUtils.asMap("resource_type", "raw",
+                                                                                        "public_id", fileName));
+                        String url = data.get("url").toString();
+                        subscriber.onNext(url);
+                        subscriber.onCompleted();
+                    } else {
+                        Map data = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+                        String url = data.get("url").toString();
+                        url = url.substring(url.lastIndexOf('/'));
+                        if (isCompressed) {
+                            url = BuildConfig.CLOUDINARY_PATH + TRANSFORM + url;
+                        } else {
+                            url = BuildConfig.CLOUDINARY_PATH + url;
+                        }
+                        subscriber.onNext(url);
+                        subscriber.onCompleted();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     subscriber.onError(e);

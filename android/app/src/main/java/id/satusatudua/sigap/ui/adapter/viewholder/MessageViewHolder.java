@@ -17,6 +17,7 @@
 package id.satusatudua.sigap.ui.adapter.viewholder;
 
 import android.support.annotation.Nullable;
+import android.text.Html;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,7 +28,9 @@ import java.text.SimpleDateFormat;
 import butterknife.Bind;
 import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.data.model.Message;
+import id.satusatudua.sigap.util.MapUtils;
 import id.zelory.benih.ui.adapter.viewholder.BenihItemViewHolder;
+import id.zelory.benih.ui.view.BenihImageView;
 
 import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnItemClickListener;
 import static id.zelory.benih.ui.adapter.BenihRecyclerAdapter.OnLongItemClickListener;
@@ -44,9 +47,10 @@ public class MessageViewHolder extends BenihItemViewHolder<Message> {
 
     @Bind(R.id.date) TextView date;
     @Bind(R.id.time) TextView time;
-    @Bind(R.id.message) TextView content;
+    @Nullable @Bind(R.id.message) TextView content;
     @Nullable @Bind(R.id.icon_check) ImageView checkIcon;
     @Nullable @Bind(R.id.sender) TextView sender;
+    @Nullable @Bind(R.id.picture) BenihImageView picture;
 
     private boolean showDate;
 
@@ -71,14 +75,27 @@ public class MessageViewHolder extends BenihItemViewHolder<Message> {
 
         time.setText(new SimpleDateFormat("HH:mm").format(message.getDate()));
 
-        if (message.getContent().startsWith("[DANGER]") && message.getContent().endsWith("[/DANGER]")) {
-            content.setText(message.getContent().replace("[DANGER]", "").replace("[/DANGER]", ""));
-        } else if (message.getContent().startsWith("[INITIAL]") && message.getContent().endsWith("[/INITIAL]")) {
-            content.setText(message.getContent().replace("[INITIAL]", "").replace("[/INITIAL]", ""));
-        } else if (message.getContent().startsWith("[CLOSED]") && message.getContent().endsWith("[/CLOSED]")) {
-            content.setText(message.getContent().replace("[CLOSED]", "").replace("[/CLOSED]", ""));
-        } else {
-            content.setText(message.getContent());
+        if (content != null) {
+            if (message.getContent().startsWith("[DANGER]") && message.getContent().endsWith("[/DANGER]")) {
+                content.setText(message.getContent().replace("[DANGER]", "").replace("[/DANGER]", ""));
+            } else if (message.getContent().startsWith("[INITIAL]") && message.getContent().endsWith("[/INITIAL]")) {
+                content.setText(message.getContent().replace("[INITIAL]", "").replace("[/INITIAL]", ""));
+            } else if (message.getContent().startsWith("[CLOSED]") && message.getContent().endsWith("[/CLOSED]")) {
+                content.setText(message.getContent().replace("[CLOSED]", "").replace("[/CLOSED]", ""));
+            } else {
+                if (message.isAttachment()) {
+                    content.setText(Html.fromHtml("File: <u>" + message.getAttachmentName() + "</u>"));
+                } else if (message.isLocation()) {
+                    content.setText(message.getLocationName());
+                    if (picture != null) {
+                        picture.setImageUrl(MapUtils.getImageUrl(message.getLatLng().latitude, message.getLatLng().longitude));
+                    }
+                } else {
+                    content.setText(message.getContent());
+                }
+            }
+        } else if (picture != null) {
+            picture.setImageUrl(message.getCompressedUrl());
         }
 
         if (sender != null) {

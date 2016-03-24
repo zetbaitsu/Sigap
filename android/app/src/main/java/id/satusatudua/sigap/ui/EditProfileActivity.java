@@ -122,7 +122,7 @@ public class EditProfileActivity extends BenihActivity implements EditProfilePre
                 InputStream inputStream = getContentResolver().openInputStream(data.getData());
                 Timber.d("Try upload: " + inputStream);
                 progressBar.setVisibility(View.VISIBLE);
-                CloudImage.pluck().upload(inputStream)
+                CloudImage.pluck().upload(inputStream, null, true)
                         .subscribe(url -> {
                             User currentUser = CacheManager.pluck().getCurrentUser();
                             currentUser.setImageUrl(url);

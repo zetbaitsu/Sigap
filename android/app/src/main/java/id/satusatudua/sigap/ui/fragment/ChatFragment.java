@@ -63,8 +63,6 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
 
     @Bind(R.id.list_message) BenihRecyclerView listMessage;
     @Bind(R.id.list_helper) BenihRecyclerView listHelper;
-    @Bind(R.id.button_helpers) ImageView buttonHelpers;
-    @Bind(R.id.divider) View divider;
     @Bind(R.id.field_message) EditText messageField;
     @Bind(R.id.button_send) ImageView buttonSend;
     @Bind(R.id.root_input) LinearLayout rootInput;
@@ -205,19 +203,6 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
 
     public void sendDangerMessage() {
         chatPresenter.sendMessage("[DANGER]BAHAYA!!!! BAHAYA!!! BAHAYA!!! SEGERA HUBUNGI PIHAK BERWAJIB!!!!![/DANGER]");
-    }
-
-    @OnClick(R.id.button_helpers)
-    public void toggleHelpers() {
-        if (listHelper.getVisibility() == View.VISIBLE) {
-            listHelper.setVisibility(View.GONE);
-            divider.setVisibility(View.GONE);
-            buttonHelpers.setImageResource(R.drawable.ic_grey_orang);
-        } else {
-            listHelper.setVisibility(View.VISIBLE);
-            divider.setVisibility(View.VISIBLE);
-            buttonHelpers.setImageResource(R.drawable.ic_orang);
-        }
     }
 
     @Override

@@ -269,4 +269,12 @@ public enum CacheManager {
     public boolean isShakeToNotify() {
         return sharedPreferences.getBoolean("shaking", true);
     }
+
+    public void cacheLastPicturePath(String path) {
+        sharedPreferences.edit().putString("last_picture_path", path).apply();
+    }
+
+    public String getLastPicturePath() {
+        return sharedPreferences.getString("last_picture_path", "");
+    }
 }

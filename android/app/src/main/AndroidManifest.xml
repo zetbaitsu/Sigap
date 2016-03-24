@@ -113,6 +113,9 @@
         <activity
             android:name=".ui.GuardingActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.PictureActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.LocationService"/>
