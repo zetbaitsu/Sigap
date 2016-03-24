@@ -51,11 +51,15 @@ public class ChatPresenter extends BenihPresenter<ChatPresenter.View> {
     private Case theCase;
     private List<CandidateHelper> candidateHelpers;
 
-
-    public ChatPresenter(View view, Case theCase) {
+    public ChatPresenter(View view, Case theCase, User reporter) {
         super(view);
         currentUser = CacheManager.pluck().getCurrentUser();
         candidateHelpers = new ArrayList<>();
+        CandidateHelper candidateHelper = new CandidateHelper();
+        candidateHelper.setCandidateId(reporter.getUserId());
+        candidateHelper.setCandidate(reporter);
+        candidateHelper.setStatus(CandidateHelper.Status.MENOLONG);
+        candidateHelpers.add(candidateHelper);
         this.theCase = theCase;
         listenHelperStatus();
     }

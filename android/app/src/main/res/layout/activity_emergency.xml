@@ -20,122 +20,79 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/reporter_background"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical">
+        android:fitsSystemWindows="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="Mode Darurat"
-            android:textColor="@color/white"
-            android:textSize="16sp"/>
-
-        <Button
-            android:id="@+id/i_am_save"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:background="@color/colorPrimaryDark"
-            android:text="Klarifikasi Saya Selamat"
-            android:textColor="@color/white"/>
-    </LinearLayout>
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_scrollFlags="snap"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider"/>
-
-    <id.zelory.benih.ui.view.BenihRecyclerView
-        android:id="@+id/list_helper"
-        android:layout_width="match_parent"
-        android:layout_height="42dp"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider"/>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/light_grey">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/rounded_white"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingStart="10dp">
-
-            <EditText
-                android:id="@+id/et_search"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:hint="Cari kontak darurat"
-                android:imeOptions="actionSearch"
-                android:singleLine="true"
-                android:textSize="16sp"/>
-
-            <ImageView
-                android:id="@+id/icon_search"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_gravity="center_vertical"
-                android:padding="9dp"
-                android:src="@drawable/ic_search"/>
-
-        </LinearLayout>
-    </FrameLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <id.zelory.benih.ui.view.BenihRecyclerView
-                android:id="@+id/recycler_view"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </android.support.v4.widget.SwipeRefreshLayout>
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-        <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
-            android:id="@+id/fast_scroller"
-            android:layout_width="24dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:paddingEnd="8dp"
-            android:paddingRight="8dp"
-            app:rfs_barColor="@color/secondary_text"
-            app:rfs_handleBackground="@drawable/rounded_grey"/>
+                <android.support.v7.widget.CardView
+                    android:id="@+id/button_i_am_save"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    app:elevation="2dp">
 
-        <id.satusatudua.sigap.ui.view.ContactIndicator
-            android:id="@+id/fast_scroller_section_title_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
-            android:layout_toLeftOf="@id/fast_scroller"
-            android:layout_toStartOf="@id/fast_scroller"
-            app:rfs_backgroundColor="@color/colorAccent"
-            app:rfs_textColor="@color/white"/>
-    </RelativeLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:background="@color/white"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
 
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="KLARIFIKASI SAYA SELAMAT"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabMode="fixed"
+            app:tabPaddingBottom="10dp"
+            app:tabPaddingTop="10dp"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/divider"/>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </LinearLayout>

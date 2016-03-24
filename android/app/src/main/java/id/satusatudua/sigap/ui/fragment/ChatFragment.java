@@ -145,7 +145,7 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
         listHelper.setAdapter(helperAdapter);
         helperAdapter.setOnItemClickListener((view, position) -> onItemHelperClicked(helperAdapter.getData().get(position)));
 
-        chatPresenter = new ChatPresenter(this, theCase);
+        chatPresenter = new ChatPresenter(this, theCase, reporter);
         if (savedInstanceState == null) {
             chatPresenter.loadHelper();
         } else {
@@ -240,7 +240,7 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
     @OnTextChanged(R.id.field_message)
     public void fieldMessageChanged(CharSequence message) {
         if (message == null || "".equals(message.toString())) {
-            buttonSend.setImageResource(R.drawable.ic_grey_send);
+            buttonSend.setImageResource(R.drawable.ic_like);
         } else {
             buttonSend.setImageResource(R.drawable.ic_send);
         }
