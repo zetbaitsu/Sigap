@@ -106,7 +106,12 @@ public class EmergencyActivity extends BenihActivity implements EmergencyPresent
 
     @Override
     public void onNewHelperAdded(CandidateHelper candidateHelper) {
-
+        try {
+            ChatFragment chatFragment = (ChatFragment) helpingPagerAdapter.getItem(0);
+            chatFragment.onHelperStatusChanged(candidateHelper);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
