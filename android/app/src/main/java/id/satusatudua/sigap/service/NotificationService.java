@@ -95,7 +95,8 @@ public class NotificationService extends Service {
                         List<String> lastCaseIds = CacheManager.pluck().getLastCases();
                         if (lastCaseIds == null || !lastCaseIds.contains(caseId)) {
                             CacheManager.pluck().cacheCase(caseId);
-                            showEmergencyNotification(caseId);
+                            //showEmergencyNotification(caseId);
+                            startActivity(ConfirmHelpingActivity.generateIntent(this, caseId));
                         }
                     }, throwable -> Timber.e(throwable.getMessage()));
         }

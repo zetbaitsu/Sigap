@@ -19,7 +19,9 @@ package id.satusatudua.sigap.ui;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.Snackbar;
 import android.text.Html;
 import android.view.View;
@@ -56,6 +58,8 @@ public class ConfirmHelpingActivity extends BenihActivity implements ConfirmHelp
     private ConfirmHelpingPresenter presenter;
     private String caseId;
     private ProgressDialog progressDialog;
+    private MediaPlayer phoneRingPlayer;
+    private Vibrator vibrator;
 
     public static Intent generateIntent(Context context, String caseId) {
         Intent intent = new Intent(context, ConfirmHelpingActivity.class);
@@ -75,6 +79,11 @@ public class ConfirmHelpingActivity extends BenihActivity implements ConfirmHelp
     protected void onViewReady(Bundle savedInstanceState) {
 
         resolveCaseId(savedInstanceState);
+
+        phoneRingPlayer = MediaPlayer.create(this, R.raw.sound_sirine);
+        phoneRingPlayer.setLooping(true);
+        vibrator = ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE));
+        startRingAndVibrate();
 
         presenter = new ConfirmHelpingPresenter(this);
         presenter.loadCaseData(caseId);
@@ -130,12 +139,14 @@ public class ConfirmHelpingActivity extends BenihActivity implements ConfirmHelp
     @Override
     public void onConfirmed(Case theCase, User reporter) {
         startActivity(HelpingActivity.generateIntent(this, theCase, reporter));
+        stopRingAndVibrate();
     }
 
     @Override
     public void onDeclined() {
         content.setVisibility(View.GONE);
         declinedContent.setVisibility(View.VISIBLE);
+        stopRingAndVibrate();
     }
 
     @Override
@@ -161,5 +172,35 @@ public class ConfirmHelpingActivity extends BenihActivity implements ConfirmHelp
     @Override
     public void dismissLoading() {
         progressDialog.dismiss();
+    }
+
+    public void startRingAndVibrate() {
+        if (phoneRingPlayer != null) {
+            phoneRingPlayer.start();
+        }
+        if (vibrator != null) {
+            vibrator.vibrate(new long[]{500, 500}, 0);
+        }
+    }
+
+    public void stopRingAndVibrate() {
+        try {
+            if (phoneRingPlayer != null) {
+                phoneRingPlayer.stop();
+                phoneRingPlayer.release();
+            }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+
+        if (vibrator != null) {
+            vibrator.cancel();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopRingAndVibrate();
     }
 }
