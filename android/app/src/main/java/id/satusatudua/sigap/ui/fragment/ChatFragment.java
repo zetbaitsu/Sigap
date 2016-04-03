@@ -18,11 +18,13 @@ package id.satusatudua.sigap.ui.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
@@ -100,6 +102,7 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
     private User reporter;
     private ChatPresenter chatPresenter;
     private ProgressDialog progressDialog;
+    private Vibrator vibrator;
 
     public static ChatFragment newInstance(Case theCase, User reporter) {
         ChatFragment chatFragment = new ChatFragment();
@@ -129,6 +132,8 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
     protected void onViewReady(@Nullable Bundle savedInstanceState) {
         resolveTheCase(savedInstanceState);
         resolveReporter(savedInstanceState);
+
+        vibrator = ((Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE));
 
         boolean disableChat = getArguments().getBoolean(KEY_DISABLE_CHAT, false);
         rootInput.setVisibility(disableChat ? View.GONE : View.VISIBLE);
@@ -485,6 +490,9 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
     public void onNewMessage(Message message) {
         chatAdapter.addOrUpdate(message);
         listMessage.post(() -> listMessage.smoothScrollToPosition(chatAdapter.getItemCount() - 1));
+        if (!message.isFromMe() && message.getContent().startsWith("[DANGER]") && message.getContent().endsWith("[/DANGER]")) {
+            vibrator.vibrate(1000);
+        }
     }
 
     @Override
