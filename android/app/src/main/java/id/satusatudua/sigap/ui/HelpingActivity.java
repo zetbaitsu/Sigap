@@ -98,8 +98,9 @@ public class HelpingActivity extends BenihActivity implements HelpingPresenter.V
         }
 
         if (theCase == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 
@@ -111,8 +112,9 @@ public class HelpingActivity extends BenihActivity implements HelpingPresenter.V
         }
 
         if (reporter == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 

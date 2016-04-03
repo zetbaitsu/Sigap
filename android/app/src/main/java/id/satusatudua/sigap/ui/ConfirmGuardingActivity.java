@@ -84,8 +84,9 @@ public class ConfirmGuardingActivity extends BenihActivity implements ConfirmGua
         }
 
         if (escortId == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 

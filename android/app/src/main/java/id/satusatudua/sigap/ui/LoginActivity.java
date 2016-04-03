@@ -125,7 +125,7 @@ public class LoginActivity extends BenihActivity implements LoginPresenter.View 
 
     @Override
     public void onSuccessLogin(User user) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, TombolActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

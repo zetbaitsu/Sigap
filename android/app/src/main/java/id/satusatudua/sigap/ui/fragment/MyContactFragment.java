@@ -31,7 +31,7 @@ import id.satusatudua.sigap.data.model.ImportantContact;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.MyContactPresenter;
 import id.satusatudua.sigap.ui.DetailContactActivity;
-import id.satusatudua.sigap.ui.MainActivity;
+import id.satusatudua.sigap.ui.TombolActivity;
 import id.satusatudua.sigap.ui.adapter.MyContactAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
@@ -96,7 +96,7 @@ public class MyContactFragment extends BenihFragment implements
         }
 
         if (user == null) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
+            Intent intent = new Intent(getActivity(), TombolActivity.class);
             startActivity(intent);
             getActivity().finish();
         }

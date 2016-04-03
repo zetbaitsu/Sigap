@@ -31,7 +31,7 @@ import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.CaseReview;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.DetailCasePresenter;
-import id.satusatudua.sigap.ui.MainActivity;
+import id.satusatudua.sigap.ui.TombolActivity;
 import id.satusatudua.sigap.ui.adapter.CaseReviewAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
@@ -95,8 +95,9 @@ public class DetailCaseFragment extends BenihFragment implements
         }
 
         if (theCase == null) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
+            Intent intent = new Intent(getActivity(), TombolActivity.class);
             startActivity(intent);
+            getActivity().finish();
         }
     }
 
@@ -108,8 +109,9 @@ public class DetailCaseFragment extends BenihFragment implements
         }
 
         if (reporter == null) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
+            Intent intent = new Intent(getActivity(), TombolActivity.class);
             startActivity(intent);
+            getActivity().finish();
         }
     }
 

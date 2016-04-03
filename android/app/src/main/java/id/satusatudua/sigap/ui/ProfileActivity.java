@@ -125,7 +125,7 @@ public class ProfileActivity extends BenihActivity {
         }
 
         if (user == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
             finish();
         }

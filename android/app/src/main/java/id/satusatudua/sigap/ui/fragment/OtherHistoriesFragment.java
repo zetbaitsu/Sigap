@@ -32,7 +32,7 @@ import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.HistoriesPresenter;
 import id.satusatudua.sigap.ui.DetailCaseActivity;
-import id.satusatudua.sigap.ui.MainActivity;
+import id.satusatudua.sigap.ui.TombolActivity;
 import id.satusatudua.sigap.ui.adapter.HistoryAdapter;
 import id.zelory.benih.ui.fragment.BenihFragment;
 import id.zelory.benih.ui.view.BenihRecyclerView;
@@ -101,7 +101,7 @@ public class OtherHistoriesFragment extends BenihFragment implements HistoriesPr
         }
 
         if (user == null) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
+            Intent intent = new Intent(getActivity(), TombolActivity.class);
             startActivity(intent);
             getActivity().finish();
         }

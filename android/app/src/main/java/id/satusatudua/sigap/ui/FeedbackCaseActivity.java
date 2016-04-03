@@ -73,7 +73,7 @@ public class FeedbackCaseActivity extends BenihActivity implements FeedbackCaseP
         }
 
         if (theCase == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
             finish();
         }

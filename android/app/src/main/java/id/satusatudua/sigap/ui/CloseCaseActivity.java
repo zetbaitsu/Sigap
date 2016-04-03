@@ -81,7 +81,7 @@ public class CloseCaseActivity extends BenihActivity implements CloseCasePresent
         }
 
         if (theCase == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
             finish();
         }
@@ -95,7 +95,7 @@ public class CloseCaseActivity extends BenihActivity implements CloseCasePresent
         }
 
         if (helpers == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
             finish();
         }
@@ -117,7 +117,7 @@ public class CloseCaseActivity extends BenihActivity implements CloseCasePresent
 
     @Override
     public void onCaseClosed() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, TombolActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

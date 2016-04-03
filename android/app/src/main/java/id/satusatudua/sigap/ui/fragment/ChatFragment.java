@@ -61,9 +61,9 @@ import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.presenter.ChatPresenter;
 import id.satusatudua.sigap.ui.FeedbackCaseActivity;
 import id.satusatudua.sigap.ui.HelpingActivity;
-import id.satusatudua.sigap.ui.MainActivity;
 import id.satusatudua.sigap.ui.PictureActivity;
 import id.satusatudua.sigap.ui.ProfileActivity;
+import id.satusatudua.sigap.ui.TombolActivity;
 import id.satusatudua.sigap.ui.adapter.ChatAdapter;
 import id.satusatudua.sigap.ui.adapter.HelperAdapter;
 import id.satusatudua.sigap.util.MapUtils;
@@ -224,8 +224,9 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
         }
 
         if (theCase == null) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
+            Intent intent = new Intent(getActivity(), TombolActivity.class);
             startActivity(intent);
+            getActivity().finish();
         }
     }
 
@@ -237,8 +238,9 @@ public class ChatFragment extends BenihFragment implements ChatPresenter.View {
         }
 
         if (reporter == null) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
+            Intent intent = new Intent(getActivity(), TombolActivity.class);
             startActivity(intent);
+            getActivity().finish();
         }
     }
 

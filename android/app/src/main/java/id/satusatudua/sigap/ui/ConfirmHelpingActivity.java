@@ -97,8 +97,9 @@ public class ConfirmHelpingActivity extends BenihActivity implements ConfirmHelp
         }
 
         if (caseId == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 

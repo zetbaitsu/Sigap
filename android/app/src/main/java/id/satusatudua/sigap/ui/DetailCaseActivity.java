@@ -84,7 +84,7 @@ public class DetailCaseActivity extends BenihActivity {
         }
 
         if (theCase == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
             finish();
         }
@@ -98,7 +98,7 @@ public class DetailCaseActivity extends BenihActivity {
         }
 
         if (reporter == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
             finish();
         }

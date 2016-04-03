@@ -79,8 +79,9 @@ public class ConfirmTrustedOfActivity extends BenihActivity implements
         }
 
         if (userId == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 

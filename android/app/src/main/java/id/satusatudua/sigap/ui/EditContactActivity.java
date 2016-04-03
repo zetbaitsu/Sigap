@@ -81,7 +81,7 @@ public class EditContactActivity extends BenihActivity implements EditContactPre
         }
 
         if (contact == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TombolActivity.class);
             startActivity(intent);
             finish();
         }
