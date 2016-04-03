@@ -40,6 +40,7 @@ import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.ui.ConfirmGuardingActivity;
 import id.satusatudua.sigap.ui.ConfirmHelpingActivity;
 import id.satusatudua.sigap.ui.ConfirmTrustedOfActivity;
+import id.satusatudua.sigap.ui.GuardingActivity;
 import id.satusatudua.sigap.ui.HelpingActivity;
 import id.satusatudua.sigap.util.RxFirebase;
 import id.zelory.benih.util.BenihUtils;
@@ -71,6 +72,7 @@ public class NotificationService extends Service {
         listenEscortRequest();
         listenTrustedOf();
         listenNewMessage();
+        listenNewGuardingMessage();
     }
 
     private void listenEscortRequest() {
@@ -160,10 +162,23 @@ public class NotificationService extends Service {
                 .filter(dataSnapshot -> dataSnapshot.child("date").getValue(Long.class) > CacheManager.pluck().getLastMessageTime())
                 .filter(dataSnapshot -> !dataSnapshot.child("userId").getValue().toString().equals(currentUser.getUserId()))
                 .doOnNext(dataSnapshot -> CacheManager.pluck().cacheLastMessageTime(dataSnapshot.child("date").getValue(Long.class)))
-                .subscribe(this::showNewMessageNotif, throwable -> Timber.e(throwable.getMessage()));
+                .subscribe(dataSnapshot -> showNewMessageNotif(dataSnapshot, false), throwable -> Timber.e(throwable.getMessage()));
     }
 
-    private void showNewMessageNotif(DataSnapshot dataSnapshot) {
+    private void listenNewGuardingMessage() {
+        User currentUser = CacheManager.pluck().getCurrentUser();
+        CacheManager.pluck()
+                .listenLastGuardingEscort()
+                .filter(escort -> !escort.isClosed())
+                .flatMap(escort -> RxFirebase.observeChildAdded(FirebaseApi.pluck().escortMessages(escort.getEscortId()))
+                        .map(firebaseChildEvent -> firebaseChildEvent.snapshot))
+                .filter(dataSnapshot -> dataSnapshot.child("date").getValue(Long.class) > CacheManager.pluck().getLastMessageTime())
+                .filter(dataSnapshot -> !dataSnapshot.child("userId").getValue().toString().equals(currentUser.getUserId()))
+                .doOnNext(dataSnapshot -> CacheManager.pluck().cacheLastMessageTime(dataSnapshot.child("date").getValue(Long.class)))
+                .subscribe(dataSnapshot -> showNewMessageNotif(dataSnapshot, true), throwable -> Timber.e(throwable.getMessage()));
+    }
+
+    private void showNewMessageNotif(DataSnapshot dataSnapshot, boolean isGuarding) {
         if (!BenihUtils.isMyAppRunning(getApplicationContext(), getPackageName())) {
             String content = dataSnapshot.child("content").getValue().toString();
             boolean danger = false;
@@ -175,12 +190,19 @@ public class NotificationService extends Service {
             } else if (content.startsWith("[INITIAL]") && content.endsWith("[/INITIAL]")) {
                 content = content.replace("[INITIAL]", "").replace("[/INITIAL]", "");
             }
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                                                                    HelpingActivity
-                                                                            .generateIntent(this,
-                                                                                            CacheManager.pluck().getLastHelpingCase(),
-                                                                                            CacheManager.pluck().getLastCaseReporter()),
-                                                                    PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent;
+            if (isGuarding) {
+                pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                                                          GuardingActivity.generateIntent(this),
+                                                          PendingIntent.FLAG_UPDATE_CURRENT);
+            } else {
+                pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                                                                        HelpingActivity
+                                                                                .generateIntent(this,
+                                                                                                CacheManager.pluck().getLastHelpingCase(),
+                                                                                                CacheManager.pluck().getLastCaseReporter()),
+                                                                        PendingIntent.FLAG_UPDATE_CURRENT);
+            }
             Notification notification = new NotificationCompat.Builder(getApplicationContext())
                     .setContentTitle("Sigap")
                     .setContentText(danger ? content : "Seseorang mengirimkan pesan baru kedalam percakapan!")
