@@ -18,11 +18,13 @@ package id.satusatudua.sigap.ui.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
@@ -93,6 +95,7 @@ public class EscortChatFragment extends BenihFragment implements EscortChatPrese
     private User reporter;
     private EscortChatPresenter chatPresenter;
     private ProgressDialog progressDialog;
+    private Vibrator vibrator;
 
     public static EscortChatFragment newInstance(User reporter, Escort escort) {
         EscortChatFragment chatFragment = new EscortChatFragment();
@@ -111,6 +114,8 @@ public class EscortChatFragment extends BenihFragment implements EscortChatPrese
     @Override
     protected void onViewReady(@Nullable Bundle savedInstanceState) {
         resolveData(savedInstanceState);
+
+        vibrator = ((Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE));
 
         chatAdapter = new ChatAdapter(getActivity());
         listMessage.setUpAsBottomList();
@@ -443,6 +448,9 @@ public class EscortChatFragment extends BenihFragment implements EscortChatPrese
     public void onNewMessage(Message message) {
         chatAdapter.addOrUpdate(message);
         listMessage.post(() -> listMessage.smoothScrollToPosition(chatAdapter.getItemCount() - 1));
+        if (!message.isFromMe() && message.getContent().startsWith("[DANGER]") && message.getContent().endsWith("[/DANGER]")) {
+            vibrator.vibrate(1000);
+        }
     }
 
     @Override
