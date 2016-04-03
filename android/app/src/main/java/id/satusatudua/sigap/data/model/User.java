@@ -18,7 +18,7 @@ public class User implements Parcelable {
     private boolean male;
     private String phoneNumber;
     private boolean fromApps;
-    private Status status;
+    private Status status = Status.SIAP;
     private String imageUrl;
 
     public User() {
