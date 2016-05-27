@@ -156,8 +156,7 @@ public class SettingFragment extends BenihFragment implements CurrentUserPresent
 
     @OnClick(R.id.rate)
     public void onRateClick() {
-        startActivity(new Intent(Intent.ACTION_VIEW,
-                                 Uri.parse("http://play.google.com/store/apps/details?id=id.zelory.codepolitan")));
+        showError("Segera hadir!");
     }
 
     @OnClick(R.id.about)
