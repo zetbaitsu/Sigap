@@ -35,6 +35,7 @@ import id.satusatudua.sigap.R;
 import id.satusatudua.sigap.SigapApp;
 import id.satusatudua.sigap.data.api.FirebaseApi;
 import id.satusatudua.sigap.data.local.CacheManager;
+import id.satusatudua.sigap.data.local.StateManager;
 import id.satusatudua.sigap.data.model.Case;
 import id.satusatudua.sigap.data.model.User;
 import id.satusatudua.sigap.ui.ConfirmGuardingActivity;
@@ -78,12 +79,22 @@ public class NotificationService extends Service {
     private void listenEscortRequest() {
         RxFirebase.observeChildAdded(FirebaseApi.pluck().userGuards(CacheManager.pluck().getCurrentUser().getUserId()))
                 .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
+                .filter(dataSnapshot -> dataSnapshot.hasChild("delivered"))
+                .filter(dataSnapshot -> !dataSnapshot.child("delivered").getValue(Boolean.class))
                 .map(DataSnapshot::getKey)
+                .doOnNext(escortId -> FirebaseApi.pluck()
+                        .userGuards(CacheManager.pluck().getCurrentUser().getUserId())
+                        .child(escortId)
+                        .child("delivered")
+                        .setValue(true)
+                )
                 .subscribe(escortId -> {
-                    List<String> lastEscortIds = CacheManager.pluck().getLastGuarding();
-                    if (lastEscortIds == null || !lastEscortIds.contains(escortId)) {
-                        CacheManager.pluck().cacheGuarding(escortId);
-                        showEscortRequestNotification(escortId);
+                    if (StateManager.pluck().getState() == StateManager.State.LOGGED) {
+                        List<String> lastEscortIds = CacheManager.pluck().getLastGuarding();
+                        if (lastEscortIds == null || !lastEscortIds.contains(escortId)) {
+                            CacheManager.pluck().cacheGuarding(escortId);
+                            showEscortRequestNotification(escortId);
+                        }
                     }
                 }, throwable -> Timber.e(throwable.getMessage()));
     }
@@ -92,13 +103,23 @@ public class NotificationService extends Service {
         if (CacheManager.pluck().getUserLocation() != null) {
             RxFirebase.observeChildAdded(FirebaseApi.pluck().userHelps(CacheManager.pluck().getCurrentUser().getUserId()))
                     .map(firebaseChildEvent -> firebaseChildEvent.snapshot)
+                    .filter(dataSnapshot -> dataSnapshot.hasChild("delivered"))
+                    .filter(dataSnapshot -> !dataSnapshot.child("delivered").getValue(Boolean.class))
                     .map(DataSnapshot::getKey)
+                    .doOnNext(caseId -> FirebaseApi.pluck()
+                            .userHelps(CacheManager.pluck().getCurrentUser().getUserId())
+                            .child(caseId)
+                            .child("delivered")
+                            .setValue(true)
+                    )
                     .subscribe(caseId -> {
-                        List<String> lastCaseIds = CacheManager.pluck().getLastCases();
-                        if (lastCaseIds == null || !lastCaseIds.contains(caseId)) {
-                            CacheManager.pluck().cacheCase(caseId);
-                            //showEmergencyNotification(caseId);
-                            startActivity(ConfirmHelpingActivity.generateIntent(this, caseId));
+                        if (StateManager.pluck().getState() == StateManager.State.LOGGED) {
+                            List<String> lastCaseIds = CacheManager.pluck().getLastCases();
+                            if (lastCaseIds == null || !lastCaseIds.contains(caseId)) {
+                                CacheManager.pluck().cacheCase(caseId);
+                                //showEmergencyNotification(caseId);
+                                startActivity(ConfirmHelpingActivity.generateIntent(this, caseId));
+                            }
                         }
                     }, throwable -> Timber.e(throwable.getMessage()));
         }
@@ -197,11 +218,11 @@ public class NotificationService extends Service {
                                                           PendingIntent.FLAG_UPDATE_CURRENT);
             } else {
                 pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                                                                        HelpingActivity
-                                                                                .generateIntent(this,
-                                                                                                CacheManager.pluck().getLastHelpingCase(),
-                                                                                                CacheManager.pluck().getLastCaseReporter()),
-                                                                        PendingIntent.FLAG_UPDATE_CURRENT);
+                                                          HelpingActivity
+                                                                  .generateIntent(this,
+                                                                                  CacheManager.pluck().getLastHelpingCase(),
+                                                                                  CacheManager.pluck().getLastCaseReporter()),
+                                                          PendingIntent.FLAG_UPDATE_CURRENT);
             }
             Notification notification = new NotificationCompat.Builder(getApplicationContext())
                     .setContentTitle("Sigap")

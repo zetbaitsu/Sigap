@@ -85,6 +85,7 @@ public class EmergencyPresenter extends BenihPresenter<EmergencyPresenter.View> 
 
             //Simpan kalau user ini pernah didaftarkan untuk menolong kasus ini
             data.put("userHelps/" + candidateHelpers.get(i).getCandidateId() + "/" + theCase.getCaseId() + "/status/", "MENUNGGU");
+            data.put("userHelps/" + candidateHelpers.get(i).getCandidateId() + "/" + theCase.getCaseId() + "/delivered/", false);
         }
 
         data.put("cases/" + theCase.getCaseId() + "/status", "BERJALAN");

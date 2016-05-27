@@ -132,6 +132,7 @@ public class RequestEscortPresenter extends BenihPresenter<RequestEscortPresente
         for (int i = 0; i < guardCandidates.size(); i++) {
             data.put("guards/" + escortId + "/" + guardCandidates.get(i).getUserTrustedId() + "/status/", "MENUNGGU");
             data.put("userGuards/" + guardCandidates.get(i).getUserTrustedId() + "/" + escortId + "/status/", "MENUNGGU");
+            data.put("userGuards/" + guardCandidates.get(i).getUserTrustedId() + "/" + escortId + "/delivered/", false);
         }
 
         api.updateChildren(data, (firebaseError, firebase) -> {
